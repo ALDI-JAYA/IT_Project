@@ -1,0 +1,1267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- HARDWARE -->
+    <menuitem id="menu_hardware" name="Master Hardware" parent="menu_itms_root" sequence="1"/>
+
+    <!-- Mainboard -->
+    <record id="view_pmr_mainboard_tree" model="ir.ui.view">
+        <field name="name">pmr.mainboard.tree</field>
+        <field name="model">pmr.mainboard</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_mainboard_form" model="ir.ui.view">
+        <field name="name">pmr.mainboard.form</field>
+        <field name="model">pmr.mainboard</field>
+        <field name="arch" type="xml">
+            <form string="Motherboard">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_mainboard" model="ir.actions.act_window">
+        <field name="name">Motherboard</field>
+        <field name="res_model">pmr.mainboard</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_mainboard" name="Motherboard" parent="menu_hardware" action="action_pmr_mainboard" sequence="80"/>
+
+    <!-- FDD  -->
+    <record id="view_pmr_fdd_tree" model="ir.ui.view">
+        <field name="name">pmr.fdd.tree</field>
+        <field name="model">pmr.fdd</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_pci"/>
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_fdd_form" model="ir.ui.view">
+        <field name="name">pmr.fdd.form</field>
+        <field name="model">pmr.fdd</field>
+        <field name="arch" type="xml">
+            <form string="Expansion Slot">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />      
+                        <field name="pmr_pci"/>
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                 <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_fdd" model="ir.actions.act_window">
+        <field name="name">Expansion Slot</field>
+        <field name="res_model">pmr.fdd</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_fdd" name="Expansion Slot" parent="menu_hardware" action="action_pmr_fdd" sequence="20"/>
+
+    <!-- POWER SUPPLY -->
+    <record id="view_power_supply_tree" model="ir.ui.view">
+        <field name="name">pmr.power.supply.tree</field>
+        <field name="model">pmr.power.supply</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_power_supply_form" model="ir.ui.view">
+        <field name="name">pmr.power.supply.form</field>
+        <field name="model">pmr.power.supply</field>
+        <field name="arch" type="xml">
+            <form string="Power SUpply">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_power_supply" model="ir.actions.act_window">
+        <field name="name">Power Supply</field>
+        <field name="res_model">pmr.power.supply</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_power_supply" name="Power Supply" parent="menu_hardware" action="action_power_supply" sequence="100"/>
+
+    <!-- Lan Card -->
+    <record id="view_lan_card_tree" model="ir.ui.view">
+        <field name="name">pmr.lan.card.tree</field>
+        <field name="model">pmr.lan.card</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_onboard"/> 
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lan_card_tree_form" model="ir.ui.view">
+        <field name="name">pmr.lan.card.form</field>
+        <field name="model">pmr.lan.card</field>
+        <field name="arch" type="xml">
+            <form string="Integrated LAN">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_onboard"/> 
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_lan_card_tree" model="ir.actions.act_window">
+        <field name="name">Integrated LAN</field>
+        <field name="res_model">pmr.lan.card</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_lan_card_tree" name="Integrated LAN" parent="menu_hardware" action="action_lan_card_tree" sequence="40"/>
+
+    <!-- Casing -->
+    <record id="view_pmr_casing_tree" model="ir.ui.view">
+        <field name="name">pmr.casing.tree</field>
+        <field name="model">pmr.casing</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_casing_tree_form" model="ir.ui.view">
+        <field name="name">pmr.casing.form</field>
+        <field name="model">pmr.casing</field>
+        <field name="arch" type="xml">
+            <form string="Casing">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_casing_tree" model="ir.actions.act_window">
+        <field name="name">Casing</field>
+        <field name="res_model">pmr.casing</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_casing" name="Casing" parent="menu_hardware" action="action_pmr_casing_tree" sequence="10"/>
+
+    <!-- Keyboard -->
+    <record id="view_pmr_keyboard_tree" model="ir.ui.view">
+        <field name="name">pmr.keyboard.tree</field>
+        <field name="model">pmr.keyboard</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_keyboard_tree_form" model="ir.ui.view">
+        <field name="name">pmr.keyboard.form</field>
+        <field name="model">pmr.keyboard</field>
+        <field name="arch" type="xml">
+            <form string="Keyboard">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_keyboard_tree" model="ir.actions.act_window">
+        <field name="name">Keyboard</field>
+        <field name="res_model">pmr.keyboard</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_keyboard" name="Keyboard" parent="menu_hardware" action="action_pmr_keyboard_tree" sequence="50"/>
+    
+    <!-- Mouse -->
+    <record id="view_pmr_mouse_tree" model="ir.ui.view">
+        <field name="name">pmr.mouse.tree</field>
+        <field name="model">pmr.mouse</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_mouse_tree_form" model="ir.ui.view">
+        <field name="name">pmr.mouse.form</field>
+        <field name="model">pmr.mouse</field>
+        <field name="arch" type="xml">
+            <form string="Mouse">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_mouse_tree" model="ir.actions.act_window">
+        <field name="name">Mouse</field>
+        <field name="res_model">pmr.mouse</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_mouse" name="Mouse" parent="menu_hardware" action="action_pmr_mouse_tree" sequence="70"/>
+
+    <!-- Monitor -->
+    <record id="view_pmr_monitor_tree" model="ir.ui.view">
+        <field name="name">pmr.monitor.tree</field>
+        <field name="model">pmr.monitor</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_monitor_tree_form" model="ir.ui.view">
+        <field name="name">pmr.monitor.form</field>
+        <field name="model">pmr.monitor</field>
+        <field name="arch" type="xml">
+            <form string="Monitor">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>     
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_monitor_tree" model="ir.actions.act_window">
+        <field name="name">Monitor</field>
+        <field name="res_model">pmr.monitor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_monitor" name="Monitor" parent="menu_hardware" action="action_pmr_monitor_tree" sequence="60"/>
+
+
+    <!-- Processor -->
+    <record id="view_pmr_processor_tree" model="ir.ui.view">
+        <field name="name">pmr.processor.tree</field>
+        <field name="model">pmr.processor</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_processor_tree_form" model="ir.ui.view">
+        <field name="name">pmr.processor.form</field>
+        <field name="model">pmr.processor</field>
+        <field name="arch" type="xml">
+            <form string="Processor">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_processor_tree" model="ir.actions.act_window">
+        <field name="name">Processor</field>
+        <field name="res_model">pmr.processor</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_processor" name="Processor" parent="menu_hardware" action="action_pmr_processor_tree" sequence="90"/>
+
+    <!-- Hardisk -->
+    <record id="view_pmr_hardisk_tree" model="ir.ui.view">
+        <field name="name">pmr.hardisk.tree</field>
+        <field name="model">pmr.hardisk</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_hardisk_tree_form" model="ir.ui.view">
+        <field name="name">pmr.hardisk.form</field>
+        <field name="model">pmr.hardisk</field>
+        <field name="arch" type="xml">
+            <form string="Hardisk">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_hardisk_tree" model="ir.actions.act_window">
+        <field name="name">Hardisk</field>
+        <field name="res_model">pmr.hardisk</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_hardisk" name="Hardisk" parent="menu_hardware" action="action_pmr_hardisk_tree" sequence="30"/>
+
+    <!-- Ram -->
+    <record id="view_pmr_ram_tree" model="ir.ui.view">
+        <field name="name">pmr.ram.tree</field>
+        <field name="model">pmr.ram</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_ram_tree_form" model="ir.ui.view">
+        <field name="name">pmr.ram.form</field>
+        <field name="model">pmr.ram</field>
+        <field name="arch" type="xml">
+            <form string="RAM">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_ram_tree" model="ir.actions.act_window">
+        <field name="name">RAM</field>
+        <field name="res_model">pmr.ram</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_ram" name="RAM" parent="menu_hardware" action="action_pmr_ram_tree" sequence="120"/>
+
+    <!-- Vga -->
+    <record id="view_pmr_vga_tree" model="ir.ui.view">
+        <field name="name">pmr.vga.tree</field>
+        <field name="model">pmr.vga</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_onboard"/> 
+                <field name="pmr_pci"/>
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_vga_tree_form" model="ir.ui.view">
+        <field name="name">pmr.vga.form</field>
+        <field name="model">pmr.vga</field>
+        <field name="arch" type="xml">
+            <form string="VGA">
+                <sheet>
+                    <group>
+                        <field name="name"/> 
+                        <field name="product_unit_category" />
+                        <field name="pmr_onboard"/> 
+                        <field name="pmr_pci"/>
+                        <field name="pmr_create_date"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_vga_tree" model="ir.actions.act_window">
+        <field name="name">VGA</field>
+        <field name="res_model">pmr.vga</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_vga" name="VGA" parent="menu_hardware" action="action_pmr_vga_tree" sequence="130"/>
+
+    <!-- PC/Laptop -->
+    <record id="view_pmr_pc_tree" model="ir.ui.view">
+        <field name="name">pmr.pc.tree</field>
+        <field name="model">pmr.pc</field>
+        <field name="arch" type="xml">
+            <tree string="PC/Laptop">
+                <field name="name"/>
+                <field name="product_unit_category"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_processor"/>
+                <field name="pmr_mainboard"/>
+                <field name="pmr_ram_1"/>
+                <field name="pmr_ram_2"/>
+                <field name="pmr_ram_3"/>
+                <field name="pmr_ram_4"/>
+                <field name="pmr_vga_1"/>
+                <field name="pmr_vga_2"/>
+                <field name="pmr_hardisk_1"/>
+                <field name="pmr_hardisk_2"/>
+                <field name="pmr_hardisk_3"/>
+                <field name="pmr_hardisk_4"/>
+                <field name="pmr_casing"/>
+                <field name="pmr_keyboard"/>
+                <field name="pmr_monitor"/> 
+                <field name="pmr_ups_boolean"/>
+                <field name="pmr_dvd_room_boolean"/>
+                <field name="pmr_hdmi_boolean"/>
+                <field name="pmr_lan_card"/>
+                <field name="pmr_fdd"/>
+                <field name="pmr_power_supply"/>
+                <field name="pmr_mouse"/>
+                <field name="pmr_operating_system"/>
+                <field name="pmr_office"/>
+                <field name="pmr_cad"/>
+                <field name="pmr_cam"/>
+                <field name="pmr_antivirus"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_pc_tree_form" model="ir.ui.view">
+        <field name="name">pmr.pc.form</field>
+        <field name="model">pmr.pc</field>
+        <field name="arch" type="xml">
+            <form string="PC">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="PC/Laptop"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_unit_category" />
+                            <field name="pmr_create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="PC/Laptop Spesification">
+                            <group>
+                                <group>
+                                    <field name="pmr_mainboard" />
+                                    <field name="pmr_processor" />
+                                    <field name="pmr_ram_1"/>
+                                    <field name="pmr_ram_2"/>
+                                    <field name="pmr_ram_3"/>
+                                    <field name="pmr_ram_4"/>
+                                    <field name="pmr_hardisk_1"/>
+                                    <field name="pmr_hardisk_2"/>
+                                    <field name="pmr_hardisk_3"/>
+                                    <field name="pmr_hardisk_4"/>
+                                    <field name="pmr_vga_1"/>
+                                    <field name="pmr_vga_type_1"/>
+                                    <field name="pmr_vga_2"/>
+                                    <field name="pmr_vga_type_2"/>
+                                    <field name="pmr_power_supply"/>
+                                    <field name="pmr_fdd"/>
+                                    <field name="pmr_lan_card"/>
+                                    <field name="pmr_lan_card_type" readonly="1"/>
+                                    <field name="pmr_casing"/>
+                                    <field name="pmr_keyboard"/>
+                                    <field name="pmr_monitor"/>
+                                    <field name="pmr_mouse"/>
+                                </group>
+                                <group>
+                                    <field name="pmr_ups_boolean"/>
+                                    <field name="pmr_dvd_room_boolean"/>
+                                    <field name="pmr_hdmi_boolean"/>                    
+                                    <field name="pmr_usb_2_0_port"/>                    
+                                    <field name="pmr_usb_3_0_port"/>                    
+                                    <field name="pmr_vga_port"/>                    
+                                    <field name="pmr_hdmi_port"/>                    
+                                    <field name="pmr_display_port"/>                    
+                                    <field name="pmr_rj45_port"/>                    
+                                    <field name="pmr_3_in_1_audio_port"/>                    
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Software Spesification">
+                            <group>
+                                <field name="pmr_operating_system"/>
+                                <field name="pmr_office"/>
+                                <field name="pmr_cad"/>
+                                <field name="pmr_cam"/>
+                                <field name="pmr_antivirus"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_pc_tree" model="ir.actions.act_window">
+        <field name="name">PC/Laptop</field>
+        <field name="res_model">pmr.pc</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_pc" name="PC/Laptop" parent="menu_hardware" action="action_pmr_pc_tree" sequence="110"/>
+
+    <!-- Printer -->
+    <record id="view_pmr_printer_tree" model="ir.ui.view">
+        <field name="name">pmr.printer.tree</field>
+        <field name="model">pmr.printer</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_kecepatan_cetak"/>
+                <field name="pmr_konektivitas_printer"/>
+                <field name="pmr_ukuran_kertas"/>
+                <field name="pmr_fitur_tambahan"/>
+                <field name="pmr_ip_printer"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_printer_tree_form" model="ir.ui.view">
+        <field name="name">pmr.printer.form</field>
+        <field name="model">pmr.printer</field>
+        <field name="arch" type="xml">
+            <form string="Printer">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Printer"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_unit_category" />
+                            <field name="pmr_create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Printer Spesification">
+                            <group>
+                                <field name="pmr_jenis_printer"/>
+                                <field name="pmr_kecepatan_cetak"/>
+                                <field name="pmr_konektivitas_printer"/>
+                                <field name="pmr_ukuran_kertas"/>
+                                <field name="pmr_fitur_tambahan"/>
+                                <field name="pmr_ip_printer"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_printer_tree" model="ir.actions.act_window">
+        <field name="name">Printer</field>
+        <field name="res_model">pmr.printer</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_printer" name="Printer" parent="menu_hardware" action="action_pmr_printer_tree" sequence="140"/>
+
+    <!-- Router -->
+    <record id="view_pmr_router_tree" model="ir.ui.view">
+        <field name="name">pmr.router.tree</field>
+        <field name="model">pmr.router</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_hardware_router"/>
+                <field name="pmr_konektivitas_router"/>
+                <field name="pmr_fitur_tambahan_router"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_router_tree_form" model="ir.ui.view">
+        <field name="name">pmr.router.form</field>
+        <field name="model">pmr.router</field>
+        <field name="arch" type="xml">
+            <form string="Router">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Router"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_unit_category" />
+                            <field name="pmr_create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Router Spesification">
+                            <group>
+                                <field name="pmr_hardware_router"/>
+                                <field name="pmr_konektivitas_router"/>
+                                <field name="pmr_fitur_tambahan_router"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_router_tree" model="ir.actions.act_window">
+        <field name="name">Router</field>
+        <field name="res_model">pmr.router</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_router" name="Router" parent="menu_hardware" action="action_pmr_router_tree" sequence="150"/>
+
+<!-- Wifi -->
+    <record id="view_pmr_wifi_tree" model="ir.ui.view">
+        <field name="name">pmr.wifi.tree</field>
+        <field name="model">pmr.wifi</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_frekuensi_wifi"/>
+                <field name="pmr_keamanan"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_wifi_tree_form" model="ir.ui.view">
+        <field name="name">pmr.wifi.form</field>
+        <field name="model">pmr.wifi</field>
+        <field name="arch" type="xml">
+            <form string="Wifi">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Wifi"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_unit_category" />
+                            <field name="pmr_create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Wifi Spesification">
+                            <group>
+                                <field name="pmr_frekuensi_wifi"/>
+                                <field name="pmr_keamanan"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_wifi_tree" model="ir.actions.act_window">
+        <field name="name">Wifi</field>
+        <field name="res_model">pmr.wifi</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_wifi" name="Wifi" parent="menu_hardware" action="action_pmr_wifi_tree" sequence="160"/>
+
+    <!-- Switch -->
+    <record id="view_pmr_switch_tree" model="ir.ui.view">
+        <field name="name">pmr.switch.tree</field>
+        <field name="model">pmr.switch</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_jenis_switch"/>
+                <field name="pmr_kecepatan_port"/>
+                <field name="pmr_switching_capacity"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_switch_tree_form" model="ir.ui.view">
+        <field name="name">pmr.switch.form</field>
+        <field name="model">pmr.switch</field>
+        <field name="arch" type="xml">
+            <form string="Switch">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Switch"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="product_unit_category" />
+                            <field name="pmr_create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Switch Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                                <field name="pmr_kecepatan_port"/>
+                                <field name="pmr_switching_capacity"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_switch_tree" model="ir.actions.act_window">
+        <field name="name">Switch</field>
+        <field name="res_model">pmr.switch</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_switch" name="Switch" parent="menu_hardware" action="action_pmr_switch_tree" sequence="170"/>
+
+    <!-- SOFTWARE -->
+    <menuitem id="menu_software" name="Master Software" parent="menu_itms_root" sequence="2"/>
+
+    <!-- Antivirus -->
+    <record id="view_pmr_antivirus_tree" model="ir.ui.view">
+        <field name="name">pmr.antivirus.tree</field>
+        <field name="model">pmr.antivirus</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="type_software" decoration-danger="type_software=='freeware'" decoration-primary="type_software=='licensed'" decoration-warning="type_software=='lifetime'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_antivirus_tree_form" model="ir.ui.view">
+        <field name="name">pmr.antivirus.form</field>
+        <field name="model">pmr.antivirus</field>
+        <field name="arch" type="xml">
+            <form string="Antivirus">
+                <sheet>
+                    <group>
+                        <field name="name"/> 
+                        <field name="product_unit_category" />
+                        <field name="type_software" />
+                    </group>
+                    <notebook>
+                        <page string="Activation Code">
+                            <field name="pmr_itms_antivirus" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/>
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_antivirus_tree" model="ir.actions.act_window">
+        <field name="name">Antivirus</field>
+        <field name="res_model">pmr.antivirus</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_antivirus" name="Antivirus" parent="menu_software" action="action_pmr_antivirus_tree"/>
+
+    <!-- Office -->
+    <record id="view_pmr_office_tree" model="ir.ui.view">
+        <field name="name">pmr.office.tree</field>
+        <field name="model">pmr.office</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+                <field name="type_software" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_office_tree_form" model="ir.ui.view">
+        <field name="name">pmr.office.form</field>
+        <field name="model">pmr.office</field>
+        <field name="arch" type="xml">
+            <form string="Office">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                        <field name="type_software"/>
+                    </group>
+                    <notebook>
+                        <page string="Product Key">
+                            <field name="pmr_itms_office" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/>
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_office_tree" model="ir.actions.act_window">
+        <field name="name">Office</field>
+        <field name="res_model">pmr.office</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_office" name="Office" parent="menu_software" action="action_pmr_office_tree"/>
+
+    <!-- OS -->
+    <record id="view_pmr_os_tree" model="ir.ui.view">
+        <field name="name">pmr.os.tree</field>
+        <field name="model">pmr.os</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+                <field name="type_software" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_os_tree_form" model="ir.ui.view">
+        <field name="name">pmr.os.form</field>
+        <field name="model">pmr.os</field>
+        <field name="arch" type="xml">
+            <form string="Operating System">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                        <field name="type_software" />
+                    </group>
+                    <notebook>
+                        <page string="Product Key">
+                            <field name="pmr_itms_os" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/>
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_os_tree" model="ir.actions.act_window">
+        <field name="name">Operating System</field>
+        <field name="res_model">pmr.os</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_os" name="Operating System" parent="menu_software" action="action_pmr_os_tree"/>
+
+    <!-- CAD -->
+    <record id="view_pmr_cad_tree" model="ir.ui.view">
+        <field name="name">pmr.cad.tree</field>
+        <field name="model">pmr.cad</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+                <field name="type_software" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_cad_tree_form" model="ir.ui.view">
+        <field name="name">pmr.cad.form</field>
+        <field name="model">pmr.cad</field>
+        <field name="arch" type="xml">
+            <form string="CAD">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                        <field name="type_software" />
+                    </group>
+                    <notebook>
+                        <page string="Product Key">
+                            <field name="pmr_itms_cad" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/>
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_cad_tree" model="ir.actions.act_window">
+        <field name="name">CAD</field>
+        <field name="res_model">pmr.cad</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_cad" name="CAD" parent="menu_software" action="action_pmr_cad_tree"/>
+
+    <!-- CAM -->
+    <record id="view_pmr_cam_tree" model="ir.ui.view">
+        <field name="name">pmr.cam.tree</field>
+        <field name="model">pmr.cam</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+                <field name="type_software" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_cam_tree_form" model="ir.ui.view">
+        <field name="name">pmr.cam.form</field>
+        <field name="model">pmr.cam</field>
+        <field name="arch" type="xml">
+            <form string="CAM">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="product_unit_category" />
+                        <field name="pmr_create_date"/>
+                        <field name="type_software" />
+                    </group>
+                    <notebook>
+                        <page string="Product Key">
+                            <field name="pmr_itms_cam" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/> 
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_cam_tree" model="ir.actions.act_window">
+        <field name="name">CAM</field>
+        <field name="res_model">pmr.cam</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_cam" name="CAM" parent="menu_software" action="action_pmr_cam_tree"/>
+
+    <!-- CAM
+    <record id="view_pmr_cam_tree" model="ir.ui.view">
+        <field name="name">pmr.cam.tree</field>
+        <field name="model">pmr.cam</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_quantity_product_it" />
+                <field name="product_unit_category" />
+                <field name="pmr_create_date"/>
+                <field name="pmr_umur_product"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_cam_tree_form" model="ir.ui.view">
+        <field name="name">pmr.cam.form</field>
+        <field name="model">pmr.cam</field>
+        <field name="arch" type="xml">
+            <form string="CAM">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" />
+                                    <field name="product_unit_category" />
+                                </div>
+                        <field name="pmr_create_date"/>
+                        <field name="pmr_umur_product"/>
+                        <field name="pmr_umur_product_str"/>
+                        <field name="state"/>
+                    </group>
+                    <notebook>
+                        <page string="Product Key">
+                            <field name="pmr_itms_cam" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/>
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_cam_tree" model="ir.actions.act_window">
+        <field name="name">CAM</field>
+        <field name="res_model">pmr.cam</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_cam" name="CAM" parent="menu_software" action="action_pmr_cam_tree"/> -->
+
+    <!-- Software Lain -->
+    <record id="view_pmr_software_lain_tree" model="ir.ui.view">
+        <field name="name">pmr.software.lain.tree</field>
+        <field name="model">pmr.software.lain</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_create_date"/>
+                <field name="type_software" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_software_lain_tree_form" model="ir.ui.view">
+        <field name="name">pmr.software.lain.form</field>
+        <field name="model">pmr.software.lain</field>
+        <field name="arch" type="xml">
+            <form string="Software Lain Lain">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="pmr_create_date"/> 
+                        <field name="type_software" />
+                    </group>
+                    <notebook>
+                        <page string="Product Key">
+                            <field name="pmr_itms_software_lain" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="name"/>
+                                    <field name="pmr_itms_user"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pmr_software_lain_tree" model="ir.actions.act_window">
+        <field name="name">Software Lain Lain</field>
+        <field name="res_model">pmr.software.lain</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_pmr_software_lain" name="Software Lain Lain" parent="menu_software" action="action_pmr_software_lain_tree"/>
+</odoo>

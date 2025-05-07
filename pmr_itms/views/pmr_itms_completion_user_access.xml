@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="pmr_itms_completion_access_form" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.access.form</field>
+        <field name="model">pmr.itms.completion.access</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button id="button_cancel" name="action_cancel" string="Cancel" type="object" states="draft"
+                            confirm="Are you sure that you need to cancel ?" />
+                    <button id="button_reset_to_draft" name="action_draft" string="Reset to Draft"
+                            class="btn-primary" type="object" states="done" />
+                    <button id="button_waiting" name="action_waiting" string="Waiting"
+                            class="btn-primary" type="object" states="draft" />
+                    <button id="button_in_progress" name="action_in_progress" string="In Progress"
+                            class="btn-primary" type="object" states="draft,waiting" />
+                    <button name="action_mark_done" type="object" string="Mark as Done" class="btn-primary" states="waiting,in_progress" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,waiting,in_progress,done,completed" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_request" />
+                            <field name="pmr_itms_link" />
+                            <field name="pmr_approval" />
+                        </group>
+                        <group>
+                            <field name="pmr_analytic_account" />
+                            <field name="pmr_itms_personil_it" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                            <field name="pmr_itms_completion_date" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                            <field name="pmr_itms_keterangan" attrs="{'readonly': [('state', '!=', 'draft')]}" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Note Approval" name="note">
+                            <group>
+                                <group>
+                                    <field name="pmr_approval_note" readonly="1" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pmr_itms_completion_access_tree" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.access.tree</field>
+        <field name="model">pmr.itms.completion.access</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="pmr_itms_request" />
+                <field name="pmr_approval" />
+                <field name="pmr_itms_personil_it" />
+                <field name="pmr_itms_completion_date" /> 
+                <field name="pmr_analytic_account" />
+                <field name="pmr_itms_completion_date" />
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pmr_itms_completion_access_search" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.access.search</field>
+        <field name="model">pmr.itms.completion.access</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="pmr_itms_request" />
+                <field name="pmr_approval" />
+                <field name="pmr_itms_personil_it" />
+                <field name="pmr_itms_completion_date" /> 
+                <field name="pmr_analytic_account" />
+                <field name="pmr_itms_completion_date" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pmr_itms_completion_access" model="ir.actions.act_window">
+        <field name="name">Completion User Access</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pmr.itms.completion.access</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="pmr_itms_completion_access_tree" />
+        <field name="search_view_id" ref="pmr_itms_completion_access_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first data!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_pmr_itms_completion_access"
+        name="Completion User Access"
+        parent="menu_request_pmr_itms"
+        action="action_pmr_itms_completion_access"
+        sequence="8" />
+</odoo>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>    
+    <record id="pmr_itms_memo_pengajuan_pembelian_barang_form" model="ir.ui.view">
+            <field name="name">pmr.itms.memo.pengajuan.barang.form</field>
+            <field name="model">pmr.itms.memo.pengajuan.barang</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header> 
+                        <button id="button_submit" name="action_submit" string="Submit"
+                        class="btn-primary" type="object" states="draft" />
+                   
+                        <button id="button_reset_to_draft" name="action_reset_to_draft" string="Reset to Draft"
+                            class="btn-primary" type="object" states="open,done" />
+
+                        <button id="button_cancel" name="action_cancel" string="Cancel"  type="object" states="draft"
+                                    confirm="Are you sure that you need to cancel ?"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,appr,pr,po,grn,in_user,return" />    
+                    </header> 
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/> 
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="pmr_itms_personil_it" 
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="pmr_itms_request_date" 
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group> 
+                            <group>
+                                <field name="request_type" 
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <field name="pmr_itms_user" 
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                 <field name="pmr_itms_departement_user" 
+                                    attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            </group>   
+                        </group>  
+                    <notebook>
+                        <page string="Item">
+                            <field name="pmr_itms_memo_line_ids">
+                                <tree editable="bottom">
+                                    <field name="state" invisible="1"/>
+                                    <field name="pmr_itms_product" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <!-- <field name="pmr_itms_product_ram" attrs="{'invisible': [('pmr_item_category', '!=', 'ram')], 'readonly': [('state', '!=', 'draft')]}"/> -->
+                                    <!-- <field name="pmr_item_category" attrs="{'readonly': [('state', '!=', 'draft')]}"/> -->
+                                    <field name="pmr_itms_jumlah" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pmr_itms_uom" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="pmr_note" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="request_type" invisible="1"/>
+                                    <field name="pmr_validation_pr" readonly="1"/>
+                                    <field name="pmr_validation_po" widget="boolean_toggle" readonly="1"/>
+                                    <field name="pmr_validation_grn" widget="boolean_toggle" readonly="1"/>
+                                    <button name="action_create_purchase_request"
+                                        type="object"
+                                        string="Create Purchase Request"
+                                        class="btn-primary"
+                                        attrs="{'invisible': [('request_type', '!=', 'purchase')]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Approval Logs" name="approval_logs">
+                            <group>
+                                <group>
+                                    <field name="x_approval_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="x_approval_log_ids" context="{'tree_view_ref': 'amp_approval.view_amp_approval_log_tree'}" readonly="1"/>
+                        </page>
+                    </notebook>
+                    </sheet>
+                     <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="form_purchase_request_pmr" model="ir.ui.view">
+            <field name="name">form.purchase.request_pmr</field>
+            <field name="model">amp.purchase.request</field>
+            <field name="inherit_id" ref="amp_pr.form_purchase_request"/>
+            <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_pr_product_purchase_desc']" position="before"> 
+                    <field name="pmr_itms_memo" readonly="1"/>
+                    <field name="pmr_itms_product" readonly="1"/>
+                </xpath>
+            </field>
+        </record>   
+
+        <record id="form_purchase_request_pmr_approved" model="ir.ui.view">
+            <field name="name">form.purchase.request.pmr.approved</field>
+            <field name="model">amp.purchase.request</field>
+            <field name="inherit_id" ref="amp_pr.tree_purchase_request_approved"/>
+            <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_pr_product_purchase_desc']" position="before"> 
+                    <field name="pmr_itms_memo" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="pmr_itms_memo_pengajuan_pembelian_barang_tree" model="ir.ui.view">
+            <field name="name">pmr.itms.memo.pengajuan.barang.tree</field>
+            <field name="model">pmr.itms.memo.pengajuan.barang</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+               <tree>
+                    <field name="name"/> 
+                    <field name="pmr_itms_personil_it"/>
+                    <field name="pmr_itms_request_date" />
+                    <field name="pmr_itms_user" />
+                    <field name="pmr_itms_departement_user" />
+                    <field name="state" 
+                        decoration-info="state == 'draft'" 
+                        decoration-warning="state == 'open'"
+                        decoration-success="state == 'appr'"
+                        decoration-primary="state == 'in_user'"
+                        widget="badge"
+                        />
+               </tree>
+            </field>
+        </record>
+
+        <record id="pmr_itms_memo_pengajuan_pembelian_barang_search" model="ir.ui.view">
+            <field name="name">pmr.itms.memo.pengajuan.barang.search</field>
+            <field name="model">pmr.itms.memo.pengajuan.barang</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+               <search>
+                    <field name="name"/> 
+                    <field name="pmr_itms_personil_it"/>
+                    <field name="pmr_itms_request_date" />
+                    <field name="pmr_itms_user" />
+                    <field name="pmr_itms_departement_user" />
+                    <field name="state"/>
+               </search>
+            </field>
+        </record>
+    
+    <record id="action_pmr_itms_memo_pengajuan_pembelian_barang" model="ir.actions.act_window">
+      <field name="name">Item Request</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">pmr.itms.memo.pengajuan.barang</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="pmr_itms_memo_pengajuan_pembelian_barang_tree" />
+            <field name="search_view_id" ref="pmr_itms_memo_pengajuan_pembelian_barang_search" />
+            <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record> 
+    
+    <menuitem id="menu_request_pmr_memo"
+        name="Request"
+        parent="menu_pmr_itms"
+        sequence="2"/>
+    
+    <menuitem id="menu_pmr_itms_memo_pengajuan_pembelian_barang"
+        name="Item Request"
+        parent="menu_request_pmr_memo"
+        action="action_pmr_itms_memo_pengajuan_pembelian_barang"
+        sequence="1"/> 
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo> 
+
+    <record id="view_handover_from_grn_from" model="ir.ui.view">
+        <field name="name">handover.from.grn.form</field>
+        <field name="model">handover.from.grn</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="no_handover"/>
+                </group>
+                <notebook>
+                    <page string="Item">
+                        <field name="handover_line_ids" widget="one2many_list">
+                            <tree editable="bottom">
+                                <field name="pmr_jenis_perangkat" />
+                                <field name="pmr_merk_type"/> 
+                                <field name="pmr_quantity_product_it"/>
+                                <field name="product_unit_category" />
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+                <!-- <footer>
+                    <button name="action_update_pallet_and_move_line" type="object" string="Update Pallet and Move Line" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer> -->
+            </form>
+        </field>
+    </record>
+
+    <record id="action_handover_from_grn_form" model="ir.actions.act_window">
+        <field name="name">Handover From GRN</field>
+        <field name="res_model">handover.from.grn</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_handover_from_grn_from"/>
+        <field name="target">new</field>
+        <field name="context">{'default_picking_id': active_id}</field>  
+    </record>
+
+</odoo>

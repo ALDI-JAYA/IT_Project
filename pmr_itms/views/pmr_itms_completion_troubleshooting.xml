@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="pmr_itms_completion_troubleshooting_form" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.troubleshooting.form</field>
+        <field name="model">pmr.itms.completion.troubleshooting</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button id="button_cancel" name="action_cancel" string="Cancel" type="object" states="draft"
+                            confirm="Are you sure that you need to cancel ?" />
+                    <button id="button_reset_to_draft" name="action_draft" string="Reset to Draft"
+                            class="btn-primary" type="object" states="done" />
+                    <button id="button_waiting" name="action_waiting" string="Waiting"
+                            class="btn-primary" type="object" states="draft" />
+                    <button id="button_in_progress" name="action_in_progress" string="In Progress"
+                            class="btn-primary" type="object" states="draft,waiting" />
+                    <button name="action_mark_done" type="object" string="Mark as Done" class="btn-primary" states="in_progress" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done,waiting,in_progress,completed" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_request" readonly="1" />
+                            <field name="pmr_itms_category" />
+                            <field name="pmr_itms_request_troubleshooting" />
+                            <field name="pmr_approval" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pmr_waiting_note" attrs="{'invisible': [('state', '!=', 'waiting')]}" />
+                            <field name="pmr_itms_personil_it" attrs="{'readonly': [('state', '!=', 'in_progress')]}" />
+                            <field name="pmr_itms_completion_date" attrs="{'readonly': [('state', '!=', 'in_progress')]}" />
+                            <field name="pmr_itms_keterangan" attrs="{'readonly': [('state', '!=', 'in_progress')]}" /> 
+                            <button name="action_copy_memo_lines"
+                                type="object"
+                                string="Send Item Request"
+                                class="oe_highlight"
+                                states="in_progress,waiting"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Note Approval" name="note">
+                            <group>
+                                <group>
+                                    <field name="pmr_approval_note" readonly="1" />
+                                </group>
+                            </group>
+                        </page>
+                       <page string="Item Request">
+                            <field name="pmr_itms_memo_line_ids_ass_1" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="state" invisible="1"/>
+                                    <field name="pmr_itms_product" attrs="{'readonly': [('state', 'not in', ('waiting', 'in_progress'))]}"/>
+                                    <field name="pmr_itms_jumlah" attrs="{'readonly': [('state', 'not in', ('waiting', 'in_progress'))]}"/>
+                                    <field name="pmr_itms_uom" attrs="{'readonly': [('state', 'not in', ('waiting', 'in_progress'))]}"/>
+                                    <field name="pmr_note" attrs="{'readonly': [('state', 'not in', ('waiting', 'in_progress'))]}"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pmr_itms_completion_troubleshooting_tree" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.troubleshooting.tree</field>
+        <field name="model">pmr.itms.completion.troubleshooting</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="pmr_itms_category"/>
+                <field name="pmr_itms_request" />
+                <field name="pmr_itms_request_troubleshooting" />
+                <field name="pmr_approval" />
+                <field name="pmr_itms_personil_it" />
+                <field name="pmr_itms_completion_date" />
+                <field name="pmr_itms_keterangan" />
+                <field name="state"
+                    decoration-muted="state == 'draft'"
+                    decoration-warning="state == 'waiting'"
+                    decoration-primary="state in ('done', 'in_progress')"
+                    decoration-success="state == 'completed'"
+                    decoration-danger="state == 'cancel'"
+                    widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="pmr_itms_completion_troubleshooting_search" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.troubleshooting.search</field>
+        <field name="model">pmr.itms.completion.troubleshooting</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="pmr_itms_request" />
+                <field name="pmr_itms_category"/>
+                <field name="pmr_itms_request_troubleshooting" />
+                <field name="pmr_approval" />
+                <field name="pmr_itms_personil_it" />
+                <field name="pmr_itms_completion_date" />
+                <field name="pmr_itms_keterangan" />
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pmr_itms_completion_troubleshooting" model="ir.actions.act_window">
+        <field name="name">Completion Troubleshooting</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pmr.itms.completion.troubleshooting</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="pmr_itms_completion_troubleshooting_tree" />
+        <field name="search_view_id" ref="pmr_itms_completion_troubleshooting_search" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first data!
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_pmr_itms_completion_troubleshooting"
+        name="Completion Troubleshooting"
+        parent="menu_request_pmr_itms"
+        action="action_pmr_itms_completion_troubleshooting"
+        sequence="7" />
+</odoo>

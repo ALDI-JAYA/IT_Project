@@ -1,0 +1,2344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem id="menu_itms_root" name="Configuration" parent="menu_pmr_itms" sequence="2"/>
+
+    <record id="view_tree_itms_user" model="ir.ui.view">
+        <field name="name">itms.user.tree</field>
+        <field name="model">pmr.itms.user</field>
+        <field name="arch" type="xml">
+            <tree string="User">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="department_id"/>
+                <field name="computer_name"/>
+                <field name="device_type"/>
+                <field name="device_model"/> 
+                <field name="ip_type"/>
+                <field name="ip_address"/>
+                <field name="user_directory"/>
+                <field name="access_level"/>
+                <field name="username"/>
+                <field name="vpn_access"/>
+                <field name="office_location"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="pmr_mainboard" string="Motherboard"/>
+                <field name="pmr_processor"/>
+                <field name="pmr_hardisk_1" string="Hardisk 1"/> 
+                <field name="pmr_hardisk_2" string="Hardisk 2"/>
+                <field name="pmr_hardisk_3" string="Hardisk 3"/>
+                <field name="pmr_hardisk_4" string="Hardisk 4"/>
+                <field name="pmr_ram_1" string="RAM 1"/>
+                <field name="pmr_ram_2" string="RAM 2"/>
+                <field name="pmr_ram_3" string="RAM 3"/>
+                <field name="pmr_ram_4" string="RAM 4"/>
+                <field name="pmr_vga_1" string="VGA 1"/>
+                <field name="pmr_vga_2" string="VGA 2"/>
+                <field name="pmr_operating_system"/>
+                <field name="pmr_sn_operating_system"/>
+                <field name="pmr_antivirus"/>
+                <field name="pmr_sn_antivirus"/>
+                <field name="pmr_date_antivirus"/>
+                <field name="pmr_anydesk"/>
+                <field name="pmr_radmin"/>
+                <field name="pmr_administrator"/>
+                <field name="pmr_spark"/>
+                <field name="pmr_local_email"/>
+                <field name="notes"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_user" model="ir.ui.view">
+        <field name="name">itms.user.search</field>
+        <field name="model">pmr.itms.user</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="department_id"/>
+                <field name="computer_name"/>
+                <field name="device_type"/>
+                <field name="device_model"/> 
+                <field name="ip_type"/>
+                <field name="ip_address"/>
+                <field name="user_directory"/>
+                <field name="access_level"/>
+                <field name="username"/>
+                <field name="vpn_access"/>
+                <field name="office_location"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="pmr_mainboard" string="Motherboard"/>
+                <field name="pmr_processor"/>
+                <field name="pmr_hardisk_1" string="Hardisk 1"/> 
+                <field name="pmr_hardisk_2" string="Hardisk 2"/>
+                <field name="pmr_hardisk_3" string="Hardisk 3"/>
+                <field name="pmr_hardisk_4" string="Hardisk 4"/>
+                <field name="pmr_ram_1" string="RAM 1"/>
+                <field name="pmr_ram_2" string="RAM 2"/>
+                <field name="pmr_ram_3" string="RAM 3"/>
+                <field name="pmr_ram_4" string="RAM 4"/>
+                <field name="pmr_vga_1" string="VGA 1"/>
+                <field name="pmr_vga_2" string="VGA 2"/>
+                <field name="pmr_operating_system"/>
+                <field name="pmr_sn_operating_system"/>
+                <field name="pmr_antivirus"/>
+                <field name="pmr_sn_antivirus"/>
+                <field name="pmr_date_antivirus"/>
+                <field name="pmr_anydesk"/>
+                <field name="pmr_radmin"/>
+                <field name="pmr_administrator"/>
+                <field name="pmr_spark"/>
+                <field name="pmr_local_email"/>
+                 <field name="notes"/>
+                <field name="status"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_user" model="ir.ui.view">
+        <field name="name">itms.user.form</field>
+        <field name="model">pmr.itms.user</field>
+        <field name="arch" type="xml">
+            <form string="User">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1"/>
+                            <field name="email"/>
+                            <field name="department_id"/>
+                            <field name="computer_name"/>
+                        </group>
+                        <group>
+                            <field name="device_type" required="1" string="Device Type"/>
+                            <field name="device_model"/>
+                            <field name="ip_type"/>
+                            <field name="ip_address" attrs="{'invisible': [('ip_type', '=', 'dhcp')]}"/>
+                            <field name="user_directory"/>
+                        </group>
+                    </group>
+                    <group string="Access Information" col="2">
+                        <field name="access_level"/>
+                        <field name="username"/>
+                        <field name="password"/>
+                        <field name="vpn_access"/>
+                        <field name="system_access" widget="many2many_tags"/>
+                    </group>
+                    <group string="Office Details">
+                        <field name="office_location"/>
+                    </group>
+                    <group string="Dates and Status">
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                        <field name="status"/>
+                    </group>
+                    <notebook>
+                        <page string="Spesification">
+                            <group>
+                                <group>
+                                    <field name="pmr_mainboard" string="Motherboard"/>
+                                    <field name="pmr_processor"/>
+                                    <field name="pmr_hardisk_1" string="Hardisk 1"/> 
+                                    <field name="pmr_hardisk_2" string="Hardisk 2"/>
+                                    <field name="pmr_hardisk_3" string="Hardisk 3"/>
+                                    <field name="pmr_hardisk_4" string="Hardisk 4"/>
+                                </group>
+                                <group>
+                                    <field name="pmr_ram_1" string="RAM 1"/>
+                                    <field name="pmr_ram_2" string="RAM 2"/>
+                                    <field name="pmr_ram_3" string="RAM 3"/>
+                                    <field name="pmr_ram_4" string="RAM 4"/>
+                                    <label for="pmr_vga_1"/>
+                                        <div class="o_row">
+                                            <field name="pmr_vga_1" />
+                                            <field name="pmr_vga_type_1" />
+                                        </div>
+                                    <label for="pmr_vga_2"/>
+                                        <div class="o_row">
+                                            <field name="pmr_vga_2" />
+                                            <field name="pmr_vga_type_2" />
+                                        </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Software">
+                            <group>
+                                <field name="pmr_software_lain" widget="many2many_tags"/>
+                                <label for="pmr_sn_software_lain"/>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_sn_software_lain"/>
+                                    </div>
+                                <field name="pmr_office"/> 
+                                <label for="pmr_sn_office" string="Product Key"/>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_sn_office"/>
+                                    </div>
+                                <field name="pmr_antivirus"/>
+                                <label for="pmr_sn_antivirus" string="Activation Code"/>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_sn_antivirus"/>
+                                    </div>
+                                <field name="pmr_date_antivirus"/>
+                            </group>
+                        </page>
+                        <page string="Operating System">
+                            <group>
+                                <field name="pmr_operating_system"/>
+                                <label for="pmr_sn_operating_system" string="Product Key"/>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_sn_operating_system"/>
+                                    </div>
+                            </group>
+                        </page>
+                        <page string="Password">
+                            <group>
+                                <label for="pmr_anydesk"/>
+                                <div class="o_row">
+                                    <span style="color: green; font-weight: bold;">Username :</span> 
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_anydesk"/>
+                                    </div>
+                                    <span style="color: red; font-weight: bold;">Password :</span>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_anydesk_pass"/>
+                                    </div>
+                                </div>
+
+                                <label for="pmr_radmin"/>
+                                <div class="o_row">
+                                    <span style="color: green; font-weight: bold;">Username :</span> 
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_radmin"/>
+                                    </div>
+                                    <span style="color: red; font-weight: bold;">Password :</span>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_radmin_pass"/>
+                                    </div>
+                                </div>
+
+                                <label for="pmr_administrator"/>
+                                <div class="o_row">
+                                    <span style="color: green; font-weight: bold;">Username :</span> 
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_administrator"/>
+                                    </div>
+                                    <span style="color: red; font-weight: bold;">Password :</span>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_administrator_pass"/>
+                                    </div>
+                                </div>
+
+                                <label for="pmr_spark"/>
+                                <div class="o_row">
+                                    <span style="color: green; font-weight: bold;">Username :</span> 
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_spark"/>
+                                    </div>
+                                    <span style="color: red; font-weight: bold;">Password :</span>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_spark_pass"/>
+                                    </div>
+                                </div>
+
+                                <label for="pmr_local_email"/>
+                                <div class="o_row">
+                                    <span style="color: green; font-weight: bold;">Username :</span> 
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_local_email"/>
+                                    </div>
+                                    <span style="color: red; font-weight: bold;">Password :</span>
+                                    <div style="font-weight: bold;">
+                                        <field name="pmr_local_email_pass"/>
+                                    </div>
+                                </div>
+                            </group>
+                        </page>
+                    </notebook>
+                    <group string="Notes">
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tree_itms_personil_it" model="ir.ui.view">
+        <field name="name">itms.personil.it.tree</field>
+        <field name="model">pmr.itms.personil.it</field>
+        <field name="arch" type="xml">
+            <tree string="Personil IT">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="role_it"/>
+                
+                <field name="start_date"/>
+                <field name="is_active"/>
+                <field name="skills" />
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_personil_it" model="ir.ui.view">
+        <field name="name">itms.personil.it.search</field>
+        <field name="model">pmr.itms.personil.it</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="email"/>
+                <field name="role_it"/>
+                
+                <field name="start_date"/>
+                <field name="is_active"/>
+                <field name="skills" />
+                <field name="notes"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_personil_it" model="ir.ui.view">
+        <field name="name">itms.personil.it.form</field>
+        <field name="model">pmr.itms.personil.it</field>
+        <field name="arch" type="xml">
+            <form string="Personil IT">
+                <sheet>
+                    <group string="Basic Information" col="2">
+                        <field name="name" required="1"/>
+                        <field name="email" required="1"/>
+                        <field name="role_it" required="1"/>
+                    </group>
+                    <group string="Status and Dates" col="2">
+                        <field name="start_date"/>
+                        <field name="is_active"/>
+                    </group>
+                    <group string="Skills and Notes">
+                        <field name="skills" widget="text"/>
+                        <field name="notes" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tree_itms_barcode" model="ir.ui.view">
+        <field name="name">itms.barcode.tree</field>
+        <field name="model">pmr.barcode</field>
+        <field name="arch" type="xml">
+            <tree string="Personil IT">
+                <field name="name"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_inventory_it"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_barcode" model="ir.ui.view">
+        <field name="name">itms.barcode.search</field>
+        <field name="model">pmr.barcode</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_inventory_it"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_barcode" model="ir.ui.view">
+        <field name="name">itms.barcode.form</field>
+        <field name="model">pmr.barcode</field>
+        <field name="arch" type="xml">
+            <form string="Barcode">
+                <sheet>
+                    <field name="name"/>
+                    <field name="pmr_create_date"/>
+                    <field name="pmr_inventory_it"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <menuitem id="menu_manajemen" name="Manajemen IT Hardware" parent="menu_itms_root" sequence="3"/>
+
+    <record id="view_tree_itms_product_it" model="ir.ui.view">
+        <field name="name">itms.product.it.tree</field>
+        <field name="model">pmr.itms.product.it</field>
+        <field name="arch" type="xml">
+            <tree string="PC/Laptop">
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="product_type" optional="hide"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_processor"/>
+                <field name="pmr_mainboard"/>
+                <field name="pmr_ram_1"/>
+                <field name="pmr_ram_2" optional="hide"/>
+                <field name="pmr_ram_3" optional="hide"/>
+                <field name="pmr_ram_4" optional="hide"/>
+                <field name="pmr_vga_1"/>
+                <field name="pmr_vga_2" optional="hide"/>
+                <field name="pmr_hardisk_1"/>
+                <field name="pmr_hardisk_2" optional="hide"/>
+                <field name="pmr_hardisk_3" optional="hide"/>
+                <field name="pmr_hardisk_4" optional="hide"/>
+                <field name="pmr_casing"/>
+                <field name="pmr_keyboard"/>
+                <field name="pmr_monitor"/> 
+                <field name="pmr_ups_boolean" optional="hide"/>
+                <field name="pmr_dvd_room_boolean" optional="hide"/>
+                <field name="pmr_hdmi_boolean" optional="hide"/>
+                <field name="pmr_lan_card"/>
+                <field name="pmr_fdd"/>
+                <field name="pmr_fdd_type" optional="hide"/>
+                <field name="pmr_power_supply" optional="hide"/>
+                <field name="pmr_mouse" optional="hide"/>
+                <field name="pmr_operating_system" optional="hide"/>
+                <field name="pmr_office" optional="hide"/>
+                <field name="pmr_cad" optional="hide"/>
+                <field name="pmr_cam" optional="hide"/>
+                <field name="pmr_antivirus" optional="hide"/>
+                <field name="pmr_program_lain" widget="many2many_tags"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it" model="ir.ui.view">
+        <field name="name">itms.product.it.search</field>
+        <field name="model">pmr.itms.product.it</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" invisible="1"/>
+                <field name="pmr_itms_departement" optional="hide"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="product_type"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_processor"/>
+                <field name="pmr_mainboard"/>
+                <field name="pmr_ram_1"/>
+                <field name="pmr_ram_2"/>
+                <field name="pmr_ram_3"/>
+                <field name="pmr_ram_4"/>
+                <field name="pmr_vga_1"/>
+                <field name="pmr_vga_2"/>
+                <field name="pmr_hardisk_1"/>
+                <field name="pmr_hardisk_2"/>
+                <field name="pmr_hardisk_3"/>
+                <field name="pmr_hardisk_4"/>
+                <field name="pmr_casing"/>
+                <field name="pmr_keyboard"/>
+                <field name="pmr_monitor"/> 
+                <field name="pmr_ups_boolean"/>
+                <field name="pmr_dvd_room_boolean"/>
+                <field name="pmr_hdmi_boolean"/>
+                <field name="pmr_lan_card"/>
+                <field name="pmr_fdd"/> 
+                <field name="pmr_fdd_type"/>
+                <field name="pmr_power_supply"/>
+                <field name="pmr_mouse"/>
+                <field name="pmr_operating_system"/>
+                <field name="pmr_office"/>
+                <field name="pmr_cad"/>
+                <field name="pmr_cam"/>
+                <field name="pmr_antivirus"/>
+                <field name="pmr_program_lain" widget="many2many_tags"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it" model="ir.ui.view">
+        <field name="name">itms.product.it.form</field>
+        <field name="model">pmr.itms.product.it</field>
+        <field name="arch" type="xml">
+            <form string="PC/Laptop">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not,repair,goog" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not,reject,good" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not,reject,repair" />
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dept-Name"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_ip_address"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_origin_po"/>
+                            <field name="pmr_office_location"/> 
+                            <button name="action_generate_barcode" type="object" string="Generate Barcode" 
+                                class="oe_highlight" attrs="{'invisible': [('pmr_barcode', '!=', False)]}"/> 
+                        </group>
+                        <group>
+                            <field name="product_type"/> 
+                            <field name="pmr_name_pc_laptop"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/>   
+                            <field name="pmr_umur_product_str_year"/> 
+                            <field name="pmr_barcode" string="Barcode" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="PC/Laptop Spesification">
+                            <group>
+                                <group>
+                                    <label for="pmr_processor"/>
+                                        <div class="o_row">
+                                            <field name="pmr_processor" readonly="1"/>
+                                            <field name="pmr_processor_adjustment" />
+                                        </div>
+                                    <label for="pmr_processor_bool_replacement" attrs="{'invisible': [('pmr_processor_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_processor_adjustment', '=', False)]}">
+                                            <field name="pmr_processor_bool_replacement"/>
+                                            <field name="pmr_processor_replacement"  attrs="{'readonly': [('pmr_processor_bool_replacement', '=', False)]}"/>
+                                        </div>
+
+                                        <label for="pmr_processor_bool_upgrade" attrs="{'invisible': [('pmr_processor_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_processor_adjustment', '=', False)]}">
+                                            <field name="pmr_processor_bool_upgrade"/>
+                                            <field name="pmr_processor_upgrade"  attrs="{'readonly': [('pmr_processor_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_mainboard"/>
+                                        <div class="o_row">
+                                            <field name="pmr_mainboard" readonly="1"/>
+                                            <field name="pmr_mainboard_adjustment" />
+                                        </div>
+                                    <label for="pmr_mainboard_bool_replacement" attrs="{'invisible': [('pmr_mainboard_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_mainboard_adjustment', '=', False)]}">
+                                            <field name="pmr_mainboard_bool_replacement"/>
+                                            <field name="pmr_mainboard_replacement" attrs="{'readonly': [('pmr_mainboard_bool_replacement', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_mainboard_bool_upgrade" attrs="{'invisible': [('pmr_mainboard_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_mainboard_adjustment', '=', False)]}">
+                                            <field name="pmr_mainboard_bool_upgrade"/>
+                                            <field name="pmr_mainboard_upgrade"  attrs="{'readonly': [('pmr_mainboard_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_1"/>
+                                        <div class="o_row">
+                                            <field name="pmr_ram_1" readonly="1"/>
+                                            <field name="pmr_ram_1_adjustment" />
+                                        </div>
+                                    <label for="pmr_ram_bool_replacement_1" attrs="{'invisible': [('pmr_ram_1_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_1_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_replacement_1"/>
+                                            <field name="pmr_ram_1_replacement" attrs="{'readonly': [('pmr_ram_bool_replacement_1', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_bool_upgrade_1" attrs="{'invisible': [('pmr_ram_1_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_1_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_upgrade_1"/>
+                                            <field name="pmr_ram_1_upgrade" attrs="{'readonly': [('pmr_ram_bool_upgrade_1', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_2"/>
+                                        <div class="o_row">
+                                            <field name="pmr_ram_2" readonly="1"/>
+                                            <field name="pmr_ram_2_adjustment" />
+                                        </div>
+                                    <label for="pmr_ram_bool_replacement_2" attrs="{'invisible': [('pmr_ram_2_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_2_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_replacement_2"/>
+                                            <field name="pmr_ram_2_replacement" attrs="{'readonly': [('pmr_ram_bool_replacement_2', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_bool_upgrade_2" attrs="{'invisible': [('pmr_ram_2_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_2_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_upgrade_2"/>
+                                            <field name="pmr_ram_2_upgrade" attrs="{'readonly': [('pmr_ram_bool_upgrade_2', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_3"/>
+                                        <div class="o_row">
+                                            <field name="pmr_ram_3" readonly="1"/>
+                                            <field name="pmr_ram_3_adjustment" />
+                                        </div>
+                                    <label for="pmr_ram_bool_replacement_3" attrs="{'invisible': [('pmr_ram_3_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_3_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_replacement_3"/>
+                                            <field name="pmr_ram_3_replacement" attrs="{'readonly': [('pmr_ram_bool_replacement_3', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_bool_upgrade_3" attrs="{'invisible': [('pmr_ram_3_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_3_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_upgrade_3"/>
+                                            <field name="pmr_ram_3_upgrade" attrs="{'readonly': [('pmr_ram_bool_upgrade_3', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_4"/>
+                                        <div class="o_row">
+                                            <field name="pmr_ram_4" readonly="1"/>
+                                            <field name="pmr_ram_4_adjustment" />
+                                        </div>
+                                    <label for="pmr_ram_bool_replacement_4" attrs="{'invisible': [('pmr_ram_4_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_4_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_replacement_4"/>
+                                            <field name="pmr_ram_4_replacement" attrs="{'readonly': [('pmr_ram_bool_replacement_4', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_ram_bool_upgrade_4" attrs="{'invisible': [('pmr_ram_4_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_ram_4_adjustment', '=', False)]}">
+                                            <field name="pmr_ram_bool_upgrade_4"/>
+                                            <field name="pmr_ram_4_upgrade" attrs="{'readonly': [('pmr_ram_bool_upgrade_4', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_power_supply"/>
+                                        <div class="o_row">
+                                            <field name="pmr_power_supply" readonly="1"/>
+                                            <field name="pmr_power_supply_adjustment" />
+                                        </div>
+                                    <label for="pmr_power_supply_bool_replacement" attrs="{'invisible': [('pmr_power_supply_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_power_supply_adjustment', '=', False)]}">
+                                            <field name="pmr_power_supply_bool_replacement"/>
+                                            <field name="pmr_power_supply_replacement" attrs="{'readonly': [('pmr_power_supply_bool_replacement', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_power_supply_bool_upgrade" attrs="{'invisible': [('pmr_power_supply_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_power_supply_adjustment', '=', False)]}">
+                                            <field name="pmr_power_supply_bool_upgrade"/>
+                                            <field name="pmr_power_supply_upgrade" attrs="{'readonly': [('pmr_power_supply_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_lan_card"/>
+                                        <div class="o_row">
+                                            <field name="pmr_lan_card" readonly="1" />
+                                        </div>
+                                        <field name="pmr_lan_card_type" readonly="1"/>
+                                    <label for="pmr_fdd"/>
+                                        <div class="o_row">
+                                            <field name="pmr_fdd" readonly="1"/>
+                                            <field name="pmr_fdd_type" />
+                                        </div>
+                                    <field name="pmr_dvd_room_boolean"/>
+                                    <field name="pmr_hdmi_boolean"/>
+                                    <field name="pmr_ups_boolean"/>
+                                    <field name="pmr_io_interface" nolabel="1" readonly="1" style="font-size:18px;"/>
+                                    <field name="pmr_usb_2_0_port" />
+                                    <field name="pmr_usb_3_0_port" />
+                                    <field name="pmr_vga_port" />
+                                    <field name="pmr_hdmi_port" />
+                                    <field name="pmr_display_port" />
+                                    <field name="pmr_rj45_port" />
+                                    <field name="pmr_3_in_1_audio_port" />
+                                </group>
+                                <group>
+                                    <label for="pmr_vga_1"/>
+                                        <div class="o_row">
+                                            <field name="pmr_vga_1" readonly="1"/>
+                                            <field name="pmr_vga_1_adjustment" />
+                                        </div>
+                                    <field name="pmr_vga_type_1" readonly="1" attrs="{'invisible': ['|', ('pmr_vga_bool_replacement_1', '=', True), ('pmr_vga_bool_upgrade_1', '=', True)]}"/>
+                                    <field name="pmr_vga_type_1_replace" readonly="1" attrs="{'invisible': [('pmr_vga_bool_replacement_1', '=', False), ('pmr_vga_bool_upgrade_1', '=', False)]}"/>
+                                    <field name="pmr_vga_type_1_upgrade" readonly="1" attrs="{'invisible': [('pmr_vga_bool_upgrade_1', '=', False)]}"/>
+                                    <label for="pmr_vga_bool_replacement_1" attrs="{'invisible': [('pmr_vga_1_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_vga_1_adjustment', '=', False)]}">
+                                            <field name="pmr_vga_bool_replacement_1"/>
+                                            <field name="pmr_vga_1_replacement" attrs="{'readonly': [('pmr_vga_bool_replacement_1', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_vga_bool_upgrade_1" attrs="{'invisible': [('pmr_vga_1_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_vga_1_adjustment', '=', False)]}">
+                                            <field name="pmr_vga_bool_upgrade_1"/>
+                                            <field name="pmr_vga_1_upgrade" attrs="{'readonly': [('pmr_vga_bool_upgrade_1', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_vga_2"/>
+                                        <div class="o_row">
+                                            <field name="pmr_vga_2" readonly="1"/>
+                                            <field name="pmr_vga_2_adjustment"/>
+                                        </div> 
+                                    <field name="pmr_vga_type_2" readonly="1" attrs="{'invisible': ['|', ('pmr_vga_bool_replacement_2', '=', True), ('pmr_vga_bool_upgrade_2', '=', True)]}"/>
+                                    <field name="pmr_vga_type_2_replace" readonly="1" attrs="{'invisible': [('pmr_vga_bool_replacement_2', '=', False), ('pmr_vga_bool_upgrade_2', '=', False)]}"/>
+                                    <field name="pmr_vga_type_2_upgrade" readonly="1" attrs="{'invisible': [('pmr_vga_bool_upgrade_2', '=', False)]}"/>
+                                    <label for="pmr_vga_bool_replacement_2" attrs="{'invisible': [('pmr_vga_2_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_vga_2_adjustment', '=', False)]}">
+                                            <field name="pmr_vga_bool_replacement_2"/>
+                                            <field name="pmr_vga_2_replacement" attrs="{'readonly': [('pmr_vga_bool_replacement_2', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_vga_bool_upgrade_2" attrs="{'invisible': [('pmr_vga_2_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_vga_2_adjustment', '=', False)]}">
+                                            <field name="pmr_vga_bool_upgrade_2"/>
+                                            <field name="pmr_vga_2_upgrade" attrs="{'readonly': [('pmr_vga_bool_upgrade_2', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_1"/>
+                                        <div class="o_row">
+                                            <field name="pmr_hardisk_1" readonly="1"/>
+                                            <field name="pmr_hardisk_1_adjustment" />
+                                        </div> 
+                                    <label for="pmr_hardisk_bool_replacement_1" attrs="{'invisible': [('pmr_hardisk_1_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_1_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_replacement_1"/>
+                                            <field name="pmr_hardisk_1_replacement" attrs="{'readonly': [('pmr_hardisk_bool_replacement_1', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_bool_upgrade_1" attrs="{'invisible': [('pmr_hardisk_1_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_1_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_upgrade_1"/>
+                                            <field name="pmr_hardisk_1_upgrade" attrs="{'readonly': [('pmr_hardisk_bool_upgrade_1', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_2"/>
+                                        <div class="o_row">
+                                            <field name="pmr_hardisk_2" readonly="1"/>
+                                            <field name="pmr_hardisk_2_adjustment" />
+                                        </div>
+                                    <label for="pmr_hardisk_bool_replacement_2" attrs="{'invisible': [('pmr_hardisk_2_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_2_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_replacement_2"/>
+                                            <field name="pmr_hardisk_2_replacement" attrs="{'readonly': [('pmr_hardisk_bool_replacement_2', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_bool_upgrade_2" attrs="{'invisible': [('pmr_hardisk_2_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_2_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_upgrade_2"/>
+                                            <field name="pmr_hardisk_2_upgrade" attrs="{'readonly': [('pmr_hardisk_bool_upgrade_2', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_3"/>
+                                        <div class="o_row">
+                                            <field name="pmr_hardisk_3" readonly="1"/>
+                                            <field name="pmr_hardisk_3_adjustment" />
+                                        </div>
+                                    <label for="pmr_hardisk_bool_replacement_3" attrs="{'invisible': [('pmr_hardisk_3_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_3_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_replacement_3"/>
+                                            <field name="pmr_hardisk_3_replacement" attrs="{'readonly': [('pmr_hardisk_bool_replacement_3', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_bool_upgrade_3" attrs="{'invisible': [('pmr_hardisk_3_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_3_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_upgrade_3"/>
+                                            <field name="pmr_hardisk_3_upgrade" attrs="{'readonly': [('pmr_hardisk_bool_upgrade_3', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_4"/>
+                                        <div class="o_row">
+                                            <field name="pmr_hardisk_4" readonly="1"/>
+                                            <field name="pmr_hardisk_4_adjustment" />
+                                        </div>
+                                    <label for="pmr_hardisk_bool_replacement_4" attrs="{'invisible': [('pmr_hardisk_4_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_4_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_replacement_4"/>
+                                            <field name="pmr_hardisk_4_replacement" attrs="{'readonly': [('pmr_hardisk_bool_replacement_4', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_hardisk_bool_upgrade_4" attrs="{'invisible': [('pmr_hardisk_4_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_hardisk_4_adjustment', '=', False)]}">
+                                            <field name="pmr_hardisk_bool_upgrade_4"/>
+                                            <field name="pmr_hardisk_4_upgrade" attrs="{'readonly': [('pmr_hardisk_bool_upgrade_4', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_casing"/>
+                                        <div class="o_row">
+                                            <field name="pmr_casing" readonly="1"/>
+                                            <field name="pmr_casing_adjustment" />
+                                        </div>
+                                    <label for="pmr_casing_bool_replacement" attrs="{'invisible': [('pmr_casing_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_casing_adjustment', '=', False)]}">
+                                            <field name="pmr_casing_bool_replacement"/>
+                                            <field name="pmr_casing_replacement" attrs="{'readonly': [('pmr_casing_bool_replacement', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_casing_bool_upgrade" attrs="{'invisible': [('pmr_casing_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_casing_adjustment', '=', False)]}">
+                                            <field name="pmr_casing_bool_upgrade"/>
+                                            <field name="pmr_casing_upgrade" attrs="{'readonly': [('pmr_casing_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_keyboard"/>
+                                        <div class="o_row">
+                                            <field name="pmr_keyboard" readonly="1"/>
+                                            <field name="pmr_keyboard_adjustment" />
+                                        </div>
+                                    <label for="pmr_keyboard_bool_replacement" attrs="{'invisible': [('pmr_keyboard_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_keyboard_adjustment', '=', False)]}">
+                                            <field name="pmr_keyboard_bool_replacement"/>
+                                            <field name="pmr_keyboard_replacement" attrs="{'readonly': [('pmr_keyboard_bool_replacement', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_keyboard_bool_upgrade" attrs="{'invisible': [('pmr_keyboard_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_keyboard_adjustment', '=', False)]}">
+                                            <field name="pmr_keyboard_bool_upgrade"/>
+                                            <field name="pmr_keyboard_upgrade" attrs="{'readonly': [('pmr_keyboard_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_monitor" readonly="1"/>
+                                        <div class="o_row">
+                                            <field name="pmr_monitor" readonly="1"/>
+                                            <field name="pmr_monitor_adjustment" />
+                                        </div>
+                                    <label for="pmr_monitor_bool_replacement" attrs="{'invisible': [('pmr_monitor_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_monitor_adjustment', '=', False)]}">
+                                            <field name="pmr_monitor_bool_replacement"/>
+                                            <field name="pmr_monitor_replacement"  attrs="{'readonly': [('pmr_monitor_bool_replacement', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_monitor_bool_upgrade" attrs="{'invisible': [('pmr_monitor_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_monitor_adjustment', '=', False)]}">
+                                            <field name="pmr_monitor_bool_upgrade"/>
+                                            <field name="pmr_monitor_upgrade"  attrs="{'readonly': [('pmr_monitor_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_mouse"/>
+                                        <div class="o_row">
+                                            <field name="pmr_mouse" readonly="1"/>
+                                            <field name="pmr_mouse_adjustment" />
+                                        </div>
+                                    <label for="pmr_mouse_bool_replacement" attrs="{'invisible': [('pmr_mouse_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_mouse_adjustment', '=', False)]}">
+                                            <field name="pmr_mouse_bool_replacement"/>
+                                            <field name="pmr_mouse_replacement"  attrs="{'readonly': [('pmr_mouse_bool_replacement', '=', False)]}"/>
+                                        </div>
+                                    <label for="pmr_mouse_bool_upgrade" attrs="{'invisible': [('pmr_mouse_adjustment', '=', False)]}"/>
+                                        <div class="o_row" attrs="{'invisible': [('pmr_mouse_adjustment', '=', False)]}">
+                                            <field name="pmr_mouse_bool_upgrade"/>
+                                            <field name="pmr_mouse_upgrade"  attrs="{'readonly': [('pmr_mouse_bool_upgrade', '=', False)]}"/>
+                                        </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Software Spesification">
+                            <group>
+                                <field name="pmr_operating_system"/>
+                                <field name="pmr_office"/>
+                                <field name="pmr_cad"/>
+                                <field name="pmr_cam"/>
+                                <field name="pmr_antivirus"/>
+                                <field name="pmr_program_lain" widget="many2many_tags"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    <group string="Log Notes">
+                        <field name="pmr_log_notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_itms_product_it" model="ir.actions.act_window">
+        <field name="name">PC/Laptop</field>
+        <field name="res_model">pmr.itms.product.it</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it" />
+        <field name="search_view_id" ref="view_search_itms_product_it" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <menuitem id="menu_itms_product_it" name="PC/Laptop"  parent="menu_manajemen" action="action_itms_product_it"/>
+    
+    <record id="view_tree_itms_product_it_printer" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.printer</field>
+        <field name="model">pmr.itms.product.it.printer</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="product_type"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_kecepatan_cetak"/>
+                <field name="pmr_konektivitas_printer"/>
+                <field name="pmr_ukuran_kertas"/>
+                <field name="pmr_fitur_tambahan"/>
+                <field name="pmr_ip_printer"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_printer" model="ir.ui.view">
+        <field name="name">itms.product.it.search.printer</field>
+        <field name="model">pmr.itms.product.it.printer</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="product_type"/>
+                <field name="pmr_jenis_printer"/>
+                <field name="pmr_kecepatan_cetak"/>
+                <field name="pmr_konektivitas_printer"/>
+                <field name="pmr_ukuran_kertas"/>
+                <field name="pmr_fitur_tambahan"/>
+                <field name="pmr_ip_printer"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_printer" model="ir.ui.view">
+        <field name="name">itms.product.it.printer.form</field>
+        <field name="model">pmr.itms.product.it.printer</field>
+        <field name="arch" type="xml">
+            <form string="Printer">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dept-Name"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <field name="product_type" readonly="1"/> 
+                            <field name="pmr_name_printer"/>
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category"/>
+                                </div>
+                            <field name="pmr_umur_product"/> 
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+        
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Printer Spesification">
+                            <group>
+                                <field name="pmr_jenis_printer" readonly="1"/>
+                                <field name="pmr_kecepatan_cetak" readonly="1"/>
+                                <field name="pmr_konektivitas_printer" readonly="1"/>
+                                <field name="pmr_ukuran_kertas" readonly="1"/>
+                                <field name="pmr_fitur_tambahan" readonly="1"/>
+                                <field name="pmr_ip_printer"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_itms_product_it_printer" model="ir.actions.act_window">
+        <field name="name">Printer</field>
+        <field name="res_model">pmr.itms.product.it.printer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_printer" />
+        <field name="search_view_id" ref="view_search_itms_product_it_printer" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <menuitem id="menu_itms_product_it_printer" name="Printer" parent="menu_manajemen" action="action_itms_product_it_printer"/>
+
+    <record id="view_tree_itms_product_it_router" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.router</field>
+        <field name="model">pmr.itms.product.it.router</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="product_type"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_hardware_router"/>
+                <field name="pmr_konektivitas_router"/>
+                <field name="pmr_fitur_tambahan_router"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_router" model="ir.ui.view">
+        <field name="name">itms.product.it.search.router</field>
+        <field name="model">pmr.itms.product.it.router</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="product_type"/>
+                <field name="pmr_hardware_router"/>
+                <field name="pmr_konektivitas_router"/>
+                <field name="pmr_fitur_tambahan_router"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_router" model="ir.ui.view">
+        <field name="name">itms.product.it.router.form</field>
+        <field name="model">pmr.itms.product.it.router</field>
+        <field name="arch" type="xml">
+            <form string="Router">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dept-Name"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <field name="product_type" readonly="1"/> 
+                            <field name="pmr_name_router"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category"/>
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+        
+                        </group>
+                    </group>
+                    <notebook>
+
+                        <page string="Router Spesification">
+                            <group>
+                                <field name="pmr_hardware_router" readonly="1"/>
+                                <field name="pmr_konektivitas_router" readonly="1"/>
+                                <field name="pmr_fitur_tambahan_router" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_itms_product_it_router" model="ir.actions.act_window">
+        <field name="name">Router</field>
+        <field name="res_model">pmr.itms.product.it.router</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_router" />
+        <field name="search_view_id" ref="view_search_itms_product_it_router" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <menuitem id="menu_itms_product_it_router" name="Router" parent="menu_manajemen" action="action_itms_product_it_router"/>
+
+    <record id="view_tree_itms_product_it_wifi" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.wifi</field>
+        <field name="model">pmr.itms.product.it.wifi</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="product_type"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_frekuensi_wifi"/>
+                <field name="pmr_keamanan"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_wifi" model="ir.ui.view">
+        <field name="name">itms.product.it.search.wifi</field>
+        <field name="model">pmr.itms.product.it.wifi</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="product_type"/>
+                <field name="pmr_frekuensi_wifi"/>
+                <field name="pmr_keamanan"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_wifi" model="ir.ui.view">
+        <field name="name">itms.product.it.wifi.form</field>
+        <field name="model">pmr.itms.product.it.wifi</field>
+        <field name="arch" type="xml">
+            <form string="Wifi">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dept-Name"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <field name="product_type" readonly="1"/> 
+                            <field name="pmr_name_wifi"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+        
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Wifi Spesification">
+                            <group>
+                                <field name="pmr_frekuensi_wifi" readonly="1"/>
+                                <field name="pmr_keamanan" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_itms_product_it_wifi" model="ir.actions.act_window">
+        <field name="name">Wifi</field>
+        <field name="res_model">pmr.itms.product.it.wifi</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_wifi" />
+        <field name="search_view_id" ref="view_search_itms_product_it_wifi" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <menuitem id="menu_itms_product_it_wifi" name="Wifi" action="action_itms_product_it_wifi" parent="menu_manajemen"/>
+
+    <record id="view_tree_itms_product_it_switch" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.switch</field>
+        <field name="model">pmr.itms.product.it.switch</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="product_type"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_jenis_switch"/>
+                <field name="pmr_jumlah_port"/>
+                <field name="pmr_kecepatan_port"/>
+                <field name="pmr_switching_capacity"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_switch" model="ir.ui.view">
+        <field name="name">itms.product.it.search.switch</field>
+        <field name="model">pmr.itms.product.it.switch</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="product_type"/>
+                <field name="pmr_jenis_switch"/>
+                <field name="pmr_jumlah_port"/>
+                <field name="pmr_kecepatan_port"/>
+                <field name="pmr_switching_capacity"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_switch" model="ir.ui.view">
+        <field name="name">itms.product.it.switch.form</field>
+        <field name="model">pmr.itms.product.it.switch</field>
+        <field name="arch" type="xml">
+            <form string="Switch">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dept-Name"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <field name="product_type" readonly="1"/> 
+                            <field name="pmr_nama_switch"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+        
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Switch Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                                <field name="pmr_jumlah_port"/>
+                                <field name="pmr_kecepatan_port"/>
+                                <field name="pmr_switching_capacity"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_itms_product_it_switch" model="ir.actions.act_window">
+        <field name="name">Switch</field>
+        <field name="res_model">pmr.itms.product.it.switch</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_switch" />
+        <field name="search_view_id" ref="view_search_itms_product_it_switch" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <menuitem id="menu_itms_product_it_switch" name="Switch" parent="menu_manajemen" action="action_itms_product_it_switch"/>
+            
+    <record id="view_tree_itms_product_it_accessories" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.accessories</field>
+        <field name="model">pmr.itms.product.it.accessories</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_name_accesories"/>
+                <field name="product_type"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_onboard"/>
+                <field name="pmr_pci"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_accessories" model="ir.ui.view">
+        <field name="name">itms.product.it.search.accessories</field>
+        <field name="model">pmr.itms.product.it.accessories</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="product_type"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_accessories" model="ir.ui.view">
+        <field name="name">itms.product.it.accessories.form</field>
+        <field name="model">pmr.itms.product.it.accessories</field>
+        <field name="arch" type="xml">
+            <form string="Accessories">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Dept-Name"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <field name="product_type"/> 
+                            <field name="name_casing" attrs="{'invisible': [('product_type', '!=', 'casing')]}"/> 
+                            <field name="name_hardisk" attrs="{'invisible': [('product_type', '!=', 'hardisk')]}"/> 
+                            <field name="name_keyboard" attrs="{'invisible': [('product_type', '!=', 'keyboard')]}"/> 
+                            <field name="name_monitor" attrs="{'invisible': [('product_type', '!=', 'monitor')]}"/> 
+                            <field name="name_mouse" attrs="{'invisible': [('product_type', '!=', 'mouse')]}"/> 
+                            <field name="name_mobo" attrs="{'invisible': [('product_type', '!=', 'motherboard')]}"/> 
+                            <field name="name_processor" attrs="{'invisible': [('product_type', '!=', 'processor')]}"/> 
+                            <field name="name_psu" attrs="{'invisible': [('product_type', '!=', 'psu')]}"/>
+                            <field name="name_ram" attrs="{'invisible': [('product_type', '!=', 'ram')]}"/> 
+                            <field name="name_vga" attrs="{'invisible': [('product_type', '!=', 'vga')]}"/> 
+                            <field name="name_lan" attrs="{'invisible': [('product_type', '!=', 'lan')]}"/> 
+                            <field name="name_fdd" attrs="{'invisible': [('product_type', '!=', 'fdd')]}"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                        <group>
+                            <field name="pmr_onboard" attrs="{'invisible': [('product_type', 'not in', ['vga', 'lan'])]}"/>
+                            <field name="pmr_pci" attrs="{'invisible': [('product_type', 'not in', ['vga', 'fdd'])]}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_itms_product_it_accessories" model="ir.actions.act_window">
+        <field name="name">Accessories</field>
+        <field name="res_model">pmr.itms.product.it.accessories</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_accessories" />
+        <field name="search_view_id" ref="view_search_itms_product_it_accessories" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <menuitem id="menu_itms_product_it_accessories" name="Accessories" parent="menu_manajemen" action="action_itms_product_it_accessories"/>
+
+    <menuitem id="menu_manajemen_software" name="Manajemen IT Software" parent="menu_itms_root" sequence="4"/>
+    <record id="view_tree_itms_product_it_antivirus" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.antivirus</field>
+        <field name="model">pmr.itms.product.it.antivirus</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement" optional="hide"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="pmr_antivirus"/>
+                <field name="pmr_no_sn"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_antivirus" model="ir.ui.view">
+        <field name="name">itms.product.it.search.antivirus</field>
+        <field name="model">pmr.itms.product.it.antivirus</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <!-- <field name="product_type"/> -->
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_antivirus" model="ir.ui.view">
+        <field name="name">itms.product.it.antivirus.form</field>
+        <field name="model">pmr.itms.product.it.antivirus</field>
+        <field name="arch" type="xml">
+            <form string="Antivirus">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Antivirus"/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <field name="pmr_antivirus"/> 
+                            <field name="pmr_no_sn"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_product_it_antivirus" model="ir.actions.act_window">
+        <field name="name">Antivirus</field>
+        <field name="res_model">pmr.itms.product.it.antivirus</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_antivirus" />
+        <field name="search_view_id" ref="view_search_itms_product_it_antivirus" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_product_it_antivirus" name="Antivirus" parent="menu_manajemen_software" action="action_itms_product_it_antivirus"/>
+
+    <record id="view_tree_itms_product_it_cad" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.cad</field>
+        <field name="model">pmr.itms.product.it.cad</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <!-- <field name="product_type"/> -->
+                <field name="pmr_quantity_product_it"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_cad" model="ir.ui.view">
+        <field name="name">itms.product.it.search.cad</field>
+        <field name="model">pmr.itms.product.it.cad</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <!-- <field name="product_type"/> -->
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_cad" model="ir.ui.view">
+        <field name="name">itms.product.it.cad.form</field>
+        <field name="model">pmr.itms.product.it.cad</field>
+        <field name="arch" type="xml">
+            <form string="Operating System">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Operating System..."/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_product_it_cad" model="ir.actions.act_window">
+        <field name="name">CAD</field>
+        <field name="res_model">pmr.itms.product.it.cad</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_cad" />
+        <field name="search_view_id" ref="view_search_itms_product_it_cad" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_product_it_cad" name="CAD" parent="menu_manajemen_software" action="action_itms_product_it_cad"/>
+
+
+    <record id="view_tree_itms_product_it_cam" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.cam</field>
+        <field name="model">pmr.itms.product.it.cam</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <!-- <field name="product_type"/> -->
+                <field name="pmr_quantity_product_it"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_cam" model="ir.ui.view">
+        <field name="name">itms.product.it.search.cam</field>
+        <field name="model">pmr.itms.product.it.cam</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <!-- <field name="product_type"/> -->
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_cam" model="ir.ui.view">
+        <field name="name">itms.product.it.cam.form</field>
+        <field name="model">pmr.itms.product.it.cam</field>
+        <field name="arch" type="xml">
+            <form string="Operating System">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Operating System..."/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_product_it_cam" model="ir.actions.act_window">
+        <field name="name">CAM</field>
+        <field name="res_model">pmr.itms.product.it.cam</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_cam" />
+        <field name="search_view_id" ref="view_search_itms_product_it_cam" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_product_it_cam" name="CAM" parent="menu_manajemen_software" action="action_itms_product_it_cam"/>
+
+    <record id="view_tree_itms_product_it_office" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.office</field>
+        <field name="model">pmr.itms.product.it.office</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <!-- <field name="product_type"/> -->
+                <field name="pmr_quantity_product_it"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_office" model="ir.ui.view">
+        <field name="name">itms.product.it.search.office</field>
+        <field name="model">pmr.itms.product.it.office</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <!-- <field name="product_type"/> -->
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_office" model="ir.ui.view">
+        <field name="name">itms.product.it.office.form</field>
+        <field name="model">pmr.itms.product.it.office</field>
+        <field name="arch" type="xml">
+            <form string="Office">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Office..."/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_product_it_office" model="ir.actions.act_window">
+        <field name="name">Office</field>
+        <field name="res_model">pmr.itms.product.it.office</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_office" />
+        <field name="search_view_id" ref="view_search_itms_product_it_office" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_product_it_office" name="Office" parent="menu_manajemen_software" action="action_itms_product_it_office"/>
+
+
+    <record id="view_tree_itms_product_it_os" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.os</field>
+        <field name="model">pmr.itms.product.it.os</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <!-- <field name="product_type"/> -->
+                <field name="pmr_quantity_product_it"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_os" model="ir.ui.view">
+        <field name="name">itms.product.it.search.os</field>
+        <field name="model">pmr.itms.product.it.os</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <!-- <field name="product_type"/> -->
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_os" model="ir.ui.view">
+        <field name="name">itms.product.it.os.form</field>
+        <field name="model">pmr.itms.product.it.os</field>
+        <field name="arch" type="xml">
+            <form string="Operating System">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Operating System..."/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_product_it_os" model="ir.actions.act_window">
+        <field name="name">Operating System</field>
+        <field name="res_model">pmr.itms.product.it.os</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_os" />
+        <field name="search_view_id" ref="view_search_itms_product_it_os" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_product_it_os" name="Operting System" parent="menu_manajemen_software" action="action_itms_product_it_os"/>
+
+    <record id="view_tree_itms_product_it_sl" model="ir.ui.view">
+        <field name="name">itms.product.it.tree.sl</field>
+        <field name="model">pmr.itms.product.it.sl</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <field name="pmr_create_date"/>
+                <!-- <field name="product_type"/> -->
+                <field name="pmr_quantity_product_it"/>
+                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_search_itms_product_it_sl" model="ir.ui.view">
+        <field name="name">itms.product.it.search.sl</field>
+        <field name="model">pmr.itms.product.it.sl</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_itms_departement"/>
+                <field name="pmr_itms_user"/>
+                <!-- <field name="product_type"/> -->
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_product_it_sl" model="ir.ui.view">
+        <field name="name">itms.product.it.sl.form</field>
+        <field name="model">pmr.itms.product.it.sl</field>
+        <field name="arch" type="xml">
+            <form string="Operating System">
+                <header> 
+                    <button id="button_reject" name="action_reject" string="Reject"
+                        class="btn-primary" type="object" states="not" />
+                   
+                    <button id="button_repair" name="action_repair" string="Repair"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button id="button_good" name="action_good" string="Good"
+                        class="btn-primary" type="object" states="not" />
+                    
+                    <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                </header> 
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Software Lainnya..."/> 
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_departement"/>
+                            <field name="pmr_itms_user"/>
+                            <field name="pmr_create_date"/> 
+                            <field name="pmr_asset"/>   
+                            <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
+                            <field name="pmr_barcode" string="Barcode"/>
+                        </group>
+                        <group>
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it" readonly="1"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="pmr_umur_product_str"/> 
+                            <field name="pmr_umur_product_str_year"/> 
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_product_it_sl" model="ir.actions.act_window">
+        <field name="name">Software lainnya</field>
+        <field name="res_model">pmr.itms.product.it.sl</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_product_it_sl" />
+        <field name="search_view_id" ref="view_search_itms_product_it_sl" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_product_it_sl" name="Software Lain-Lain" parent="menu_manajemen_software" action="action_itms_product_it_sl"/>
+
+    <!-- <menuitem id="menu_inventory_it" name="Inventory IT" parent="menu_itms_root" sequence="5"/> -->
+    <record id="view_tree_itms_inventory_it" model="ir.ui.view">
+        <field name="name">pmr.itms.inventory.it</field>
+        <field name="model">pmr.itms.inventory.it</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name_product"/>
+                <field name="category"/>
+                <field name="product_location_unit"/>
+                <field name="pmr_barcode"/>
+                <field name="pmr_quantity_product_it"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_kanban_itms_inventory_it" model="ir.ui.view">
+        <field name="name">pmr.itms.inventory.it.kanban</field>
+        <field name="model">pmr.itms.inventory.it</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column">
+                <field name="name_product"/>
+                <field name="category"/>
+                <field name="pmr_barcode"/>
+                <field name="pmr_quantity_product_it"/>
+                <field name="condition"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click" style="border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 16px; background: white; transition: box-shadow 0.3s ease;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <div>
+                                    <strong style="font-size: 16px; color: #2c3e50;">
+                                        <field name="pmr_itms_product"/>
+                                    </strong>
+                                </div>
+                                <div>
+                                    <span t-if="record.condition.raw_value == 'baik'" class="badge bg-success text-white" style="border-radius: 8px; padding: 4px 10px;">
+                                        <field name="condition"/>
+                                    </span>
+                                    <span t-elif="record.condition.raw_value == 'rusak'" class="badge bg-danger text-white" style="border-radius: 8px; padding: 4px 10px;">
+                                        <field name="condition"/>
+                                    </span>
+                                    <span t-else="" class="badge bg-secondary text-white" style="border-radius: 8px; padding: 4px 10px;">
+                                        <field name="condition"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div style="font-size: 14px; color: #555;">
+                                <div style="margin-bottom: 6px;">
+                                    <i class="fa fa-tag" style="margin-right: 6px; color: #7f8c8d;"></i>
+                                    <strong>Kategori:</strong> <field name="category"/>
+                                </div>
+                                <div style="margin-bottom: 6px;">
+                                    <i class="fa fa-barcode" style="margin-right: 6px; color: #7f8c8d;"></i>
+                                    <strong>Barcode:</strong> <field name="pmr_barcode"/>
+                                </div>
+                                <div style="margin-bottom: 6px;">
+                                    <i class="fa fa-barcode" style="margin-right: 6px; color: #7f8c8d;"></i>
+                                    <strong>Location:</strong> <field name="product_location_unit"/>
+                                </div>
+                                <div style="margin-bottom: 6px;">
+                                    <i class="fa fa-box" style="margin-right: 6px; color: #7f8c8d;"></i>
+                                    <strong>On Hand:</strong>
+                                    <t t-if="record.pmr_quantity_product_it.raw_value &lt; 5">
+                                        <span class="badge bg-danger text-white" style="margin-left: 5px; border-radius: 6px; padding: 4px 10px;">
+                                            <field name="pmr_quantity_product_it"/>
+                                        </span>
+                                    </t>
+                                    <t t-else="">
+                                        <span class="badge bg-success text-white" style="margin-left: 5px; border-radius: 6px; padding: 4px 10px;">
+                                            <field name="pmr_quantity_product_it"/>
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_search_itms_inventory_it" model="ir.ui.view">
+        <field name="name">itms.inventory.it.search</field>
+        <field name="model">pmr.itms.inventory.it</field>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="pmr_itms_product"/>
+                <field name="category"/>
+                <searchpanel>
+                    <field name="category" select="multi"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_form_itms_inventory_it" model="ir.ui.view">
+        <field name="name">itms.inventory.it.form</field>
+        <field name="model">pmr.itms.inventory.it</field>
+        <field name="arch" type="xml">
+            <form string="Inventory IT">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="pmr_itms_product"/>
+                            <field name="name_product"/>
+                            <field name="category"/>  
+                            <field name="product_location_unit"/>  
+                            <button name="action_generate_barcode" type="object" string="Generate Barcode" 
+                                class="oe_highlight" attrs="{'invisible': [('pmr_barcode', '!=', False)]}"/> 
+                        </group>
+                        <group> 
+                            <field name="pmr_barcode" string="Barcode" readonly="1"/>   
+                            <field name="condition"/> 
+                            <label for="pmr_quantity_product_it"/>
+                                <div class="o_row">
+                                    <field name="pmr_quantity_product_it"/>
+                                    <field name="product_unit_category" />
+                                </div>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                    <!-- <notebook>
+                        <page string="Spareparts Spesification">
+                            <group>
+                                <field name="pmr_jenis_switch"/>
+                            </group>
+                        </page>
+                    </notebook> -->
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_itms_inventory_it" model="ir.actions.act_window">
+        <field name="name">Inventory IT</field>
+        <field name="res_model">pmr.itms.inventory.it</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_id" ref="view_kanban_itms_inventory_it" />
+        <field name="search_view_id" ref="view_search_itms_inventory_it" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+    <menuitem id="menu_itms_inventory_it" name="Inventory IT" parent="menu_itms_root" action="action_itms_inventory_it" sequence="5"/>
+
+    <record id="action_itms_user" model="ir.actions.act_window">
+        <field name="name">User</field>
+        <field name="res_model">pmr.itms.user</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_user" />
+        <field name="search_view_id" ref="view_search_itms_user" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <record id="action_itms_personil_it" model="ir.actions.act_window">
+        <field name="name">Personil IT</field>
+        <field name="res_model">pmr.itms.personil.it</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_personil_it" />
+        <field name="search_view_id" ref="view_search_itms_personil_it" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <record id="action_pmr_barcode" model="ir.actions.act_window">
+        <field name="name">Barcode</field>
+        <field name="res_model">pmr.barcode</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_tree_itms_barcode" />
+        <field name="search_view_id" ref="view_search_itms_barcode" />
+        <field name="domain"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first data !
+                </p>
+            </field>
+    </record>
+
+    <record id="view_asset_number_it_tree" model="ir.ui.view">
+        <field name="name">asset.number.it.tree</field>
+        <field name="model">asset.number.it</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="pmr_create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_asset_number_it_form" model="ir.ui.view">
+        <field name="name">asset.number.it.form</field>
+        <field name="model">asset.number.it</field>
+        <field name="arch" type="xml">
+            <form string="Asset Number IT">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="pmr_create_date"/>
+                    </group>
+                    <notebook>
+                        <page string="Item">
+                            <field name="pmr_itms_panset">
+                                <tree editable="bottom">
+                                    <field name="pmr_itis_product" />
+                                    <field name="pmr_itis_po_number" />
+                                    <field name="pmr_quantity_product_it" />
+                                    <field name="product_unit_category" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_asset_number_it_search" model="ir.ui.view">
+        <field name="name">asset.number.it.search</field>
+        <field name="model">asset.number.it</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pmr_create_date"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_asset_number_it" model="ir.actions.act_window">
+        <field name="name">Asset Number IT</field>
+        <field name="res_model">asset.number.it</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create and manage your IT asset numbers.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_asset_number_it" name="Asset Numbers" parent="menu_itms_root"
+        action="action_asset_number_it" sequence="7"/>
+
+    <menuitem id="menu_itms_user" name="User" parent="menu_itms_root" action="action_itms_user" sequence="6"/>
+    <menuitem id="menu_itms_personil_it" name="Personil IT" action="action_itms_personil_it" parent="menu_itms_root" sequence="7"/>
+    <menuitem id="menu_itms_barcodet" name="Barcode" action="action_pmr_barcode" parent="menu_itms_root" sequence="8"/>
+</odoo>

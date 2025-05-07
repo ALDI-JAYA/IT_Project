@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_a4_qr_code_lot_itis_pc" model="report.paperformat">
+            <field name="name">A4 QR Code Lot ITIS</field>
+            <field name="default" eval="True" />
+            <field name="format">custom</field>
+            <field name="orientation">Portrait</field>
+            <field name="page_height">65</field>
+            <field name="page_width">70</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">2</field>
+            <field name="margin_bottom">3</field>
+            <field name="margin_left">2</field>
+            <field name="margin_right">2</field>
+            <field name="header_line" eval="False" />
+            <field name="header_spacing">65</field>
+            <field name="dpi">130</field>
+        </record>
+
+        <record id="pmr_action_report_qr_code_lo_pc" model="ir.actions.report">
+            <field name="paperformat_id" ref="pmr_itms.paperformat_a4_qr_code_lot_itis_pc"/>
+            <field name="name">Print Qr Code PC/Laptop</field>
+            <field name="model">pmr.itms.product.it</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">pmr_itms.pmr_qrcode_it_pc</field>
+            <field name="report_file">pmr_itms.pmr_qrcode_it_pc</field>
+            <field name="print_report_name">
+                'QR Code - %s - %s' % (object.name or '', object.name)
+            </field>
+            <field name="binding_model_id" ref="pmr_itms.model_pmr_itms_product_it"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Handover -->
+        
+            <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_handover" model="amp.enum">
+                <field name="name">Approval ITMS Handover</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_handover</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="handover_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">handover.approval.sequence</field>
+                <field name="prefix">APITMS/HANDOV</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_handover" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.handover</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+            
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_handover_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.handover.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_handover_approval</field>
+            </record>
+            
+        <!-- Assets -->
+        
+            <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_asset" model="amp.enum">
+                <field name="name">Approval ITMS Asset</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_asset</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="asset_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">asset.approval.sequence</field>
+                <field name="prefix">APITMS/REQ/ASS/</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_asset" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.asset</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+            
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_asset_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.asset.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_asset_approval</field>
+            </record>
+
+        <!-- User Access -->
+        
+            <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_access" model="amp.enum">
+                <field name="name">Approval ITMS Access</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_access</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="access_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">access.approval.sequence</field>
+                <field name="prefix">APITMS/REQ/ACC/</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_access" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.access</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+            
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_access_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.access.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_access_approval</field>
+            </record>
+
+        <!-- Completion Development -->
+
+            <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_com_dev" model="amp.enum">
+                <field name="name">Approval ITMS Com Dev</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_com_dev</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="com_dev_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">com.dev.approval.sequence</field>
+                <field name="prefix">APITMS/COM/DEV/</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_com_dev" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.com.dev</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_dev_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.com.dev.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_com_dev_approval</field>
+            </record>
+
+        <!-- Development -->
+
+            <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_dev" model="amp.enum">
+                <field name="name">Approval ITMS Dev</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_dev</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="dev_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">dev.approval.sequence</field>
+                <field name="prefix">APITMS/REQ/DEV/</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_dev" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.dev</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_dev_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.dev.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_dev_approval</field>
+            </record>
+
+        <!-- Troubleshooting -->
+
+            <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_itms" model="amp.enum">
+                <field name="name">Approval ITMS</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_itms</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="itms_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">itms.approval.sequence</field>
+                <field name="prefix">APITMS/TROUBLE/</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_itms" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.itms</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_itms_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.itms.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_itms_approval</field>
+            </record>
+
+        <!-- Pembelian dan permintaan -->
+
+        <!-- Config Enum Data Approval ITMS-->
+            <record id="approval_memo" model="amp.enum">
+                <field name="name">Approval ITMS Memo</field>
+                <field name="sequence">0</field>
+                <field name="x_type">approval_setting_type</field>
+                <field name="x_code">approval_memo</field>
+            </record>
+            
+            <!-- Sequence ITMS Approval-->
+            <record id="memo_approval_sequence" model="ir.sequence">
+                <field name="name">ITMS Approval Sequence</field>
+                <field name="code">memo.approval.sequence</field>
+                <field name="prefix">APITMS/ITEMREQ/</field>
+                <field name="padding" eval="6"/>
+                <field name="number_next_actual" eval="1"/>
+            </record>
+            
+            <!-- Config Parameter Approval ITMS-->
+            <record id="pmr_approval_setting_memo" model="ir.config_parameter">
+                <field name="key">pmr_itms.approval.setting.memo</field>
+                <field name="value">0</field>
+                <field name="code_parameter">amp_approval_setting</field>
+            </record>
+
+            <!-- SETTING APPROVAL ACTIVE -->
+            <record id="active_memo_approval" model="ir.config_parameter">
+                <field name="key">pmr_itms.active.memo.approval</field>
+                <field name="value">1</field>
+                <field name="code_parameter">active_memo_approval</field>
+            </record>
+
+            <record id="ir_cron_update_product_age" model="ir.cron">
+                <field name="name">Update Printer Product Age</field>
+                <field name="model_id" ref="model_pmr_itms_product_it_printer"/>
+                <field name="state">code</field>
+                <field name="code">model._cron_update_product_age()</field>
+                <field name="interval_number">1</field>
+                <field name="interval_type">days</field>
+                <field name="numbercall">-1</field>
+                <field name="doall" eval="False"/>
+                <field name="active" eval="True"/>
+            </record>
+        
+    </data>
+</odoo>

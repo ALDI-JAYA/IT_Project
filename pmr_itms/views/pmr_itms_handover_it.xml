@@ -1,0 +1,164 @@
+<odoo>
+    <data>
+        <!-- Form View -->
+        <record id="view_pmr_itms_handover_form" model="ir.ui.view">
+            <field name="name">pmr.itms.handover.it.form</field>
+            <field name="model">pmr.itms.handover.it</field>
+            <field name="arch" type="xml">
+                <form string="Handover">
+                    <header>
+                        <button id="button_submit" name="action_submit" string="Submit"
+                        class="btn-primary" type="object" states="submit" />
+
+                        <button id="button_agreement_user" name="action_user" string="Send User"
+                        class="btn-primary" type="object" states="draft" />
+
+                        <button id="button_user_submit" name="action_user_submit" string="To Submit"
+                        class="btn-primary" type="object" states="user_agreement" />
+                   
+                        <button id="button_reset_to_draft" name="action_reset_to_submit" string="Reset to Submit"
+                            class="btn-primary" type="object" states="open" />
+
+                        <button id="button_cancel" name="action_cancel" string="Cancel"  type="object" states="draft,user_aggreement,submit"
+                                    confirm="Are you sure that you need to cancel ?"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,user_agreement,submit,open,appr" />
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/> 
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="pmr_itms_personil_it"/>
+                                <field name="pmr_itms_re_to_it"/>
+                            </group>
+                            <group> 
+                                 <field name="pmr_itms_user"/>
+                                <field name="pmr_itms_departement"/>
+                            </group>
+                        </group>
+                    <notebook>
+                        <page string="Item">
+                            <field name="pmr_itms_handover_head" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="pmr_jenis_perangkat"/>
+                                    <field name="pmr_merk_type"/>
+                                    <field name="pmr_quantity_product_it"/>
+                                    <field name="product_unit_category"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Approval Logs" name="approval_logs">
+                            <group>
+                                <group>
+                                    <field name="x_approval_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="x_approval_log_ids" context="{'tree_view_ref': 'amp_approval.view_amp_approval_log_tree'}" readonly="1"/>
+                        </page>
+                    </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="view_pmr_itms_handover_tree" model="ir.ui.view">
+            <field name="name">pmr.itms.handover.it.tree</field>
+            <field name="model">pmr.itms.handover.it</field>
+            <field name="arch" type="xml">
+                <tree string="Handover">
+                    <field name="pmr_itms_personil_it"/>
+                    <field name="pmr_itms_re_to_it"/>
+                    <field name="pmr_itms_departement"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="view_pmr_itms_handover_search" model="ir.ui.view">
+            <field name="name">pmr.itms.handover.it.search</field>
+            <field name="model">pmr.itms.handover.it</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="pmr_itms_personil_it"/>
+                    <field name="pmr_itms_re_to_it"/>
+                    <field name="pmr_itms_departement"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_stock_picking_inherit" model="ir.ui.view">
+            <field name="name">stock.picking.inherit.form</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">  
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="pmr_state_handover" string="Handover Type"/>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name="action_create_item_handover"
+                            type="object"
+                            string="Create Item Handover"
+                            class="oe_highlight"
+                            icon="fa-external-link"
+                            attrs="{'invisible': [('pmr_state_handover', '!=', 'create')]}" />
+                    <button name="action_create_handover_it"
+                            type="object"
+                            string="Send Item Handover"
+                            class="oe_highlight"
+                            icon="fa-external-link"
+                            attrs="{'invisible': [('pmr_state_handover', '!=', 'send')]}" />
+                </xpath>
+                <field name="product_id" position="after">
+                    <field name="pmr_item_category" string="Item Category"/> 
+                    <button name="action_create_item_inventory"
+                            type="object"
+                            string="Create Item Inventory"
+                            class="oe_highlight"
+                            icon="fa-external-link"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_picking_confirmation_tree_inherit_custom" model="ir.ui.view">
+            <field name="name">stock.picking.tree.inherit.custom</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="amp_pr.view_picking_pr_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree/field[@name='name']" position="before">
+                    <header>
+                        <button name="action_create_item_handover" type="object" string="Create Custom Handover"/>
+                    </header>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_pmr_itms_handover" model="ir.actions.act_window">
+            <field name="name">Handover</field>
+            <field name="res_model">pmr.itms.handover.it</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_pmr_itms_handover" 
+                  name="Handover"
+                  parent="menu_request_pmr_memo_ass" 
+                  action="action_pmr_itms_handover"
+                  sequence="3"/>
+    </data>
+</odoo>

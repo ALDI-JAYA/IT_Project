@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_pmr_itms_completion_development_tree" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.development.tree</field>
+        <field name="model">pmr.itms.completion.development</field>
+        <field name="arch" type="xml">
+            <tree string="ITMS Completion Development">
+                <field name="name"/>
+                <field name="pmr_approval"/>
+                <field name="pmr_itms_request"/>
+                <field name="pmr_itms_personil_it"/>
+                <field name="pmr_start_date"/>
+                <field name="pmr_end_date"/>
+                <field name="state" widget="badge"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_pmr_itms_completion_development_form" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.development.form</field>
+        <field name="model">pmr.itms.completion.development</field>
+        <field name="arch" type="xml">
+            <form string="ITMS Completion Development">
+                <header>
+                    <button id="button_submit" name="action_submit" string="Submit"
+                        class="btn-primary" type="object" states="draft" />
+                   
+                        <button id="button_reset_to_draft" name="action_reset_to_draft" string="Reset to Draft"
+                            class="btn-primary" type="object" states="open" />
+                        
+                        <button id="button_completed" name="action_completed" string="Complete"
+                            class="btn-primary" type="object" states="done" />
+                        
+                        <button id="button_waiting" name="action_waiting" string="Waiting"
+                            class="btn-primary" type="object" states="appr" />
+                        
+                        <button id="button_in_progress" name="action_in_progress" string="In Progress"
+                            class="btn-primary" type="object" states="appr,waiting" />
+
+                        <button id="button_cancel" name="action_cancel" string="Cancel"  type="object" states="draft"
+                                    confirm="Are you sure that you need to cancel ?"/>
+                        
+                        <button name="action_mark_done" type="object" string="Mark as Done" class="btn-primary" states="in_progress" />
+
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,appr,waiting,in_progress,done,completed" />    
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pmr_approval"/>
+                            <field name="pmr_approval_note" readonly="1"/>
+                            <field name="pmr_itms_request"/>  
+                            <field name="pmr_itms_request_development" readonly="1"/>
+                            <field name="pmr_itms_request_development_note" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="pmr_itms_personil_it"/>
+                            <field name="pmr_start_date"/> 
+                            <field name="pmr_end_date"/> 
+                            <field name="pmr_itms_keterangan"/>
+                            <field name="pmr_note_revision"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approval Logs" name="approval_logs">
+                            <group>
+                                <group>
+                                    <field name="x_approval_id" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="x_approval_log_ids" context="{'tree_view_ref': 'amp_approval.view_amp_approval_log_tree'}" readonly="1"/>
+                        </page>
+                        <page string="Odoo" name="odoo">
+                            <notebook>
+                                <page string="Frontend Development" name="frontend">
+                                    <field name="pmr_itms_frontend">
+                                        <tree editable="bottom">
+                                            <field name="pmr_name_frontend"/>
+                                            <field name="pmr_frontend_category"/>
+                                            <field name="view_id"/>
+                                            <field name="field_id"/>
+                                        </tree>
+                                    </field>
+                                </page>          
+                                <page string="Backend Development" name="backend">
+                                    <field name="pmr_itms_backend">
+                                        <tree editable="bottom">
+                                            <field name="pmr_name_backend"/>
+                                            <field name="model_id"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                        <page string="Non Odoo" name="non_odoo">
+                            <notebook>
+                                <page string="Frontend Development" name="frontend_non">
+                                    <field name="pmr_itms_frontend_non">
+                                        <tree editable="bottom">
+                                            <field name="pmr_name_frontend"/>
+                                            <field name="pmr_name_frontend_prog"/>
+                                        </tree>
+                                    </field>
+                                </page>          
+                                <page string="Backend Development" name="backend_non">
+                                    <field name="pmr_itms_backend_non">
+                                        <tree editable="bottom">
+                                            <field name="pmr_name_backend"/>
+                                            <field name="pmr_name_backend_prog"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                        <page string="Website" name="web">
+                            <notebook>
+                                <page string="Frontend Development" name="frontend">
+                                    <field name="pmr_itms_frontend_web">
+                                        <tree editable="bottom">
+                                            <field name="pmr_name_frontend"/>
+                                            <field name="pmr_name_frontend_prog"/>
+                                        </tree>
+                                    </field>
+                                </page>          
+                                <page string="Backend Development" name="backend">
+                                    <field name="pmr_itms_backend_web">
+                                        <tree editable="bottom">
+                                            <field name="pmr_name_backend"/>
+                                            <field name="pmr_name_backend_prog"/>
+                                        </tree>
+                                    </field>
+                                </page>
+                            </notebook>
+                        </page>
+                        <page string="Note Approval User" name="note">
+                            <group>
+                                <group>
+                                    <field name="pmr_approval_note" readonly="1" />
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pmr_itms_completion_development_search" model="ir.ui.view">
+        <field name="name">pmr.itms.completion.development.search</field>
+        <field name="model">pmr.itms.completion.development</field>
+        <field name="arch" type="xml">
+            <search string="ITMS Completion Development">
+                <field name="name"/>
+                <field name="pmr_itms_request"/>
+                <field name="pmr_itms_personil_it"/>
+                <field name="pmr_start_date"/>
+                <field name="pmr_end_date"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pmr_itms_completion_development" model="ir.actions.act_window">
+        <field name="name">Completion Development</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">pmr.itms.completion.development</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_pmr_itms_completion_development_tree"/>
+        <field name="search_view_id" ref="view_pmr_itms_completion_development_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Completion Development entry!
+            </p>
+        </field>
+    </record>
+    
+    <menuitem id="menu_pmr_itms_completion_development"
+        name="Completion Development"
+        parent="menu_request_pmr_itms"
+        action="action_pmr_itms_completion_development"
+        sequence="7"/>
+</odoo>
