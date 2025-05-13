@@ -13,7 +13,7 @@ class AmpPurchaseRequestInherit(models.Model):
         for record in self:
             if record.pmr_itms_memo:
                 memo_lines = record.pmr_itms_memo.pmr_itms_memo_line_ids.filtered(
-                    lambda line: line.pmr_itms_product == record.pmr_itms_product
+                    lambda line: line.pmr_itms_product and line.pmr_itms_product.name == record.pmr_itms_product
                 )
                 if memo_lines:
                     memo_lines.write({
@@ -310,7 +310,6 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
     _description = "Pmr Itms Memo Pengajuan Barang"
 
     name = fields.Char(string="Memo Name", compute="_compute_name", store=True)
-    # pmr_itms_product = fields.Many2one('pmr.vga',string="Item Name")
     pmr_itms_product = fields.Reference(selection=[
         ('pmr.pc', 'pc'),
         ('pmr.wifi', 'WiFi'),
@@ -335,24 +334,22 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
     pmr_note = fields.Text(string="Note")
     pmr_itms_memo_head = fields.Many2one('pmr.itms.memo.pengajuan.barang', string="ID Memo")
     pmr_itms_product_text = fields.Text(string="Product Description")
-    pmr_validation_pr_id = fields.Many2one('amp.purchase.request',string="PR")
+    pmr_validation_pr_id = fields.Many2one('amp.purchase.request',string=" Code PR")
     pmr_validation_pr = fields.Char(string="PR")
     pmr_validation_po = fields.Boolean(string="PO", compute="_compute_pmr_validation_po", store=True)
+    pmr_validation_grn = fields.Boolean(string="GRN", compute="_compute_pmr_validation_grn", store=True)
+    state = fields.Selection(string="state", related='pmr_itms_memo_head.state', store=True)
+    request_type = fields.Selection(string="state", related='pmr_itms_memo_head.request_type', store=True)
 
     @api.depends('pmr_validation_pr_id.x_pr_state')
     def _compute_pmr_validation_po(self):
         for line in self:
             line.pmr_validation_po = (line.pmr_validation_pr_id.x_pr_state == 'po')
 
-    pmr_validation_grn = fields.Boolean(string="GRN", compute="_compute_pmr_validation_grn", store=True)
-
     @api.depends('pmr_validation_pr_id.x_pr_state')
     def _compute_pmr_validation_grn(self):
         for line in self:
             line.pmr_validation_grn = (line.pmr_validation_pr_id.x_pr_state == 'received')
-
-    state = fields.Selection(string="state", related='pmr_itms_memo_head.state', store=True)
-    request_type = fields.Selection(string="state", related='pmr_itms_memo_head.request_type', store=True)
 
     @api.depends('pmr_itms_memo_head')
     def _compute_name(self):

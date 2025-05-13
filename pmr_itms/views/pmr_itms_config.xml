@@ -402,7 +402,7 @@
                 <field name="pmr_cam" optional="hide"/>
                 <field name="pmr_antivirus" optional="hide"/>
                 <field name="pmr_program_lain" widget="many2many_tags"/>
-                <field name="state" decoration-danger="state=='non'" decoration-primary="state=='aktif'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -840,7 +840,7 @@
                 <field name="pmr_ukuran_kertas"/>
                 <field name="pmr_fitur_tambahan"/>
                 <field name="pmr_ip_printer"/>
-                <field name="state" decoration-danger="state=='non'" decoration-primary="state=='aktif'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -908,6 +908,7 @@
                             <field name="pmr_umur_product"/> 
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
         
                         </group>
                     </group>
@@ -959,7 +960,7 @@
                 <field name="pmr_hardware_router"/>
                 <field name="pmr_konektivitas_router"/>
                 <field name="pmr_fitur_tambahan_router"/>
-                <field name="state" decoration-danger="state=='non'" decoration-primary="state=='aktif'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1074,7 +1075,7 @@
                 <field name="pmr_quantity_product_it"/>
                 <field name="pmr_frekuensi_wifi"/>
                 <field name="pmr_keamanan"/>
-                <field name="state" decoration-danger="state=='non'" decoration-primary="state=='aktif'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1310,7 +1311,7 @@
                 <field name="pmr_quantity_product_it"/>
                 <field name="pmr_onboard"/>
                 <field name="pmr_pci"/>
-                <field name="state" decoration-danger="state=='non'" decoration-primary="state=='aktif'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>

@@ -354,8 +354,8 @@ class PmrItmsProductItAccessories(models.Model):
         ('fdd', 'Expansion Slot'),
     ], string="Device Type", default="sparepart", tracking=True, store=True)
     state = fields.Selection([
-        ('aktif', 'Aktif'),
         ('non', 'Non Aktif'),
+        ('aktif', 'Aktif'),
     ], string="State", default="non", tracking=True, store=True)
     
     @api.onchange('name_vga', 'name_fdd', 'name_lan')
@@ -586,8 +586,8 @@ class PmrItmsProductItWifi(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="wifi", tracking=True, store=True)
     state = fields.Selection([
-        ('aktif', 'Aktif'),
         ('non', 'Non Aktif'),
+        ('aktif', 'Aktif'),
     ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_name_wifi')
@@ -807,8 +807,8 @@ class PmrItmsProductItRouter(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="router", tracking=True, store=True)
     state = fields.Selection([
-        ('aktif', 'Aktif'),
         ('non', 'Non Aktif'),
+        ('aktif', 'Aktif'),
     ], string="State", default="non", tracking=True, store=True)
     @api.onchange('pmr_name_router')
     def _onchange_pmr_name_router(self):
@@ -879,6 +879,7 @@ class PmrItmsProductItRouter(models.Model):
                 record.pmr_umur_product_str_year = f"{months} months"
             else:
                 record.pmr_umur_product_str_year = "0 days"
+
     def action_router(self):
         for record in self:
             self.env['pmr.itms.inventory.movement'].create({
@@ -1028,6 +1029,7 @@ class PmrItmsProductItPrinter(models.Model):
     ]
     
     name = fields.Char(string="Personil IT", required=True, store=True)
+    active = fields.Boolean(string="Active", default=True)
     pmr_barcode = fields.Many2one('pmr.barcode', string="Barcode")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
@@ -1362,8 +1364,8 @@ class PmrItmsProductIt(models.Model):
         ('laptop', 'Laptop'),
     ], string="Device Type", tracking=True, store=True)
     state = fields.Selection([
-        ('aktif', 'Aktif'),
         ('non', 'Non Aktif'),
+        ('aktif', 'Aktif'),
     ], string="State", default="non", tracking=True, store=True)
     pmr_program_lain = fields.Many2many('pmr.software.lain',string="Software Lain")
     pmr_vga_type_1 = fields.Char(string="Type", store=True)
@@ -3888,6 +3890,7 @@ class PmrItmsInventoryIt(models.Model):
             self.category_product = 'hardware'
         else:
             self.category_product = 'software'
+            
     # def generate_pc_laptop_sequence(self):
     #     suffix_mapping = {
     #         'pc': 'PC',
