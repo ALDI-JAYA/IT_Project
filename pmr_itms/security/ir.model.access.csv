@@ -16,6 +16,7 @@ access_pmr_itms_product_it_cam,access.pmr.itms.product.it.cam,model_pmr_itms_pro
 access_pmr_itms_product_it_os,access.pmr.itms.product.it.os,model_pmr_itms_product_it_os,base.group_user,1,1,1,1
 access_pmr_itms_product_it_sl,access.pmr.itms.product.it.sl,model_pmr_itms_product_it_sl,base.group_user,1,1,1,1
 access_pmr_itms_inventory_it,access.pmr.itms.inventory.it,model_pmr_itms_inventory_it,base.group_user,1,1,1,1
+access_pmr_itms_inventory_movement,access.pmr.itms.inventory.movement,model_pmr_itms_inventory_movement,base.group_user,1,1,1,1
 access_pmr_itms_panitera_asset,access.pmr.itms.panitera.asset,model_pmr_itms_panitera_asset,base.group_user,1,1,1,1
 access_pmr_itms_panitera_asset_line,access.pmr.itms.panitera.asset.line,model_pmr_itms_panitera_asset_line,base.group_user,1,1,1,1
 access_pmr_itms_completion_memo_pembelian_troubleshooting,access.pmr.itms.completion.memo.pembelian.troubleshooting,model_pmr_itms_completion_memo_pembelian_troubleshooting,base.group_user,1,1,1,1

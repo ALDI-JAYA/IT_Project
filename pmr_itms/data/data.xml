@@ -244,6 +244,54 @@
                 <field name="doall" eval="False"/>
                 <field name="active" eval="True"/>
             </record>
+
+            <record id="ir_cron_update_product_cpu_age" model="ir.cron">
+                <field name="name">Update Cpu Product Age</field>
+                <field name="model_id" ref="model_pmr_itms_product_it"/>
+                <field name="state">code</field>
+                <field name="code">model._cron_update_product_cpu_age()</field>
+                <field name="interval_number">1</field>
+                <field name="interval_type">days</field>
+                <field name="numbercall">-1</field>
+                <field name="doall" eval="False"/>
+                <field name="active" eval="True"/>
+            </record>
+
+            <record id="ir_cron_update_product_router_age" model="ir.cron">
+                <field name="name">Update Router Product Age</field>
+                <field name="model_id" ref="model_pmr_itms_product_it_router"/>
+                <field name="state">code</field>
+                <field name="code">model._cron_update_product_router_age()</field>
+                <field name="interval_number">1</field>
+                <field name="interval_type">days</field>
+                <field name="numbercall">-1</field>
+                <field name="doall" eval="False"/>
+                <field name="active" eval="True"/>
+            </record>
+
+            <record id="ir_cron_update_product_wifi_age" model="ir.cron">
+                <field name="name">Update Wifi Product Age</field>
+                <field name="model_id" ref="model_pmr_itms_product_it_wifi"/>
+                <field name="state">code</field>
+                <field name="code">model._cron_update_product_wifi_age()</field>
+                <field name="interval_number">1</field>
+                <field name="interval_type">days</field>
+                <field name="numbercall">-1</field>
+                <field name="doall" eval="False"/>
+                <field name="active" eval="True"/>
+            </record>
+
+            <record id="ir_cron_update_product_accesories_age" model="ir.cron">
+                <field name="name">Update Accesories Product Age</field>
+                <field name="model_id" ref="model_pmr_itms_product_it_accessories"/>
+                <field name="state">code</field>
+                <field name="code">model._cron_update_product_accesories_age()</field>
+                <field name="interval_number">1</field>
+                <field name="interval_type">days</field>
+                <field name="numbercall">-1</field>
+                <field name="doall" eval="False"/>
+                <field name="active" eval="True"/>
+            </record>
         
     </data>
 </odoo>

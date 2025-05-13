@@ -353,30 +353,6 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
 
     state = fields.Selection(string="state", related='pmr_itms_memo_head.state', store=True)
     request_type = fields.Selection(string="state", related='pmr_itms_memo_head.request_type', store=True)
-    # pmr_item_category = fields.Selection([
-    #     ('pc_laptop', 'PC/Laptop'), 
-    #     ('printer', 'Printer'),
-    #     ('router','Router'),
-    #     ('wifi', 'Wifi'), 
-    #     ('switch', 'Switch'),
-    #     ('motherboard', 'Motherboard'), 
-    #     ('expansion_slot', 'Expansion Slot'),
-    #     ('power_supply', 'Power Supply'),
-    #     ('casing', 'Casing'),
-    #     ('keyboard', 'Keyboard'),
-    #     ('mouse', 'Mouse'),
-    #     ('monitor', 'Monitor'),
-    #     ('processor', 'Processor'),
-    #     ('hardisk', 'Hardisk'),
-    #     ('ram', 'RAM'),
-    #     ('vga', 'VGA'),
-    #     ('antivirus', 'Antivirus'),
-    #     ('office', 'Office'),
-    #     ('os', 'Operating System'),
-    #     ('cad', 'CAD'),
-    #     ('cam', 'CAM'),
-    #     ('software_lain', 'Software Lain Lain'),
-    # ], string="Item Category", store=True)
 
     @api.depends('pmr_itms_memo_head')
     def _compute_name(self):

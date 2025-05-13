@@ -170,6 +170,7 @@ class PmrItmsProductItSwitch(models.Model):
     
     name = fields.Char(string="Personil IT", required=True, store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
@@ -182,7 +183,7 @@ class PmrItmsProductItSwitch(models.Model):
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category", store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
-    pmr_nama_switch = fields.Many2one('pmr.switch',string="Nama Switch", store=True)
+    pmr_nama_switch = fields.Many2one('pmr.itms.inventory.it',string="Nama Switch", domain=[('category', '=', 'switch')], store=True)
     pmr_jenis_switch = fields.Char(string="Jenis Switch", store=True)
     pmr_jumlah_port = fields.Float(string="Jumlah Port")
     pmr_kecepatan_port = fields.Char(string="Kecepatan Port", store=True)
@@ -197,45 +198,17 @@ class PmrItmsProductItSwitch(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="switch", tracking=True, store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('aktif', 'Aktif'),
+        ('non', 'Non Aktif'),
+    ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_nama_switch')
-    def _onchange_pmr_name_switch(self):
+    def _onchange_pmr_nama_switch(self):
         if self.pmr_nama_switch:
-            self._set_switch_fields()
-        else:
-            self.product_unit_category = False  
-            self.pmr_jenis_switch = False  
-            self.pmr_jumlah_port = False
-            self.pmr_kecepatan_port = False
-            self.pmr_switching_capacity = False
-
-    def _set_switch_fields(self):
-        self.product_unit_category = self.pmr_nama_switch.product_unit_category 
-        self.pmr_jenis_switch = self.pmr_nama_switch.pmr_jenis_switch 
-        self.pmr_jumlah_port = self.pmr_nama_switch.pmr_jumlah_port
-        self.pmr_kecepatan_port = self.pmr_nama_switch.pmr_kecepatan_port
-        self.pmr_switching_capacity = self.pmr_nama_switch.pmr_switching_capacity
-
-    @api.model
-    def create(self, vals):
-        record = super(PmrItmsProductItSwitch, self).create(vals)
-        if record.pmr_nama_switch:
-            record._set_switch_fields()
-        return record
-
-    def write(self, vals):
-        res = super(PmrItmsProductItSwitch, self).write(vals)
-        if 'pmr_nama_switch' in vals:
-            for record in self:
-                if record.pmr_nama_switch:
-                    record._set_switch_fields()
-        return res
-
+            self.pmr_jenis_switch = self.pmr_nama_switch.pmr_jenis_switch
+            self.pmr_jumlah_port = self.pmr_nama_switch.pmr_jumlah_port
+            self.pmr_kecepatan_port = self.pmr_nama_switch.pmr_kecepatan_port
+            self.pmr_switching_capacity = self.pmr_nama_switch.pmr_switching_capacity
 
     @api.depends('pmr_create_date')
     def _compute_pmr_umur_product(self):
@@ -268,6 +241,26 @@ class PmrItmsProductItSwitch(models.Model):
                 record.pmr_umur_product_str_year = f"{months} months"
             else:
                 record.pmr_umur_product_str_year = "0 days"
+    def action_switch(self):
+        for record in self:
+            self.env['pmr.itms.inventory.movement'].create({
+                'name_product': record.pmr_name_switch.display_name if record.pmr_name_switch else record.name,
+                'pmr_itms_departement': record.pmr_itms_departement.id,
+                'pmr_itms_user': record.pmr_itms_user.id,
+                'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
+                'product_unit_category': record.product_unit_category.id,
+                'product_location_unit': record.pmr_name_switch.product_location_unit.id,
+            })
+            record.state = 'non'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Sukses',
+                'message': 'Data berhasil dikirim',
+                'sticky': False,
+            }
+        }
     
     def action_reject(self):
         self.state= 'reject'
@@ -318,10 +311,11 @@ class PmrItmsProductItAccessories(models.Model):
     
     name = fields.Char(string="Personil IT", required=True, store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
-    pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
-    pmr_umur_product_str_year = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str_year", store=True)
+    pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
+    pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
+    pmr_umur_product_str_year = fields.Char(string="Product Age (Tahun)", compute="_compute_pmr_umur_product_str_year", store=True) 
     pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True,default=1)
@@ -331,18 +325,18 @@ class PmrItmsProductItAccessories(models.Model):
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
-    name_casing = fields.Many2one('pmr.casing', string="Casing", store=True)
-    name_hardisk = fields.Many2one('pmr.hardisk', string="Hardisk", store=True)
-    name_keyboard = fields.Many2one('pmr.keyboard', string="Keyboard", store=True)
-    name_monitor = fields.Many2one('pmr.monitor', string="Monitor", store=True)
-    name_mouse = fields.Many2one('pmr.mouse', string="Mouse", store=True)
-    name_mobo = fields.Many2one('pmr.mainboard', string="Motherboard", store=True)
-    name_processor = fields.Many2one('pmr.processor', string="Processor", store=True)
-    name_psu = fields.Many2one('pmr.power.supply', string="Power Supply", store=True)
-    name_ram = fields.Many2one('pmr.ram', string="RAM", store=True)
-    name_vga = fields.Many2one('pmr.vga', string="VGA", store=True)
-    name_fdd = fields.Many2one('pmr.fdd', string="Expansion Slot", store=True)
-    name_lan = fields.Many2one('pmr.lan.card', string="Integrated LAN", store=True)
+    name_casing = fields.Many2one('pmr.itms.inventory.it', string="Casing",domain=[('category', '=', 'casing')], store=True)
+    name_hardisk = fields.Many2one('pmr.itms.inventory.it', string="Hardisk",domain=[('category', '=', 'hardisk')], store=True)
+    name_keyboard = fields.Many2one('pmr.itms.inventory.it', string="Keyboard",domain=[('category', '=', 'keyboard')], store=True)
+    name_monitor = fields.Many2one('pmr.itms.inventory.it', string="Monitor",domain=[('category', '=', 'monitor')], store=True)
+    name_mouse = fields.Many2one('pmr.itms.inventory.it', string="Mouse",domain=[('category', '=', 'mosue')], store=True)
+    name_mobo = fields.Many2one('pmr.itms.inventory.it', string="Motherboard",domain=[('category', '=', 'mainboard')], store=True)
+    name_processor = fields.Many2one('pmr.itms.inventory.it', string="Processor",domain=[('category', '=', 'processor')], store=True)
+    name_psu = fields.Many2one('pmr.itms.inventory.it', string="Power Supply",domain=[('category', '=', 'power_supply')], store=True)
+    name_ram = fields.Many2one('pmr.itms.inventory.it', string="RAM",domain=[('category', '=', 'ram')], store=True)
+    name_vga = fields.Many2one('pmr.itms.inventory.it', string="VGA",domain=[('category', '=', 'vga')], store=True)
+    name_fdd = fields.Many2one('pmr.itms.inventory.it', string="Expansion Slot",domain=[('category', '=', 'fdd')], store=True)
+    name_lan = fields.Many2one('pmr.itms.inventory.it', string="Integrated LAN",domain=[('category', '=', 'Integrated_LAN')], store=True)
     pmr_onboard = fields.Boolean(string="On Board")
     pmr_pci = fields.Boolean(string="External")
     product_type = fields.Selection([
@@ -360,11 +354,9 @@ class PmrItmsProductItAccessories(models.Model):
         ('fdd', 'Expansion Slot'),
     ], string="Device Type", default="sparepart", tracking=True, store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('aktif', 'Aktif'),
+        ('non', 'Non Aktif'),
+    ], string="State", default="non", tracking=True, store=True)
     
     @api.onchange('name_vga', 'name_fdd', 'name_lan')
     def _onchange_component_fields(self):
@@ -437,35 +429,96 @@ class PmrItmsProductItAccessories(models.Model):
 
             record.pmr_name_accesories = ', '.join(accessories)
 
-    @api.depends('pmr_umur_product')
-    def _compute_pmr_umur_product_str(self):
-        """Change pmr_umur_product to a string with the format 'X days'."""
-        for record in self:
-            record.pmr_umur_product_str = f"{record.pmr_umur_product} days"
-    
-    @api.depends('pmr_umur_product')
-    def _compute_pmr_umur_product_str_year(self):
-        """Convert pmr_umur_product into years format (X years, X months)."""
-        for record in self:
-            years = record.pmr_umur_product // 365
-            months = (record.pmr_umur_product % 365) // 30  
-            if years > 0 and months > 0:
-                record.pmr_umur_product_str_year = f"{years} years {months} months"
-            elif years > 0:
-                record.pmr_umur_product_str_year = f"{years} years"
-            elif months > 0:
-                record.pmr_umur_product_str_year = f"{months} months"
+    @api.model
+    def _cron_update_product_accesories_age(self):
+        records = self.search([])
+        for rec in records:
+            if rec.pmr_create_date:
+                today = date.today()
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+                days = (today - create_date).days
+
+                rec.pmr_umur_product = days
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+
+    def action_run_cron_manual(self):
+        """Menjalankan cron secara manual"""
+        self.env['pmr.itms.product.it.accessories']._cron_update_product_accesories_age()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Berhasil',
+                'message': 'Jadwal diaktifkan.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def action_disable_cron(self):
+        """Menonaktifkan cron dari ir.cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_update_product_accesories_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': False})
+            message = "Jadwal berhasil dinonaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'warning',
+                'sticky': False,
+            }
+        }
+
+    def action_enable_cron(self):
+        """Mengaktifkan ulang cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_update_product_accesories_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': True})
+            message = "Jadwal berhasil diaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    @api.depends('pmr_create_date')
+    def _compute_pmr_umur_product(self):
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                age_days = (today - create_date).days
+                rec.pmr_umur_product = age_days
             else:
-                record.pmr_umur_product_str_year = "0 days"
-    
-    def action_reject(self):
-        self.state= 'reject'
+                rec.pmr_umur_product = 0
 
-    def action_repair(self):
-        self.state = 'repair'
+    @api.depends('pmr_create_date')
+    def _compute_pmr_umur_product_str(self):
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
 
-    def action_good(self):
-        self.state= 'good'
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+            else:
+                rec.pmr_umur_product_str = "-"
+                rec.pmr_umur_product_str_year = "-"
     
     def generate_pc_laptop_sequence(self):
         for record in self:
@@ -507,10 +560,11 @@ class PmrItmsProductItWifi(models.Model):
     
     name = fields.Char(string="Personil IT", required=True, store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
-    pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
-    pmr_umur_product_str_year = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str_year", store=True)
+    pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
+    pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
+    pmr_umur_product_str_year = fields.Char(string="Product Age (Tahun)", compute="_compute_pmr_umur_product_str_year", store=True)
     pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
@@ -519,7 +573,7 @@ class PmrItmsProductItWifi(models.Model):
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category", store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
-    pmr_name_wifi = fields.Many2one('pmr.wifi',string="Nama Wifi", store=True)
+    pmr_name_wifi = fields.Many2one('pmr.itms.inventory.it',string="Nama Wifi", domain=[('category', '=', 'wifi')], store=True)
     pmr_frekuensi_wifi = fields.Char(string="Frekuensi WIFI", store=True)
     pmr_keamanan = fields.Char(string="Keamanan Wifi")
     product_type = fields.Selection([
@@ -532,40 +586,15 @@ class PmrItmsProductItWifi(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="wifi", tracking=True, store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('aktif', 'Aktif'),
+        ('non', 'Non Aktif'),
+    ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_name_wifi')
     def _onchange_pmr_name_wifi(self):
         if self.pmr_name_wifi:
-            self._set_wifi_fields()
-        else:
-            self.product_unit_category = False  
-            self.pmr_frekuensi_wifi = False  
-            self.pmr_keamanan = False
-
-    def _set_wifi_fields(self):
-        self.product_unit_category = self.pmr_name_wifi.product_unit_category 
-        self.pmr_frekuensi_wifi = self.pmr_name_wifi.pmr_frekuensi_wifi 
-        self.pmr_keamanan = self.pmr_name_wifi.pmr_keamanan
-
-    @api.model
-    def create(self, vals):
-        record = super(PmrItmsProductItWifi, self).create(vals)
-        if record.pmr_name_wifi:
-            record._set_wifi_fields()
-        return record
-
-    def write(self, vals):
-        res = super(PmrItmsProductItWifi, self).write(vals)
-        if 'pmr_name_wifi' in vals:
-            for record in self:
-                if record.pmr_name_wifi:
-                    record._set_wifi_fields()
-        return res
+            self.pmr_frekuensi_wifi = self.pmr_name_wifi.pmr_frekuensi_wifi
+            self.pmr_keamanan = self.pmr_name_wifi.pmr_keamanan
 
     @api.depends('pmr_create_date')
     def _compute_pmr_umur_product(self):
@@ -599,14 +628,117 @@ class PmrItmsProductItWifi(models.Model):
             else:
                 record.pmr_umur_product_str_year = "0 days"
     
-    def action_reject(self):
-        self.state= 'reject'
+    def action_wifi(self):
+        for record in self:
+            self.env['pmr.itms.inventory.movement'].create({
+                'name_product': record.pmr_name_wifi.display_name if record.pmr_name_wifi else record.name,
+                'pmr_itms_departement': record.pmr_itms_departement.id,
+                'pmr_itms_user': record.pmr_itms_user.id,
+                'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
+                'product_unit_category': record.product_unit_category.id,
+                'product_location_unit': record.pmr_name_wifi.product_location_unit.id,
+            })
+            record.state = 'non'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Sukses',
+                'message': 'Data berhasil dikirim',
+                'sticky': False,
+            }
+        }
 
-    def action_repair(self):
-        self.state = 'repair'
+    @api.model
+    def _cron_update_product_wifi_age(self):
+        records = self.search([])
+        for rec in records:
+            if rec.pmr_create_date:
+                today = date.today()
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+                days = (today - create_date).days
 
-    def action_good(self):
-        self.state= 'good'
+                rec.pmr_umur_product = days
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+
+    def action_run_cron_manual(self):
+        """Menjalankan cron secara manual"""
+        self.env['pmr.itms.product.it.wifi']._cron_update_product_wifi_age()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Berhasil',
+                'message': 'Jadwal diaktifkan.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def action_disable_cron(self):
+        """Menonaktifkan cron dari ir.cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_wifi_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': False})
+            message = "Jadwal berhasil dinonaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'warning',
+                'sticky': False,
+            }
+        }
+
+    def action_enable_cron(self):
+        """Mengaktifkan ulang cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_wifi_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': True})
+            message = "Jadwal berhasil diaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    @api.depends('pmr_create_date')
+    def _compute_pmr_umur_product(self):
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                age_days = (today - create_date).days
+                rec.pmr_umur_product = age_days
+            else:
+                rec.pmr_umur_product = 0
+
+    @api.depends('pmr_create_date')
+    def _compute_pmr_umur_product_str(self):
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+            else:
+                rec.pmr_umur_product_str = "-"
+                rec.pmr_umur_product_str_year = "-"
     
     def generate_pc_laptop_sequence(self):
         for record in self:
@@ -648,10 +780,11 @@ class PmrItmsProductItRouter(models.Model):
     
     name = fields.Char(string="Personil IT", required=True, store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
-    pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
-    pmr_umur_product_str_year = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str_year", store=True)
+    pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
+    pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
+    pmr_umur_product_str_year = fields.Char(string="Product Age (Tahun)", compute="_compute_pmr_umur_product_str_year", store=True)
     pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
@@ -660,7 +793,7 @@ class PmrItmsProductItRouter(models.Model):
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category", store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
-    pmr_name_router = fields.Many2one('pmr.router',string="Nama Router", store=True)
+    pmr_name_router = fields.Many2one('pmr.itms.inventory.it',domain=[('category', '=', 'router')],string="Nama Router", store=True)
     pmr_hardware_router = fields.Char(string="Hardware Router", store=True)
     pmr_konektivitas_router = fields.Char(string="Konektivitas", store=True)
     pmr_fitur_tambahan_router = fields.Char(string="Fitur Tambahan Router", store=True)
@@ -674,41 +807,45 @@ class PmrItmsProductItRouter(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="router", tracking=True, store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
-
+        ('aktif', 'Aktif'),
+        ('non', 'Non Aktif'),
+    ], string="State", default="non", tracking=True, store=True)
     @api.onchange('pmr_name_router')
     def _onchange_pmr_name_router(self):
         if self.pmr_name_router:
-            self._set_router_fields()
-        else:
-            self.product_unit_category = False  
-            self.pmr_hardware_router = False  
-            self.pmr_konektivitas_router = False
-            self.pmr_fitur_tambahan_router = False
+            self.pmr_hardware_router = self.pmr_name_router.pmr_hardware_router
+            self.pmr_konektivitas_router = self.pmr_name_router.pmr_konektivitas_router
+            self.pmr_fitur_tambahan_router = self.pmr_name_router.pmr_fitur_tambahan_router
 
-    def _set_router_fields(self):
-        self.product_unit_category = self.pmr_name_router.product_unit_category 
-        self.pmr_hardware_router = self.pmr_name_router.pmr_hardware_router 
-        self.pmr_konektivitas_router = self.pmr_name_router.pmr_konektivitas_router
-        self.pmr_fitur_tambahan_router = self.pmr_name_router.pmr_fitur_tambahan_router
+    # @api.onchange('pmr_name_router')
+    # def _onchange_pmr_name_router(self):
+    #     if self.pmr_name_router:
+    #         self._set_router_fields()
+    #     else:
+    #         self.product_unit_category = False  
+    #         self.pmr_hardware_router = False  
+    #         self.pmr_konektivitas_router = False
+    #         self.pmr_fitur_tambahan_router = False
 
-    @api.model
-    def create(self, vals):
-        record = super(PmrItmsProductItRouter, self).create(vals)
-        if record.pmr_name_router:
-            record._set_router_fields()
-        return record
+    # def _set_router_fields(self):
+    #     self.product_unit_category = self.pmr_name_router.product_unit_category 
+    #     self.pmr_hardware_router = self.pmr_name_router.pmr_hardware_router 
+    #     self.pmr_konektivitas_router = self.pmr_name_router.pmr_konektivitas_router
+    #     self.pmr_fitur_tambahan_router = self.pmr_name_router.pmr_fitur_tambahan_router
 
-    def write(self, vals):
-        res = super(PmrItmsProductItRouter, self).write(vals)
-        if 'pmr_name_router' in vals:
-            for record in self:
-                if record.pmr_name_router:
-                    record._set_router_fields()
+    # @api.model
+    # def create(self, vals):
+    #     record = super(PmrItmsProductItRouter, self).create(vals)
+    #     if record.pmr_name_router:
+    #         record._set_router_fields()
+    #     return record
+
+    # def write(self, vals):
+    #     res = super(PmrItmsProductItRouter, self).write(vals)
+    #     if 'pmr_name_router' in vals:
+    #         for record in self:
+    #             if record.pmr_name_router:
+    #                 record._set_router_fields()
 
 
     @api.depends('pmr_create_date')
@@ -742,16 +879,116 @@ class PmrItmsProductItRouter(models.Model):
                 record.pmr_umur_product_str_year = f"{months} months"
             else:
                 record.pmr_umur_product_str_year = "0 days"
+    def action_router(self):
+        for record in self:
+            self.env['pmr.itms.inventory.movement'].create({
+                'name_product': record.pmr_name_router.display_name if record.pmr_name_router else record.name,
+                'pmr_itms_departement': record.pmr_itms_departement.id,
+                'pmr_itms_user': record.pmr_itms_user.id,
+                'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
+                'product_unit_category': record.product_unit_category.id,
+                'product_location_unit': record.pmr_name_router.product_location_unit.id,
+            })
+            record.state = 'aktif'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Sukses',
+                'message': 'Data berhasil dikirim',
+                'sticky': False,
+            }
+        }
     
-    def action_reject(self):
-        self.state= 'reject'
+    @api.model
+    def _cron_update_product_router_age(self):
+        records = self.search([])
+        for rec in records:
+            if rec.pmr_create_date:
+                today = date.today()
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+                days = (today - create_date).days
 
-    def action_repair(self):
-        self.state = 'repair'
+                rec.pmr_umur_product = days
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
 
-    def action_good(self):
-        self.state= 'good'
-    
+    def action_run_cron_manual(self):
+        """Menjalankan cron secara manual"""
+        self.env['pmr.itms.product.it.router']._cron_update_product_router_age()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Berhasil',
+                'message': 'Jadwal diaktifkan.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def action_disable_cron(self):
+        """Menonaktifkan cron dari ir.cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_router_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': False})
+            message = "Jadwal berhasil dinonaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'warning',
+                'sticky': False,
+            }
+        }
+
+    def action_enable_cron(self):
+        """Mengaktifkan ulang cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_router_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': True})
+            message = "Jadwal berhasil diaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+    @api.depends('pmr_create_date')
+    def _compute_pmr_umur_product(self):
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                age_days = (today - create_date).days
+                rec.pmr_umur_product = age_days
+            else:
+                rec.pmr_umur_product = 0
+
+    @api.depends('pmr_create_date')
+    def _compute_pmr_umur_product_str(self):
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+            else:
+                rec.pmr_umur_product_str = "-"
+                rec.pmr_umur_product_str_year = "-"
     def generate_pc_laptop_sequence(self):
         for record in self:
             if record.product_type == 'router':
@@ -792,6 +1029,7 @@ class PmrItmsProductItPrinter(models.Model):
     
     name = fields.Char(string="Personil IT", required=True, store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', string="Barcode")
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
@@ -804,7 +1042,7 @@ class PmrItmsProductItPrinter(models.Model):
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category", store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
-    pmr_name_printer = fields.Many2one('pmr.printer',string="Nama Printer", store=True)
+    pmr_name_printer = fields.Many2one('pmr.itms.inventory.it',string="Nama Printer", domain=[('category', '=', 'printer')], store=True)
     pmr_jenis_printer = fields.Char(string="Jenis Printer", store=True)
     pmr_kecepatan_cetak = fields.Char(string="Kecepatan Cetak", store=True)
     pmr_konektivitas_printer = fields.Char(string="Konektivitas", store=True)
@@ -821,75 +1059,19 @@ class PmrItmsProductItPrinter(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="printer", tracking=True, store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
-
-    # @api.onchange('pmr_itms_departement', 'pmr_itms_user')
-    # def _onchange_name_autofill(self):
-    #     if self.pmr_itms_departement and self.pmr_itms_user:
-    #         self.name = f"{self.pmr_itms_departement.name}-{self.pmr_itms_user.name}"
+        ('non', 'Non Aktif'),
+        ('aktif', 'Aktif'),
+    ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_name_printer')
     def _onchange_pmr_name_printer(self):
         if self.pmr_name_printer:
-            self._set_printer_fields()
-        else:
-            self.product_unit_category = False
-            self.pmr_jenis_printer = False
-            self.pmr_kecepatan_cetak = False
-            self.pmr_konektivitas_printer = False
-            self.pmr_ukuran_kertas = False
-            self.pmr_fitur_tambahan = False
-            self.pmr_ip_printer = False
-            
-    def _set_printer_fields(self):
-        self.product_unit_category = self.pmr_name_printer.product_unit_category 
-        self.pmr_jenis_printer = self.pmr_name_printer.pmr_jenis_printer 
-        self.pmr_kecepatan_cetak = self.pmr_name_printer.pmr_kecepatan_cetak
-        self.pmr_konektivitas_printer = self.pmr_name_printer.pmr_konektivitas_printer
-        self.pmr_ukuran_kertas = self.pmr_name_printer.pmr_ukuran_kertas
-        self.pmr_fitur_tambahan = self.pmr_name_printer.pmr_fitur_tambahan
-        self.pmr_ip_printer = self.pmr_name_printer.pmr_ip_printer
+            self.pmr_jenis_printer = self.pmr_name_printer.pmr_jenis_printer
+            self.pmr_kecepatan_cetak = self.pmr_name_printer.pmr_kecepatan_cetak
+            self.pmr_konektivitas_printer = self.pmr_name_printer.pmr_konektivitas_printer
+            self.pmr_ukuran_kertas = self.pmr_name_printer.pmr_ukuran_kertas
+            self.pmr_fitur_tambahan = self.pmr_name_printer.pmr_fitur_tambahan
 
-    @api.model
-    def create(self, vals):
-        # if vals.get('pmr_itms_departement') and vals.get('pmr_itms_user'):
-        #     dept = self.env['hr.department'].browse(vals['pmr_itms_departement'])
-        #     user = self.env['pmr.itms.user'].browse(vals['pmr_itms_user'])
-        #     vals['name'] = f"{dept.name}-{user.name}"
-
-        record = super(PmrItmsProductItPrinter, self).create(vals)
-
-        if record.pmr_name_printer:
-            record._set_printer_fields()
-
-        return record
-
-    def write(self, vals):
-        # for rec in self:
-        #     dept = rec.pmr_itms_departement
-        #     user = rec.pmr_itms_user
-
-        #     if 'pmr_itms_departement' in vals:
-        #         dept = self.env['hr.department'].browse(vals['pmr_itms_departement'])
-        #     if 'pmr_itms_user' in vals:
-        #         user = self.env['pmr.itms.user'].browse(vals['pmr_itms_user'])
-
-        #     if dept and user:
-        #         vals['name'] = f"{dept.name}-{user.name}"
-
-        res = super(PmrItmsProductItPrinter, self).write(vals)
-
-        if 'pmr_name_printer' in vals:
-            for record in self:
-                if record.pmr_name_printer:
-                    record._set_printer_fields()
-
-        return res
-    
     @api.model
     def _cron_update_product_age(self):
         records = self.search([])
@@ -928,15 +1110,79 @@ class PmrItmsProductItPrinter(models.Model):
             else:
                 rec.pmr_umur_product_str = "-"
                 rec.pmr_umur_product_str_year = "-"
+
+    def action_run_cron_manual(self):
+        """Menjalankan cron secara manual"""
+        self.env['pmr.itms.product.it.printer']._cron_update_product_age()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Berhasil',
+                'message': 'Jadwal diaktifkan.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def action_disable_cron(self):
+        """Menonaktifkan cron dari ir.cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': False})
+            message = "Cron berhasil dinonaktifkan."
+        else:
+            message = "Cron tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'warning',
+                'sticky': False,
+            }
+        }
+
+    def action_enable_cron(self):
+        """Mengaktifkan ulang cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': True})
+            message = "Cron berhasil diaktifkan."
+        else:
+            message = "Cron tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            }
+        }
     
-    def action_reject(self):
-        self.state= 'reject'
-
-    def action_repair(self):
-        self.state = 'repair'
-
-    def action_good(self):
-        self.state= 'good'
+    def action_not(self):
+        for record in self:
+            self.env['pmr.itms.inventory.movement'].create({
+                'name_product': record.pmr_name_printer.display_name if record.pmr_name_printer else record.name,
+                'pmr_itms_departement': record.pmr_itms_departement.id,
+                'pmr_itms_user': record.pmr_itms_user.id,
+                'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
+                'product_unit_category': record.product_unit_category.id,
+                'product_location_unit': record.pmr_name_printer.product_location_unit.id,
+            })
+            record.state = 'aktif'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Sukses',
+                'message': 'Data berhasil dikirim ke Inventory Movement',
+                'sticky': False,
+            }
+        }
     
     def generate_pc_laptop_sequence(self):
         for record in self:
@@ -978,14 +1224,15 @@ class PmrItmsProductIt(models.Model):
     
     name = fields.Char(string="Personil IT", required=True, store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
-    pmr_umur_product_str = fields.Char(string="Product Age (Days)", compute="_compute_pmr_umur_product_str", store=True)
-    pmr_umur_product_str_year = fields.Char(string="Product Age (Years)", compute="_compute_pmr_umur_product_str_year", store=True)
+    pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
+    pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
+    pmr_umur_product_str_year = fields.Char(string="Product Age (Tahun)", compute="_compute_pmr_umur_product_str_year", store=True)
     pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_origin_po = fields.Char(string="PO Number")
-    pmr_name_pc_laptop = fields.Many2one('pmr.pc',string="Name PC/Laptop")
+    pmr_name_pc_laptop = fields.Many2one('pmr.itms.inventory.it',string="Nama CPU/Laptop", domain=[('category', '=', 'pc')], store=True)
     pmr_office_location = fields.Char(string="Location")
     pmr_ip_address = fields.Char(string="IP Adress")
     pmr_quantity_product_it = fields.Float(string="Quantity",required=True, default=1)
@@ -995,69 +1242,70 @@ class PmrItmsProductIt(models.Model):
     product_category = fields.Many2one('pmr.product.category', string="Category", store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
     pmr_processor = fields.Char(string="Processor", store=True)
+    pmr_mainboard = fields.Char(string="Motherboard", store=True)
     pmr_processor_adjustment = fields.Boolean(string="Adjustment Processor")
     pmr_processor_bool_replacement = fields.Boolean(string="Replacement Processor")
-    pmr_processor_replacement = fields.Many2one('pmr.processor', string="Processor Replacement", store=True)
+    pmr_processor_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Processor", domain=[('category', '=', 'processor')], store=True)
     pmr_processor_bool_upgrade = fields.Boolean(string="Upgrade Processor")
-    pmr_processor_upgrade = fields.Many2one('pmr.processor', string="Processor Upgrade", store=True)
+    pmr_processor_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Processor", domain=[('category', '=', 'processor')], store=True)
     pmr_mainboard = fields.Char(string="Motherboard", store=True)
     pmr_mainboard_adjustment = fields.Boolean(string="Adjustment Mainboard")
     pmr_mainboard_bool_replacement = fields.Boolean(string="Replacement Motherboard")
-    pmr_mainboard_replacement = fields.Many2one('pmr.mainboard', string="Motherboard Replacement", store=True)
+    pmr_mainboard_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Motherboard", domain=[('category', '=', 'motherboard')], store=True)
     pmr_mainboard_bool_upgrade = fields.Boolean(string="Upgrade Motherboard")
-    pmr_mainboard_upgrade = fields.Many2one('pmr.mainboard', string="Motherboard Upgrade", store=True)
+    pmr_mainboard_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Motherboard", domain=[('category', '=', 'motherboard')], store=True)
     pmr_hardisk_1 = fields.Char(string="Hardisk 1", store=True)
     pmr_hardisk_1_adjustment = fields.Boolean(string="Adjustment Hardisk 1")
     pmr_hardisk_bool_replacement_1 = fields.Boolean(string="Replacement Hardisk 1")
-    pmr_hardisk_1_replacement = fields.Many2one('pmr.hardisk', string="Hardisk 1 Replacement", store=True)
+    pmr_hardisk_1_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Replacment", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_bool_upgrade_1 = fields.Boolean(string="Upgrade Hardisk 1")
-    pmr_hardisk_1_upgrade = fields.Many2one('pmr.hardisk', string="Hardisk 1 Upgrade", store=True)
+    pmr_hardisk_1_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Upgrade", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_2 = fields.Char(string="Hardisk 2", store=True)
     pmr_hardisk_2_adjustment = fields.Boolean(string="Adjustment Hardisk 2")
     pmr_hardisk_bool_replacement_2 = fields.Boolean(string="Replacement Hardisk 2")
-    pmr_hardisk_2_replacement = fields.Many2one('pmr.hardisk', string="Hardisk 2 Replacement", store=True)
+    pmr_hardisk_2_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Replacment", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_bool_upgrade_2 = fields.Boolean(string="Upgrade Hardisk 2")
-    pmr_hardisk_2_upgrade = fields.Many2one('pmr.hardisk', string="Hardisk 2 Upgrade", store=True)
+    pmr_hardisk_2_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Upgrade", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_3 = fields.Char(string="Hardisk 3", store=True)
     pmr_hardisk_3_adjustment = fields.Boolean(string="Adjustment Hardisk 3")
     pmr_hardisk_bool_replacement_3 = fields.Boolean(string="Replacement Hardisk 3")
-    pmr_hardisk_3_replacement = fields.Many2one('pmr.hardisk', string="Hardisk 3 Replacement", store=True)
+    pmr_hardisk_3_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Replacment", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_bool_upgrade_3 = fields.Boolean(string="Upgrade Hardisk 3")
-    pmr_hardisk_3_upgrade = fields.Many2one('pmr.hardisk', string="Hardisk 3 Upgrade", store=True)
+    pmr_hardisk_3_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Upgrade", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_4 = fields.Char(string="Hardisk 4", store=True)
     pmr_hardisk_4_adjustment = fields.Boolean(string="Adjustment Hardisk 4")
     pmr_hardisk_bool_replacement_4 = fields.Boolean(string="Replacement Hardisk 4")
-    pmr_hardisk_4_replacement = fields.Many2one('pmr.hardisk', string="Hardisk 4 Replacement", store=True)
+    pmr_hardisk_4_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Replacment", domain=[('category', '=', 'hardisk')], store=True)
     pmr_hardisk_bool_upgrade_4 = fields.Boolean(string="Upgrade Hardisk 4")
-    pmr_hardisk_4_upgrade = fields.Many2one('pmr.hardisk', string="Hardisk 4 Upgrade", store=True)
+    pmr_hardisk_4_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Hardisk Upgrade", domain=[('category', '=', 'hardisk')], store=True)
     pmr_ram_1 = fields.Char(string="RAM 1", store=True)
     pmr_ram_1_adjustment = fields.Boolean(string="Adjustment RAM 1")
     pmr_ram_bool_replacement_1 = fields.Boolean(string="Replacement RAM 1")
-    pmr_ram_1_replacement = fields.Many2one('pmr.ram', string="RAM 1 Replacement", store=True)
+    pmr_ram_1_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 1 Replacment", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_bool_upgrade_1 = fields.Boolean(string="Upgrade RAM 1")
-    pmr_ram_1_upgrade = fields.Many2one('pmr.ram', string="RAM 1 Upgrade", store=True)
+    pmr_ram_1_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 1 Upgrade", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_2 = fields.Char(string="RAM 2", store=True)
     pmr_ram_2_adjustment = fields.Boolean(string="Adjustment RAM 2")
     pmr_ram_bool_replacement_2 = fields.Boolean(string="Replacement RAM 2")
-    pmr_ram_2_replacement = fields.Many2one('pmr.ram', string="RAM 2 Replacement", store=True)
+    pmr_ram_2_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 2 Replacment", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_bool_upgrade_2 = fields.Boolean(string="Upgrade RAM 2")
-    pmr_ram_2_upgrade = fields.Many2one('pmr.ram', string="RAM 2 Upgrade", store=True)
+    pmr_ram_2_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 2 Upgrade", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_3 = fields.Char(string="RAM 3", store=True)
     pmr_ram_3_adjustment = fields.Boolean(string="Adjustment RAM 3")
     pmr_ram_bool_replacement_3 = fields.Boolean(string="Replacement RAM 3")
-    pmr_ram_3_replacement = fields.Many2one('pmr.ram', string="RAM 3 Replacement", store=True)
+    pmr_ram_3_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 3 Replacment", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_bool_upgrade_3 = fields.Boolean(string="Upgrade RAM 3")
-    pmr_ram_3_upgrade = fields.Many2one('pmr.ram', string="RAM 3 Upgrade", store=True)
+    pmr_ram_3_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 3 Upgrade", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_4 = fields.Char(string="RAM 4", store=True)
     pmr_ram_4_adjustment = fields.Boolean(string="Adjustment RAM 4")
     pmr_ram_bool_replacement_4 = fields.Boolean(string="Replacement RAM 4")
-    pmr_ram_4_replacement = fields.Many2one('pmr.ram', string="RAM 4 Replacement", store=True)
+    pmr_ram_4_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 4 Replacment", domain=[('category', '=', 'ram')], store=True)
     pmr_ram_bool_upgrade_4 = fields.Boolean(string="Upgrade RAM 4")
-    pmr_ram_4_upgrade = fields.Many2one('pmr.ram', string="RAM 4 Upgrade", store=True)
+    pmr_ram_4_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama RAM 4 Upgrade", domain=[('category', '=', 'ram')], store=True)
     pmr_vga_1 = fields.Char(string="VGA 1", store=True)
     pmr_vga_1_adjustment = fields.Boolean(string="Adjustment VGA 1")
     pmr_vga_bool_replacement_1 = fields.Boolean(string="Replacement VGA 1")
-    pmr_vga_1_replacement = fields.Many2one('pmr.vga', string="VGA 1 Replacement", store=True)
+    pmr_vga_1_replacement = fields.Many2one('pmr.vga', string="VGA 1 Replacment", store=True)
     pmr_vga_bool_upgrade_1 = fields.Boolean(string="Upgrade VGA 1")
     pmr_vga_1_upgrade = fields.Many2one('pmr.vga', string="VGA 1 Upgrade", store=True)
     pmr_vga_2 = fields.Char(string="VGA 2", store=True)
@@ -1074,35 +1322,35 @@ class PmrItmsProductIt(models.Model):
     pmr_casing = fields.Char(string="Casing", store=True)
     pmr_casing_adjustment = fields.Boolean(string="Adjustment Casing")
     pmr_casing_bool_replacement = fields.Boolean(string="Replacement casing")
-    pmr_casing_replacement = fields.Many2one('pmr.casing', string="Casing Replacement", store=True)
+    pmr_casing_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Casing Replacment", domain=[('category', '=', 'casing')], store=True)
     pmr_casing_bool_upgrade = fields.Boolean(string="Upgrade Casing")
-    pmr_casing_upgrade = fields.Many2one('pmr.casing', string="Casing Upgrade", store=True)
+    pmr_casing_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Casing Upgrade", domain=[('category', '=', 'casing')], store=True)
     pmr_power_supply = fields.Char(string="Power Supply", store=True)
     pmr_power_supply_adjustment = fields.Boolean(string="Adjustment Power Supply")
     pmr_power_supply_bool_replacement = fields.Boolean(string="Replacement Power Supply")
-    pmr_power_supply_replacement = fields.Many2one('pmr.power.supply', string="Power Supply Replacement", store=True)
+    pmr_power_supply_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Power Supply replacment", domain=[('category', '=', 'power_supply')], store=True)
     pmr_power_supply_bool_upgrade = fields.Boolean(string="Upgrade Power Supply")
-    pmr_power_supply_upgrade = fields.Many2one('pmr.power.supply', string="Power Supply Upgrade", store=True)
+    pmr_power_supply_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Power Supply Upgrade", domain=[('category', '=', 'power_supply')], store=True)
     pmr_keyboard = fields.Char(string="Keyboard", store=True)
     pmr_keyboard_adjustment = fields.Boolean(string="Adjustment Keyboard")
     pmr_keyboard_bool_replacement = fields.Boolean(string="Replacement Keyboard")
-    pmr_keyboard_replacement = fields.Many2one('pmr.keyboard', string="Keyboard Replacement", store=True)
+    pmr_keyboard_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Keyboard replacment", domain=[('category', '=', 'keyboard')], store=True)
     pmr_keyboard_bool_upgrade = fields.Boolean(string="Upgrade Keyboard")
-    pmr_keyboard_upgrade = fields.Many2one('pmr.keyboard', string="Keyboard Upgrade", store=True)
+    pmr_keyboard_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Keyboard Upgrade", domain=[('category', '=', 'keyboard')], store=True)
     pmr_mouse = fields.Char(string="Mouse", store=True)
     pmr_mouse_adjustment = fields.Boolean(string="Adjustment Mouse")
     pmr_mouse_bool_replacement = fields.Boolean(string="Replacement Mouse")
-    pmr_mouse_replacement = fields.Many2one('pmr.mouse', string="Mouse Replacement", store=True)
+    pmr_mouse_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Mouse replacment", domain=[('category', '=', 'mouse')], store=True)
     pmr_mouse_bool_upgrade = fields.Boolean(string="Upgrade Mouse")
-    pmr_mouse_upgrade = fields.Many2one('pmr.mouse', string="Mouse Upgrade", store=True)
+    pmr_mouse_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Mouse Upgrade", domain=[('category', '=', 'mouse')], store=True)
     pmr_monitor = fields.Char(string="Monitor", store=True)
     pmr_monitor_adjustment = fields.Boolean(string="Adjustment Monitor")
     pmr_monitor_bool_replacement = fields.Boolean(string="Replacement Monitor")
-    pmr_monitor_replacement = fields.Many2one('pmr.monitor', string="Monitor Replacement", store=True)
+    pmr_monitor_replacement = fields.Many2one('pmr.itms.inventory.it',string="Nama Monitor Replacment", domain=[('category', '=', 'monitor')], store=True)
     pmr_monitor_bool_upgrade = fields.Boolean(string="Upgrade Monitor")
-    pmr_monitor_upgrade = fields.Many2one('pmr.monitor', string="Monitor Upgrade", store=True)
+    pmr_monitor_upgrade = fields.Many2one('pmr.itms.inventory.it',string="Nama Monitor Upgrade", domain=[('category', '=', 'monitor')], store=True)
     pmr_ups = fields.Many2one('pmr.ups', string="UPS", store=True)
-    pmr_printer = fields.Many2one('pmr.printer',string="Printer", store=True)
+    pmr_printer = fields.Many2one('pmr.itms.inventory.it',string="Nama Printer", domain=[('category', '=', 'printer')], store=True)
     pmr_operating_system = fields.Many2one('pmr.os', string="Operating System", store=True)
     pmr_sn_operating_system = fields.Char(string="SN Operating System", store=True)
     pmr_office = fields.Many2one('pmr.office', string="Office", store=True)
@@ -1114,11 +1362,9 @@ class PmrItmsProductIt(models.Model):
         ('laptop', 'Laptop'),
     ], string="Device Type", tracking=True, store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('aktif', 'Aktif'),
+        ('non', 'Non Aktif'),
+    ], string="State", default="non", tracking=True, store=True)
     pmr_program_lain = fields.Many2many('pmr.software.lain',string="Software Lain")
     pmr_vga_type_1 = fields.Char(string="Type", store=True)
     pmr_vga_type_2 = fields.Char(string="Type", store=True)
@@ -1138,99 +1384,233 @@ class PmrItmsProductIt(models.Model):
     pmr_io_interface = fields.Char(string="I/O Interface", default="I/O Interface")
     pmr_log_notes = fields.Text(string="Log Notes")
 
+    # @api.model
+    # def create(self, vals):
+    #     if vals.get('pmr_name_pc_laptop'):
+    #         pc_laptop = self.env['pmr.itms.product.it'].browse(vals['pmr_name_pc_laptop'])
+    #         vals.update({
+    #             'pmr_processor': pc_laptop.pmr_processor,
+    #             'pmr_mainboard': pc_laptop.pmr_mainboard,
+    #             'pmr_power_supply': pc_laptop.pmr_power_supply,
+    #             'pmr_mouse': pc_laptop.pmr_mouse,
+    #             'pmr_casing': pc_laptop.pmr_casing,
+    #             'pmr_keyboard': pc_laptop.pmr_keyboard,
+    #             'pmr_monitor': pc_laptop.pmr_monitor,
+    #             'pmr_lan_card': pc_laptop.pmr_lan_card,
+    #             'pmr_lan_card_type': pc_laptop.pmr_lan_card_type,
+    #             'pmr_fdd': pc_laptop.pmr_fdd,
+    #             'pmr_dvd_room_boolean': pc_laptop.pmr_dvd_room_boolean,
+    #             'pmr_hdmi_boolean': pc_laptop.pmr_hdmi_boolean,
+    #             'pmr_ups_boolean': pc_laptop.pmr_ups_boolean,
+    #             'pmr_usb_2_0_port': pc_laptop.pmr_usb_2_0_port,
+    #             'pmr_usb_3_0_port': pc_laptop.pmr_usb_3_0_port,
+    #             'pmr_vga_port': pc_laptop.pmr_vga_port,
+    #             'pmr_hdmi_port': pc_laptop.pmr_hdmi_port,
+    #             'pmr_display_port': pc_laptop.pmr_display_port,
+    #             'pmr_rj45_port': pc_laptop.pmr_rj45_port,
+    #             'pmr_3_in_1_audio_port': pc_laptop.pmr_3_in_1_audio_port,
+    #             'pmr_ram_1': pc_laptop.pmr_ram_1,
+    #             'pmr_ram_2': pc_laptop.pmr_ram_2,
+    #             'pmr_ram_3': pc_laptop.pmr_ram_3,
+    #             'pmr_ram_4': pc_laptop.pmr_ram_4,
+    #             'pmr_hardisk_1': pc_laptop.pmr_hardisk_1,
+    #             'pmr_hardisk_2': pc_laptop.pmr_hardisk_2,
+    #             'pmr_hardisk_3': pc_laptop.pmr_hardisk_3,
+    #             'pmr_hardisk_4': pc_laptop.pmr_hardisk_4,
+    #             'pmr_vga_1': pc_laptop.pmr_vga_1,
+    #             'pmr_vga_2': pc_laptop.pmr_vga_2,
+    #             'pmr_vga_type_1': pc_laptop.pmr_vga_type_1,
+    #             'pmr_vga_type_2': pc_laptop.pmr_vga_type_2,
+    #         })
+    #     return super(PmrItmsProductIt, self).create(vals)
+
+    # def write(self, vals):
+    #     if vals.get('pmr_name_pc_laptop'):
+    #         pc_laptop = self.env['pmr.itms.product.it'].browse(vals['pmr_name_pc_laptop'])
+    #         vals.update({
+    #             'pmr_processor': pc_laptop.pmr_processor,
+    #             'pmr_mainboard': pc_laptop.pmr_mainboard,
+    #             'pmr_power_supply': pc_laptop.pmr_power_supply,
+    #             'pmr_mouse': pc_laptop.pmr_mouse,
+    #             'pmr_casing': pc_laptop.pmr_casing,
+    #             'pmr_keyboard': pc_laptop.pmr_keyboard,
+    #             'pmr_monitor': pc_laptop.pmr_monitor,
+    #             'pmr_lan_card': pc_laptop.pmr_lan_card,
+    #             'pmr_lan_card_type': pc_laptop.pmr_lan_card_type,
+    #             'pmr_fdd': pc_laptop.pmr_fdd,
+    #             'pmr_dvd_room_boolean': pc_laptop.pmr_dvd_room_boolean,
+    #             'pmr_hdmi_boolean': pc_laptop.pmr_hdmi_boolean,
+    #             'pmr_ups_boolean': pc_laptop.pmr_ups_boolean,
+    #             'pmr_usb_2_0_port': pc_laptop.pmr_usb_2_0_port,
+    #             'pmr_usb_3_0_port': pc_laptop.pmr_usb_3_0_port,
+    #             'pmr_vga_port': pc_laptop.pmr_vga_port,
+    #             'pmr_hdmi_port': pc_laptop.pmr_hdmi_port,
+    #             'pmr_display_port': pc_laptop.pmr_display_port,
+    #             'pmr_rj45_port': pc_laptop.pmr_rj45_port,
+    #             'pmr_3_in_1_audio_port': pc_laptop.pmr_3_in_1_audio_port,
+    #             'pmr_ram_1': pc_laptop.pmr_ram_1,
+    #             'pmr_ram_2': pc_laptop.pmr_ram_2,
+    #             'pmr_ram_3': pc_laptop.pmr_ram_3,
+    #             'pmr_ram_4': pc_laptop.pmr_ram_4,
+    #             'pmr_hardisk_1': pc_laptop.pmr_hardisk_1,
+    #             'pmr_hardisk_2': pc_laptop.pmr_hardisk_2,
+    #             'pmr_hardisk_3': pc_laptop.pmr_hardisk_3,
+    #             'pmr_hardisk_4': pc_laptop.pmr_hardisk_4,
+    #             'pmr_vga_1': pc_laptop.pmr_vga_1,
+    #             'pmr_vga_2': pc_laptop.pmr_vga_2,
+    #             'pmr_vga_type_1': pc_laptop.pmr_vga_type_1,
+    #             'pmr_vga_type_2': pc_laptop.pmr_vga_type_2,
+    #         })
+    #     return super(PmrItmsProductIt, self).write(vals)
+    
     @api.onchange('pmr_name_pc_laptop')
     def _onchange_pmr_name_pc_laptop(self):
         if self.pmr_name_pc_laptop:
-            self._set_pc_laptop_fields()
-        else:
-            self.product_unit_category = False  
-            self.pmr_processor = False  
-            self.pmr_mainboard = False  
-            self.pmr_power_supply = False  
-            self.pmr_mouse = False  
-            self.pmr_casing = False  
-            self.pmr_keyboard = False  
-            self.pmr_monitor = False  
-            self.pmr_lan_card = False  
-            self.pmr_lan_card_type = False  
-            self.pmr_fdd = False  
-            self.pmr_dvd_room_boolean = False  
-            self.pmr_hdmi_boolean = False  
-            self.pmr_ups_boolean = False  
-            self.pmr_usb_2_0_port = False  
-            self.pmr_usb_3_0_port = False  
-            self.pmr_vga_port = False  
-            self.pmr_hdmi_port = False  
-            self.pmr_display_port = False
-            self.pmr_rj45_port = False
-            self.pmr_3_in_1_audio_port = False
-            self.pmr_ram_1 = False
-            self.pmr_ram_2 = False
-            self.pmr_ram_3 = False
-            self.pmr_ram_4 = False
-            self.pmr_hardisk_1 = False
-            self.pmr_hardisk_2 = False
-            self.pmr_hardisk_3 = False
-            self.pmr_hardisk_4 = False
-            self.pmr_vga_1 = False
-            self.pmr_vga_2 = False
-            self.pmr_vga_type_1 = False
-            self.pmr_vga_type_2 = False
+            self.pmr_processor = self.pmr_name_pc_laptop.pmr_processor
+            self.pmr_mainboard = self.pmr_name_pc_laptop.pmr_mainboard
+            self.pmr_power_supply = self.pmr_name_pc_laptop.pmr_power_supply
+            self.pmr_mouse = self.pmr_name_pc_laptop.pmr_mouse
+            self.pmr_casing = self.pmr_name_pc_laptop.pmr_casing
+            self.pmr_keyboard = self.pmr_name_pc_laptop.pmr_keyboard
+            self.pmr_monitor = self.pmr_name_pc_laptop.pmr_monitor
+            self.pmr_lan_card = self.pmr_name_pc_laptop.pmr_lan_card
+            self.pmr_lan_card_type = self.pmr_name_pc_laptop.pmr_lan_card_type
+            self.pmr_fdd = self.pmr_name_pc_laptop.pmr_fdd
+            self.pmr_dvd_room_boolean = self.pmr_name_pc_laptop.pmr_dvd_room_boolean
+            self.pmr_hdmi_boolean = self.pmr_name_pc_laptop.pmr_hdmi_boolean
+            self.pmr_ups_boolean = self.pmr_name_pc_laptop.pmr_ups_boolean
+            self.pmr_usb_2_0_port = self.pmr_name_pc_laptop.pmr_usb_2_0_port
+            self.pmr_usb_3_0_port = self.pmr_name_pc_laptop.pmr_usb_3_0_port
+            self.pmr_vga_port = self.pmr_name_pc_laptop.pmr_vga_port
+            self.pmr_hdmi_port = self.pmr_name_pc_laptop.pmr_hdmi_port
+            self.pmr_display_port = self.pmr_name_pc_laptop.pmr_display_port
+            self.pmr_rj45_port = self.pmr_name_pc_laptop.pmr_rj45_port
+            self.pmr_3_in_1_audio_port = self.pmr_name_pc_laptop.pmr_3_in_1_audio_port
+            self.pmr_ram_1 = self.pmr_name_pc_laptop.pmr_ram_1
+            self.pmr_ram_2 = self.pmr_name_pc_laptop.pmr_ram_2
+            self.pmr_ram_3 = self.pmr_name_pc_laptop.pmr_ram_3
+            self.pmr_ram_4 = self.pmr_name_pc_laptop.pmr_ram_4
+            self.pmr_hardisk_1 = self.pmr_name_pc_laptop.pmr_hardisk_1
+            self.pmr_hardisk_2 = self.pmr_name_pc_laptop.pmr_hardisk_2
+            self.pmr_hardisk_3 = self.pmr_name_pc_laptop.pmr_hardisk_3
+            self.pmr_hardisk_4 = self.pmr_name_pc_laptop.pmr_hardisk_4
+            self.pmr_vga_1 = self.pmr_name_pc_laptop.pmr_vga_1
+            self.pmr_vga_2 = self.pmr_name_pc_laptop.pmr_vga_2
+            self.pmr_vga_type_1 = self.pmr_name_pc_laptop.pmr_vga_type_1
+            self.pmr_vga_type_2 = self.pmr_name_pc_laptop.pmr_vga_type_2
 
-    def _set_pc_laptop_fields(self):
-        self.product_unit_category = self.pmr_name_pc_laptop.product_unit_category 
-        self.pmr_processor = self.pmr_name_pc_laptop.pmr_processor.name if self.pmr_name_pc_laptop.pmr_processor else ''
-        self.pmr_mainboard = self.pmr_name_pc_laptop.pmr_mainboard.name if self.pmr_name_pc_laptop.pmr_mainboard else ''
-        self.pmr_power_supply = self.pmr_name_pc_laptop.pmr_power_supply.name if self.pmr_name_pc_laptop.pmr_power_supply else ''
-        self.pmr_mouse = self.pmr_name_pc_laptop.pmr_mouse.name if self.pmr_name_pc_laptop.pmr_mouse else ''
-        self.pmr_casing = self.pmr_name_pc_laptop.pmr_casing.name if self.pmr_name_pc_laptop.pmr_casing else ''
-        self.pmr_keyboard = self.pmr_name_pc_laptop.pmr_keyboard.name if self.pmr_name_pc_laptop.pmr_keyboard else ''
-        self.pmr_monitor = self.pmr_name_pc_laptop.pmr_monitor.name if self.pmr_name_pc_laptop.pmr_monitor else ''
-        self.pmr_lan_card = self.pmr_name_pc_laptop.pmr_lan_card.name if self.pmr_name_pc_laptop.pmr_lan_card else ''
-        self.pmr_lan_card_type = self.pmr_name_pc_laptop.pmr_lan_card_type
-        self.pmr_fdd = self.pmr_name_pc_laptop.pmr_fdd.name if self.pmr_name_pc_laptop.pmr_fdd else ''
-        self.pmr_ram_1 = self.pmr_name_pc_laptop.pmr_ram_1.name if self.pmr_name_pc_laptop.pmr_ram_1 else ''
-        self.pmr_ram_2 = self.pmr_name_pc_laptop.pmr_ram_2.name if self.pmr_name_pc_laptop.pmr_ram_2 else ''
-        self.pmr_ram_3 = self.pmr_name_pc_laptop.pmr_ram_3.name if self.pmr_name_pc_laptop.pmr_ram_3 else ''
-        self.pmr_ram_4 = self.pmr_name_pc_laptop.pmr_ram_4.name if self.pmr_name_pc_laptop.pmr_ram_4 else ''
-        self.pmr_hardisk_1 = self.pmr_name_pc_laptop.pmr_hardisk_1.name if self.pmr_name_pc_laptop.pmr_hardisk_1 else ''
-        self.pmr_hardisk_2 = self.pmr_name_pc_laptop.pmr_hardisk_2.name if self.pmr_name_pc_laptop.pmr_hardisk_2 else ''
-        self.pmr_hardisk_3 = self.pmr_name_pc_laptop.pmr_hardisk_3.name if self.pmr_name_pc_laptop.pmr_hardisk_3 else ''
-        self.pmr_hardisk_4 = self.pmr_name_pc_laptop.pmr_hardisk_4.name if self.pmr_name_pc_laptop.pmr_hardisk_4 else ''
-        self.pmr_vga_1 = self.pmr_name_pc_laptop.pmr_vga_1.name if self.pmr_name_pc_laptop.pmr_vga_1 else ''
-        self.pmr_vga_2 = self.pmr_name_pc_laptop.pmr_vga_2.name if self.pmr_name_pc_laptop.pmr_vga_2 else ''
-        self.pmr_vga_type_1 = self.pmr_name_pc_laptop.pmr_vga_type_1
-        self.pmr_vga_type_2 = self.pmr_name_pc_laptop.pmr_vga_type_2
-        self.pmr_dvd_room_boolean = self.pmr_name_pc_laptop.pmr_dvd_room_boolean
-        self.pmr_hdmi_boolean = self.pmr_name_pc_laptop.pmr_hdmi_boolean
-        self.pmr_ups_boolean = self.pmr_name_pc_laptop.pmr_hdmi_boolean
-        self.pmr_usb_2_0_port = self.pmr_name_pc_laptop.pmr_usb_2_0_port
-        self.pmr_usb_3_0_port = self.pmr_name_pc_laptop.pmr_usb_3_0_port
-        self.pmr_vga_port = self.pmr_name_pc_laptop.pmr_vga_port
-        self.pmr_hdmi_port = self.pmr_name_pc_laptop.pmr_hdmi_port
-        self.pmr_display_port = self.pmr_name_pc_laptop.pmr_display_port
-        self.pmr_rj45_port = self.pmr_name_pc_laptop.pmr_rj45_port
-        self.pmr_3_in_1_audio_port = self.pmr_name_pc_laptop.pmr_rj45_port
+    # @api.onchange('pmr_name_pc_laptop')
+    # def _onchange_pmr_name_pc_laptop(self):
+    #     if self.pmr_name_pc_laptop:
+    #         self._set_pc_laptop_fields()
+    #     else:
+    #         self.product_unit_category = False  
+    #         self.pmr_processor = False  
+    #         self.pmr_mainboard = False  
+    #         self.pmr_power_supply = False  
+    #         self.pmr_mouse = False  
+    #         self.pmr_casing = False  
+    #         self.pmr_keyboard = False  
+    #         self.pmr_monitor = False  
+    #         self.pmr_lan_card = False  
+    #         self.pmr_lan_card_type = False  
+    #         self.pmr_fdd = False  
+    #         self.pmr_dvd_room_boolean = False  
+    #         self.pmr_hdmi_boolean = False  
+    #         self.pmr_ups_boolean = False  
+    #         self.pmr_usb_2_0_port = False  
+    #         self.pmr_usb_3_0_port = False  
+    #         self.pmr_vga_port = False  
+    #         self.pmr_hdmi_port = False  
+    #         self.pmr_display_port = False
+    #         self.pmr_rj45_port = False
+    #         self.pmr_3_in_1_audio_port = False
+    #         self.pmr_ram_1 = False
+    #         self.pmr_ram_2 = False
+    #         self.pmr_ram_3 = False
+    #         self.pmr_ram_4 = False
+    #         self.pmr_hardisk_1 = False
+    #         self.pmr_hardisk_2 = False
+    #         self.pmr_hardisk_3 = False
+    #         self.pmr_hardisk_4 = False
+    #         self.pmr_vga_1 = False
+    #         self.pmr_vga_2 = False
+    #         self.pmr_vga_type_1 = False
+    #         self.pmr_vga_type_2 = False
 
-    @api.model
-    def create(self, vals):
-        record = super(PmrItmsProductIt, self).create(vals)
+    # def _set_pc_laptop_fields(self):
+    #     self.product_unit_category = self.pmr_name_pc_laptop.product_unit_category 
+    #     self.pmr_processor = self.pmr_name_pc_laptop.pmr_processor.name if self.pmr_name_pc_laptop.pmr_processor else ''
+    #     self.pmr_mainboard = self.pmr_name_pc_laptop.pmr_mainboard.name if self.pmr_name_pc_laptop.pmr_mainboard else ''
+    #     self.pmr_power_supply = self.pmr_name_pc_laptop.pmr_power_supply.name if self.pmr_name_pc_laptop.pmr_power_supply else ''
+    #     self.pmr_mouse = self.pmr_name_pc_laptop.pmr_mouse.name if self.pmr_name_pc_laptop.pmr_mouse else ''
+    #     self.pmr_casing = self.pmr_name_pc_laptop.pmr_casing.name if self.pmr_name_pc_laptop.pmr_casing else ''
+    #     self.pmr_keyboard = self.pmr_name_pc_laptop.pmr_keyboard.name if self.pmr_name_pc_laptop.pmr_keyboard else ''
+    #     self.pmr_monitor = self.pmr_name_pc_laptop.pmr_monitor.name if self.pmr_name_pc_laptop.pmr_monitor else ''
+    #     self.pmr_lan_card = self.pmr_name_pc_laptop.pmr_lan_card.name if self.pmr_name_pc_laptop.pmr_lan_card else ''
+    #     self.pmr_lan_card_type = self.pmr_name_pc_laptop.pmr_lan_card_type
+    #     self.pmr_fdd = self.pmr_name_pc_laptop.pmr_fdd.name if self.pmr_name_pc_laptop.pmr_fdd else ''
+    #     self.pmr_ram_1 = self.pmr_name_pc_laptop.pmr_ram_1.name if self.pmr_name_pc_laptop.pmr_ram_1 else ''
+    #     self.pmr_ram_2 = self.pmr_name_pc_laptop.pmr_ram_2.name if self.pmr_name_pc_laptop.pmr_ram_2 else ''
+    #     self.pmr_ram_3 = self.pmr_name_pc_laptop.pmr_ram_3.name if self.pmr_name_pc_laptop.pmr_ram_3 else ''
+    #     self.pmr_ram_4 = self.pmr_name_pc_laptop.pmr_ram_4.name if self.pmr_name_pc_laptop.pmr_ram_4 else ''
+    #     self.pmr_hardisk_1 = self.pmr_name_pc_laptop.pmr_hardisk_1.name if self.pmr_name_pc_laptop.pmr_hardisk_1 else ''
+    #     self.pmr_hardisk_2 = self.pmr_name_pc_laptop.pmr_hardisk_2.name if self.pmr_name_pc_laptop.pmr_hardisk_2 else ''
+    #     self.pmr_hardisk_3 = self.pmr_name_pc_laptop.pmr_hardisk_3.name if self.pmr_name_pc_laptop.pmr_hardisk_3 else ''
+    #     self.pmr_hardisk_4 = self.pmr_name_pc_laptop.pmr_hardisk_4.name if self.pmr_name_pc_laptop.pmr_hardisk_4 else ''
+    #     self.pmr_vga_1 = self.pmr_name_pc_laptop.pmr_vga_1.name if self.pmr_name_pc_laptop.pmr_vga_1 else ''
+    #     self.pmr_vga_2 = self.pmr_name_pc_laptop.pmr_vga_2.name if self.pmr_name_pc_laptop.pmr_vga_2 else ''
+    #     self.pmr_vga_type_1 = self.pmr_name_pc_laptop.pmr_vga_type_1
+    #     self.pmr_vga_type_2 = self.pmr_name_pc_laptop.pmr_vga_type_2
+    #     self.pmr_dvd_room_boolean = self.pmr_name_pc_laptop.pmr_dvd_room_boolean
+    #     self.pmr_hdmi_boolean = self.pmr_name_pc_laptop.pmr_hdmi_boolean
+    #     self.pmr_ups_boolean = self.pmr_name_pc_laptop.pmr_hdmi_boolean
+    #     self.pmr_usb_2_0_port = self.pmr_name_pc_laptop.pmr_usb_2_0_port
+    #     self.pmr_usb_3_0_port = self.pmr_name_pc_laptop.pmr_usb_3_0_port
+    #     self.pmr_vga_port = self.pmr_name_pc_laptop.pmr_vga_port
+    #     self.pmr_hdmi_port = self.pmr_name_pc_laptop.pmr_hdmi_port
+    #     self.pmr_display_port = self.pmr_name_pc_laptop.pmr_display_port
+    #     self.pmr_rj45_port = self.pmr_name_pc_laptop.pmr_rj45_port
+    #     self.pmr_3_in_1_audio_port = self.pmr_name_pc_laptop.pmr_rj45_port
 
-        if record.pmr_name_pc_laptop:
-            record._set_pc_laptop_fields()
+    # @api.model
+    # def create(self, vals):
+    #     record = super(PmrItmsProductIt, self).create(vals)
 
-        return record
+    #     if record.pmr_name_pc_laptop:
+    #         record._set_pc_laptop_fields()
 
-    def write(self, vals):
-        res = super(PmrItmsProductIt, self).write(vals)
+    #     return record
 
-        if 'pmr_name_pc_laptop' in vals:
-            for record in self:
-                if record.pmr_name_pc_laptop:
-                    record._set_pc_laptop_fields()
+    # def write(self, vals):
+    #     res = super(PmrItmsProductIt, self).write(vals)
 
-        return res
-    
+    #     if 'pmr_name_pc_laptop' in vals:
+    #         for record in self:
+    #             if record.pmr_name_pc_laptop:
+    #                 record._set_pc_laptop_fields()
+
+    #     return res
+    def action_pc(self):
+        for record in self:
+            self.env['pmr.itms.inventory.movement'].create({
+                'name_product': record.pmr_name_pc_laptop.display_name if record.pmr_name_pc_laptop else record.name,
+                'pmr_itms_departement': record.pmr_itms_departement.id,
+                'pmr_itms_user': record.pmr_itms_user.id,
+                'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
+                'product_unit_category': record.product_unit_category.id,
+                'product_location_unit': record.pmr_name_pc_laptop.product_location_unit.id,
+            })
+            record.state = 'non'
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Sukses',
+                'message': 'Data berhasil dikirim',
+                'sticky': False,
+            }
+        }
     @api.depends('pmr_vga_1_replacement', 'pmr_vga_1_replacement.pmr_onboard', 'pmr_vga_1_replacement.pmr_pci',
                 'pmr_vga_2_replacement', 'pmr_vga_2_replacement.pmr_onboard', 'pmr_vga_2_replacement.pmr_pci',
                 'pmr_vga_1_upgrade', 'pmr_vga_1_upgrade.pmr_onboard', 'pmr_vga_1_upgrade.pmr_pci',
@@ -1695,22 +2075,113 @@ class PmrItmsProductIt(models.Model):
                     lan_card_types.append("External")
             record.pmr_fdd_type = lan_card_types if lan_card_types else ""
 
+    @api.model
+    def _cron_update_product_cpu_age(self):
+        records = self.search([])
+        for rec in records:
+            if rec.pmr_create_date:
+                today = date.today()
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+                days = (today - create_date).days
+
+                rec.pmr_umur_product = days
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+
+    def action_run_cron_manual(self):
+        """Menjalankan cron secara manual"""
+        self.env['pmr.itms.product.it']._cron_update_product_cpu_age()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Berhasil',
+                'message': 'Jadwal diaktifkan.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def action_disable_cron(self):
+        """Menonaktifkan cron dari ir.cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_cpu_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': False})
+            message = "Jadwal berhasil dinonaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'warning',
+                'sticky': False,
+            }
+        }
+
+    def action_enable_cron(self):
+        """Mengaktifkan ulang cron"""
+        cron = self.env.ref('pmr_itms.ir_cron_pmr_update_product_cpu_age', raise_if_not_found=False)
+        if cron:
+            cron.write({'active': True})
+            message = "Jadwal berhasil diaktifkan."
+        else:
+            message = "Jadwal tidak ditemukan."
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Info',
+                'message': message,
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
     @api.depends('pmr_create_date')
     def _compute_pmr_umur_product(self):
-        """Calculates product age and ensures the result is not negative."""
-        today_date = date.today() 
-        for record in self:
-            if record.pmr_create_date:
-                create_date = record.pmr_create_date.date()
-                record.pmr_umur_product = max((today_date - create_date).days, 0)
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                age_days = (today - create_date).days
+                rec.pmr_umur_product = age_days
             else:
-                record.pmr_umur_product = 0  
-    
-    @api.depends('pmr_umur_product')
+                rec.pmr_umur_product = 0
+
+    @api.depends('pmr_create_date')
     def _compute_pmr_umur_product_str(self):
-        """Change pmr_umur_product to a string with the format 'X days'."""
-        for record in self:
-            record.pmr_umur_product_str = f"{record.pmr_umur_product} days"
+        for rec in self:
+            if rec.pmr_create_date:
+                today = fields.Date.context_today(rec)
+                create_date = rec.pmr_create_date.date()
+                delta = relativedelta(today, create_date)
+
+                rec.pmr_umur_product_str = f"{delta.years} tahun, {delta.months} bulan, {delta.days} hari"
+                rec.pmr_umur_product_str_year = f"{delta.years} tahun"
+            else:
+                rec.pmr_umur_product_str = "-"
+                rec.pmr_umur_product_str_year = "-"
+
+    # @api.depends('pmr_create_date')
+    # def _compute_pmr_umur_product(self):
+    #     """Calculates product age and ensures the result is not negative."""
+    #     today_date = date.today() 
+    #     for record in self:
+    #         if record.pmr_create_date:
+    #             create_date = record.pmr_create_date.date()
+    #             record.pmr_umur_product = max((today_date - create_date).days, 0)
+    #         else:
+    #             record.pmr_umur_product = 0  
+    
+    # @api.depends('pmr_umur_product')
+    # def _compute_pmr_umur_product_str(self):
+    #     """Change pmr_umur_product to a string with the format 'X days'."""
+    #     for record in self:
+    #         record.pmr_umur_product_str = f"{record.pmr_umur_product} days"
     
     def generate_pc_laptop_sequence(self):
         for record in self:
@@ -1757,16 +2228,6 @@ class PmrItmsProductIt(models.Model):
                 record.pmr_umur_product_str_year = f"{months} months"
             else:
                 record.pmr_umur_product_str_year = "0 days"
-
-    def action_reject(self):
-        self.state= 'reject'
-
-    def action_repair(self):
-        self.state = 'repair'
-
-    def action_good(self):
-        self.state= 'good'
-
 
 class PmrItmsProductItAntivirus(models.Model):
     _name = "pmr.itms.product.it.antivirus"
@@ -2637,7 +3098,7 @@ class PmrSwitch(models.Model):
     name = fields.Char(string="Name", required=True, store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_jenis_switch = fields.Many2one('pmr.frekuensi.wifi',string="Jenis Switch", store=True)
+    pmr_jenis_switch = fields.Many2one('pmr.jenis.switch',string="Jenis Switch", store=True)
     pmr_jumlah_port = fields.Float(string="Jumlah Port")
     pmr_kecepatan_port = fields.Many2one('pmr.kecepatan.port',string="Kecepatan Port", store=True)
     pmr_switching_capacity = fields.Many2one('pmr.switching.capacity',string="Switching Capacity")
@@ -3069,11 +3530,12 @@ class PmrItmsInventoryIt(models.Model):
     _name = "pmr.itms.inventory.it"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Pmr Itms Product IT"
+    _rec_name = "product"
+
     _sql_constraints = [
-        ('name_uniq', 'unique(name_product)', 'Name must be Unique.')
+        ('name_uniq', 'unique(product)', 'Name must be Unique.')
     ]   
-    name = fields.Char(string="Name")
-    name_product = fields.Char(string="Name")
+    product = fields.Char(string="Name Product")
     pmr_itms_product = fields.Reference(selection=[
         ('pmr.pc', 'pc'),
         ('pmr.wifi', 'wiFi'),
@@ -3099,6 +3561,7 @@ class PmrItmsInventoryIt(models.Model):
     ], string="Item Name")
     # asset_code = fields.Many2one('asset.number.it',string='Asset Code', required=True, tracking=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    onhand_count = fields.Float(string="On Hand Quantity", compute="_compute_onhand_count", store=True)
     category= fields.Selection([
         ('pc', 'PC'),
         ('laptop', 'Laptop'),
@@ -3113,7 +3576,7 @@ class PmrItmsInventoryIt(models.Model):
         ('switch', 'Switch'),
         ('router', 'Router'),
         ('wifi', 'Wifi'),
-        ('Processor', 'Processor'),
+        ('processor', 'Processor'),
         ('keyboard', 'Keyboard'),
         ('fdd', 'Expansion Slot'),
         ('casing', 'Casing'),
@@ -3124,7 +3587,11 @@ class PmrItmsInventoryIt(models.Model):
         ('operatingsys', 'Operating System'),
         ('other', 'Other'),
     ], string='Category', required=True, tracking=True)
-    pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
+    category_product= fields.Selection([
+        ('hardware', 'Hardware'),
+        ('software', 'Software'),
+    ], required=True, tracking=True)
+    pmr_quantity_product_it = fields.Float(string="Quantity", required=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", required=True, store=True)
     condition = fields.Selection([
@@ -3138,13 +3605,107 @@ class PmrItmsInventoryIt(models.Model):
         ('spare', 'Spare'),
         ('retired', 'Retired'),
     ], default='in_use', string='Usage Status', tracking=True)
+    # Printer
+    pmr_jenis_printer = fields.Char(string="Jenis Printer", store=True)
+    pmr_kecepatan_cetak = fields.Char(string="Kecepatan Cetak", store=True)
+    pmr_konektivitas_printer = fields.Char(string="Konektivitas", store=True)
+    pmr_ukuran_kertas = fields.Char(string="Ukuran Kertas", store=True)
+    pmr_fitur_tambahan = fields.Char(string="Fitur Tambahan", store=True)
+    pmr_ip_printer = fields.Char(string="IP Printer")
+
+    # Router
+    pmr_hardware_router = fields.Char(string="Hardware Router", store=True)
+    pmr_konektivitas_router = fields.Char(string="Konektivitas", store=True)
+    pmr_fitur_tambahan_router = fields.Char(string="Fitur Tambahan Router", store=True)
+
+     # Wifi
+    pmr_frekuensi_wifi = fields.Char(string="Frekuensi WIFI", store=True)
+    pmr_keamanan = fields.Char(string="Keamanan Wifi")
+
+    # Switch
+    pmr_jenis_switch = fields.Char(string="Jenis Switch", store=True)
+    pmr_jumlah_port = fields.Float(string="Jumlah Port")
+    pmr_kecepatan_port = fields.Char(string="Kecepatan Port", store=True)
+    pmr_switching_capacity = fields.Char(string="Switching Capacity")
+
+    # CPU/Laptop
+    pmr_processor = fields.Char(string="Processor", store=True)
+    pmr_mainboard = fields.Char(string="Motherboard", store=True)
+    pmr_hardisk_1 = fields.Char(string="Hardisk 1", store=True)
+    pmr_hardisk_2 = fields.Char(string="Hardisk 2", store=True)
+    pmr_hardisk_3 = fields.Char(string="Hardisk 3", store=True)
+    pmr_hardisk_4 = fields.Char(string="Hardisk 4", store=True)
+    pmr_ram_1 = fields.Char(string="RAM 1", store=True)
+    pmr_ram_2 = fields.Char(string="RAM 2", store=True)
+    pmr_ram_3 = fields.Char(string="RAM 3", store=True)
+    pmr_ram_4 = fields.Char(string="RAM 4", store=True)
+    pmr_vga_1 = fields.Char(string="VGA 1", store=True)
+    pmr_vga_2 = fields.Char(string="VGA 2", store=True)
+    pmr_dvd_room_boolean = fields.Boolean(string="CD/DVD Room")
+    pmr_ups_boolean = fields.Boolean(string="UPS")
+    pmr_fdd = fields.Char(string="Expansion Slot", store=True)
+    pmr_hdmi_boolean = fields.Boolean(string="HDMI")
+    pmr_lan_card = fields.Char(string="Integrated LAN", store=True)
+    pmr_casing = fields.Char(string="Casing", store=True)
+    pmr_power_supply = fields.Char(string="Power Supply", store=True)
+    pmr_keyboard = fields.Char(string="Keyboard", store=True)
+    pmr_mouse = fields.Char(string="Mouse", store=True)
+    pmr_monitor = fields.Char(string="Monitor", store=True)
+    pmr_ups = fields.Many2one('pmr.ups', string="UPS", store=True)
+    pmr_printer = fields.Many2one('pmr.printer',string="Printer", store=True)
+    pmr_operating_system = fields.Many2one('pmr.os', string="Operating System", store=True)
+    pmr_sn_operating_system = fields.Char(string="SN Operating System", store=True)
+    pmr_office = fields.Many2one('pmr.office', string="Office", store=True)
+    pmr_cad = fields.Many2one('pmr.cad', string="CAD", store=True)
+    pmr_cam = fields.Many2one('pmr.cam', string="CAM", store=True)
+    pmr_antivirus = fields.Many2one('pmr.antivirus',string="Antivirus", store=True)
+    pmr_program_lain = fields.Many2many('pmr.software.lain',string="Software Lain")
+    pmr_vga_type_1 = fields.Char(string="Type", store=True)
+    pmr_vga_type_2 = fields.Char(string="Type", store=True)
+    pmr_lan_card_type = fields.Char(string="Type", store=True)
+    # pmr_fdd_type = fields.Char(string="Type", compute="_compute_fdd_type", store=True)
+    pmr_usb_2_0_port =fields.Boolean(string="USB 2.0 Port")
+    pmr_usb_3_0_port =fields.Boolean(string="USB 3.0 Port")
+    pmr_vga_port =fields.Boolean(string="VGA Port")
+    pmr_hdmi_port =fields.Boolean(string="HDMI Port")
+    pmr_display_port =fields.Boolean(string="Display Port")
+    pmr_rj45_port =fields.Boolean(string="RJ45 Port")
+    pmr_3_in_1_audio_port =fields.Boolean(string="3-in-1 Audio Port")
+    pmr_io_interface = fields.Char(string="I/O Interface", default="I/O Interface")
+
+    total_onhand_quantity = fields.Float(string="Total On Hand Quantity", compute="_compute_total_onhand_quantity", store=False)
+    serial_number = fields.Char(string="Serial Number", tracking=True)
     notes = fields.Text(string='Notes')
+    
+    @api.depends('product', 'pmr_quantity_product_it')
+    def _compute_total_onhand_quantity(self):
+        for rec in self:
+            if rec.product:
+                movements = self.env['pmr.itms.inventory.movement'].search([
+                    ('name_product', '=', rec.product)
+                ])
+                rec.total_onhand_quantity = sum(mov.pmr_quantity_product_it for mov in movements)
+            else:
+                rec.total_onhand_quantity = 0.0
+
+
+
+    def action_set_to_retired (self):
+        # (Opsional) logika membuat data baru bisa diletakkan di sini
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Inventory Movement',
+            'view_mode': 'tree,form',
+            'res_model': 'pmr.itms.inventory.movement',
+            'target': 'current',
+            'domain': [('name_product', '=', self.product)],
+        }
 
     @api.model
     def create(self, vals):
         record = super(PmrItmsInventoryIt, self).create(vals)
         if record.pmr_itms_product:
-            record.name_product = record.pmr_itms_product.display_name
+            record.product = record.pmr_itms_product.display_name
         return record
 
     @api.onchange('pmr_itms_product')
@@ -3176,63 +3737,213 @@ class PmrItmsInventoryIt(models.Model):
                 'pmr.os': 'operating_system',
             }
             self.category = mapping.get(model, 'other')
-
-    def generate_pc_laptop_sequence(self):
-        suffix_mapping = {
-            'pc': 'PC',
-            'laptop': 'LP',
-            'printer': 'PR',
-            'hardisk': 'HD',
-            'monitor': 'MN',
-            'motherboard': 'MB',
-            'mouse': 'MS',
-            'ram': 'RM',
-            'vga': 'VG',
-            'power_supply': 'PS',
-            'switch': 'SW',
-            'router': 'RT',
-            'wifi': 'WF',
-            'processor': 'PRC',
-            'keyboard': 'KB',
-            'fdd': 'FD',
-            'casing': 'CS',
-            'Integrated_LAN': 'LAN',
-            'antivirus': 'AV',
-            'cad': 'CD',
-            'cam': 'CM',
-            'operatingsys': 'OS',
-            'other': 'OT'
-        }
-        for record in self:
-            category = record.category or 'other'
-            suffix = suffix_mapping.get(category, 'OT')  # default 'OT' if tidak ditemukan
             
-            current_date = fields.Datetime.now()
-            year_month = current_date.strftime('%y%m')
+    @api.onchange('pmr_itms_product')
+    def _onchange_pmr_itms_product(self):
+        if self.pmr_itms_product:
+            model = self.pmr_itms_product._name
+            record = self.pmr_itms_product
+            # Printer
+            if model == 'pmr.printer':
+                self.category = 'printer'
+                self.pmr_jenis_printer = record.pmr_jenis_printer.name
+                self.product_unit_category = record.product_unit_category
+                self.pmr_kecepatan_cetak = record.pmr_kecepatan_cetak.name
+                self.pmr_konektivitas_printer = record.pmr_konektivitas_printer.name
+                self.pmr_ukuran_kertas = record.pmr_ukuran_kertas.name
+                self.pmr_fitur_tambahan = record.pmr_fitur_tambahan.name
+                self.pmr_ip_printer = record.pmr_ip_printer
+            # Router
+            elif model == 'pmr.router':
+                self.category = 'router'
+                self.product_unit_category = record.product_unit_category
+                self.pmr_konektivitas_router = record.pmr_konektivitas_router.name
+                self.pmr_hardware_router = record.pmr_hardware_router.name
+                self.pmr_fitur_tambahan_router = record.pmr_fitur_tambahan_router.name
+            # Wifi
+            elif model == 'pmr.wifi':
+                self.category = 'wifi'
+                self.product_unit_category = record.product_unit_category
+                self.pmr_frekuensi_wifi = record.pmr_frekuensi_wifi.name
+                self.pmr_keamanan = record.pmr_keamanan.name
+            # Switch
+            elif model == 'pmr.switch':
+                self.category = 'switch'
+                self.product_unit_category = record.product_unit_category
+                self.pmr_jenis_switch = record.pmr_jenis_switch.name
+                self.pmr_jumlah_port = record.pmr_jumlah_port
+                self.pmr_kecepatan_port = record.pmr_kecepatan_port.name
+                self.pmr_switching_capacity = record.pmr_switching_capacity.name
+            # CPU/Laptop
+            elif model == 'pmr.pc':
+                self.category = 'pc'
+                self.product_unit_category = record.product_unit_category
+                self.pmr_processor = record.pmr_processor.name 
+                self.pmr_mainboard = record.pmr_mainboard.name   
+                self.pmr_power_supply = record.pmr_power_supply.name   
+                self.pmr_mouse = record.pmr_mouse.name   
+                self.pmr_casing = record.pmr_casing.name   
+                self.pmr_keyboard = record.pmr_keyboard.name   
+                self.pmr_monitor = record.pmr_monitor.name   
+                self.pmr_lan_card = record.pmr_lan_card.name   
+                self.pmr_lan_card_type = record.pmr_lan_card_type  
+                self.pmr_fdd = record.pmr_fdd.name   
+                self.pmr_dvd_room_boolean = record.pmr_dvd_room_boolean   
+                self.pmr_hdmi_boolean = record.pmr_hdmi_boolean   
+                self.pmr_ups_boolean = record.pmr_ups_boolean   
+                self.pmr_usb_2_0_port = record.pmr_usb_2_0_port   
+                self.pmr_usb_3_0_port = record.pmr_usb_3_0_port   
+                self.pmr_vga_port = record.pmr_vga_port   
+                self.pmr_hdmi_port = record.pmr_hdmi_port   
+                self.pmr_display_port = record.pmr_display_port 
+                self.pmr_rj45_port = record.pmr_rj45_port 
+                self.pmr_3_in_1_audio_port = record.pmr_3_in_1_audio_port 
+                self.pmr_ram_1 = record.pmr_ram_1.name 
+                self.pmr_ram_2 = record.pmr_ram_2.name 
+                self.pmr_ram_3 = record.pmr_ram_3.name 
+                self.pmr_ram_4 = record.pmr_ram_4.name 
+                self.pmr_hardisk_1 = record.pmr_hardisk_1.name 
+                self.pmr_hardisk_2 = record.pmr_hardisk_2.name 
+                self.pmr_hardisk_3 = record.pmr_hardisk_3.name 
+                self.pmr_hardisk_4 = record.pmr_hardisk_4.name 
+                self.pmr_vga_1 = record.pmr_vga_1.name 
+                self.pmr_vga_2 = record.pmr_vga_2.name 
+                self.pmr_vga_type_1 = record.pmr_vga_type_1
+                self.pmr_vga_type_2 = record.pmr_vga_type_2
+            # Processor
+            elif model == 'pmr.processor':
+                self.category = 'processor'
+                self.product_unit_category = record.product_unit_category
+            # Hardisk
+            elif model == 'pmr.hardisk':
+                self.category = 'hardisk'
+                self.product_unit_category = record.product_unit_category
+            # RAM
+            elif model == 'pmr.ram':
+                self.category = 'ram'
+                self.product_unit_category = record.product_unit_category
+            # VGA
+            elif model == 'pmr.vga':
+                self.category = 'vga'
+                self.product_unit_category = record.product_unit_category
+            # FDD
+            elif model == 'pmr.fdd':
+                self.category = 'fdd'
+                self.product_unit_category = record.product_unit_category
+            # Casing
+            elif model == 'pmr.casing':
+                self.category = 'casing'
+                self.product_unit_category = record.product_unit_category
+            # Keyboard
+            elif model == 'pmr.keyboard':
+                self.category = 'keyboard'
+                self.product_unit_category = record.product_unit_category
+            # Monitor
+            elif model == 'pmr.monitor':
+                self.category = 'monitor'
+                self.product_unit_category = record.product_unit_category
+            # Mouse
+            elif model == 'pmr.mouse':
+                self.category = 'mouse'
+                self.product_unit_category = record.product_unit_category
+            # Motherboard
+            elif model == 'pmr.mainboard':
+                self.category = 'mainboard'
+                self.product_unit_category = record.product_unit_category
+            # Power Supply
+            elif model == 'pmr.power.supply':
+                self.category = 'power.supply'
+                self.product_unit_category = record.product_unit_category
+            # Integrated LAN
+            elif model == 'pmr.lan.card':
+                self.category = 'Integrated_LAN'
+                self.product_unit_category = record.product_unit_category
+            # Antivirus
+            elif model == 'pmr.antivirus':
+                self.category = 'antivirus'
+                self.product_unit_category = record.product_unit_category
+            # CAD
+            elif model == 'pmr.cad':
+                self.category = 'cad'
+                self.product_unit_category = record.product_unit_category
+            # CAM
+            elif model == 'pmr.cam':
+                self.category = 'cam'
+                self.product_unit_category = record.product_unit_category
+            # OS
+            elif model == 'pmr.os':
+                self.category = 'operating_system'
+                self.product_unit_category = record.product_unit_categorys
 
-            # Cari barcode terakhir yang cocok dengan pola tahunbulan + suffix
-            last_barcode = self.env['pmr.barcode'].search([
-                ('name', 'like', f"{year_month}%{suffix}")
-            ], order='name desc', limit=1)
+            self.product = record.display_name
 
-            if last_barcode:
-                last_sequence = int(last_barcode.name[4:9]) + 1
-            else:
-                last_sequence = 1
+    @api.onchange('category')
+    def _onchange_category(self):
+        hardware_categories = [
+            'pc', 'laptop', 'printer', 'hardisk', 'monitor', 'motherboard', 'mouse',
+            'ram', 'vga', 'power_supply', 'switch', 'router', 'wifi', 'processor',
+            'keyboard', 'fdd', 'casing', 'Integrated_LAN'
+        ]
+        if self.category in hardware_categories:
+            self.category_product = 'hardware'
+        else:
+            self.category_product = 'software'
+    # def generate_pc_laptop_sequence(self):
+    #     suffix_mapping = {
+    #         'pc': 'PC',
+    #         'laptop': 'LP',
+    #         'printer': 'PR',
+    #         'hardisk': 'HD',
+    #         'monitor': 'MN',
+    #         'motherboard': 'MB',
+    #         'mouse': 'MS',
+    #         'ram': 'RM',
+    #         'vga': 'VG',
+    #         'power_supply': 'PS',
+    #         'switch': 'SW',
+    #         'router': 'RT',
+    #         'wifi': 'WF',
+    #         'processor': 'PRC',
+    #         'keyboard': 'KB',
+    #         'fdd': 'FD',
+    #         'casing': 'CS',
+    #         'Integrated_LAN': 'LAN',
+    #         'antivirus': 'AV',
+    #         'cad': 'CD',
+    #         'cam': 'CM',
+    #         'operatingsys': 'OS',
+    #         'other': 'OT'
+    #     }
+    #     for record in self:
+    #         category = record.category or 'other'
+    #         suffix = suffix_mapping.get(category, 'OT')  # default 'OT' if tidak ditemukan
+            
+    #         current_date = fields.Datetime.now()
+    #         year_month = current_date.strftime('%y%m')
 
-            sequence_str = str(last_sequence).zfill(5)
-            barcode_name = f"{year_month}{sequence_str}{suffix}"
+    #         # Cari barcode terakhir yang cocok dengan pola tahunbulan + suffix
+    #         last_barcode = self.env['pmr.barcode'].search([
+    #             ('name', 'like', f"{year_month}%{suffix}")
+    #         ], order='name desc', limit=1)
 
-            barcode = self.env['pmr.barcode'].create({
-                'name': barcode_name,
-                'pmr_create_date': current_date,
-                'pmr_inventory_it': record.name
-            })
+    #         if last_barcode:
+    #             last_sequence = int(last_barcode.name[4:9]) + 1
+    #         else:
+    #             last_sequence = 1
 
-            record.pmr_barcode = barcode.id
+    #         sequence_str = str(last_sequence).zfill(5)
+    #         barcode_name = f"{year_month}{sequence_str}{suffix}"
 
-    def action_generate_barcode(self):
-        self.generate_pc_laptop_sequence()
+    #         barcode = self.env['pmr.barcode'].create({
+    #             'name': barcode_name,
+    #             'pmr_create_date': current_date,
+    #             'pmr_inventory_it': record.name
+    #         })
+
+    #         record.pmr_barcode = barcode.id
+
+    # def action_generate_barcode(self):
+    #     self.generate_pc_laptop_sequence()
 
 class PmrMaster(models.Model):
     _name = "pmr.master"
@@ -3240,3 +3951,17 @@ class PmrMaster(models.Model):
 
     name = fields.Char(string="Condition", store=True)
     color = fields.Integer(string="Color Index")
+
+
+class PmrItmsInventoryMovement(models.Model):
+    _name = "pmr.itms.inventory.movement"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _description = "IT Inventory Movement"
+   
+    name_product = fields.Char(string="Product", store=True)
+    pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
+    pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
+    pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
+    pmr_quantity_product_it = fields.Float(string="On Hand Quantity", required=True, default=1)
+    product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
+    product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)

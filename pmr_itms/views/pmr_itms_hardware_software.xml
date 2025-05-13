@@ -516,12 +516,12 @@
 
     <menuitem id="menu_pmr_vga" name="VGA" parent="menu_hardware" action="action_pmr_vga_tree" sequence="130"/>
 
-    <!-- PC/Laptop -->
+    <!-- CPU/Laptop -->
     <record id="view_pmr_pc_tree" model="ir.ui.view">
         <field name="name">pmr.pc.tree</field>
         <field name="model">pmr.pc</field>
         <field name="arch" type="xml">
-            <tree string="PC/Laptop">
+            <tree string="CPU/Laptop">
                 <field name="name"/>
                 <field name="product_unit_category"/>
                 <field name="pmr_create_date"/>
@@ -564,7 +564,7 @@
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="PC/Laptop"/> 
+                            <field name="name" placeholder="CPU/Laptop"/> 
                         </h1>
                     </div>
                     <group>
@@ -574,7 +574,7 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="PC/Laptop Spesification">
+                        <page string="CPU/Laptop Spesification">
                             <group>
                                 <group>
                                     <field name="pmr_mainboard" />
@@ -635,12 +635,12 @@
     </record>
 
     <record id="action_pmr_pc_tree" model="ir.actions.act_window">
-        <field name="name">PC/Laptop</field>
+        <field name="name">CPU/Laptop</field>
         <field name="res_model">pmr.pc</field>
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_pmr_pc" name="PC/Laptop" parent="menu_hardware" action="action_pmr_pc_tree" sequence="110"/>
+    <menuitem id="menu_pmr_pc" name="CPU/Laptop" parent="menu_hardware" action="action_pmr_pc_tree" sequence="110"/>
 
     <!-- Printer -->
     <record id="view_pmr_printer_tree" model="ir.ui.view">
