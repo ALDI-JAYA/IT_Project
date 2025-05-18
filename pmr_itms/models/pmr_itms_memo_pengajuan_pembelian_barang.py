@@ -33,7 +33,27 @@ class PmrItmsMemoPengajuanBarang(models.Model):
         ('demand', 'Demand'),
         ('purchase', 'Purchase'),
     ], string="Request Type", tracking=True, store=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_departement = fields.Many2one('hr.department', string="Departement IT", store=True)
+    pmr_itms_request_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
+    pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True, store=True)
+    pmr_itms_departement_user = fields.Many2one('hr.department', string="Departement", required=True, store=True)
+    pmr_itms_memo_line_ids  = fields.One2many('pmr.itms.memo.pengajuan.barang.line','pmr_itms_memo_head', tracking=10)
+    x_approval_id = fields.Many2one('amp.approval', string='Approval Ref', copy=False, store=True)
+    x_approval_state = fields.Selection(default='open',
+                                        string='Approval Status', related='x_approval_id.state', store=True,
+                                        readonly=False)
+    has_lines_grn = fields.Boolean(
+        string="Ada Line GRN",
+        compute="_compute_has_lines_grn",
+        store=True
+    )
 
+    @api.depends('pmr_itms_memo_line_ids.pmr_validation_grn')
+    def _compute_has_lines_grn(self):
+        for rec in self:
+            rec.has_lines_grn = any(line.pmr_validation_grn for line in rec.pmr_itms_memo_line_ids)
+    
     @api.model
     def create(self, vals):
         if vals.get("name", _("New")) == _("New"):
@@ -65,16 +85,6 @@ class PmrItmsMemoPengajuanBarang(models.Model):
         new_sequence = f"{prefix}/{year_str}/{month_str}/{sequence_number:05d}"
         return new_sequence
 
-    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
-    pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
-    pmr_itms_request_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True, store=True)
-    pmr_itms_departement_user = fields.Many2one('hr.department', string="Departement", required=True, store=True)
-    pmr_itms_memo_line_ids  = fields.One2many('pmr.itms.memo.pengajuan.barang.line','pmr_itms_memo_head', tracking=10)
-    x_approval_id = fields.Many2one('amp.approval', string='Approval Ref', copy=False, store=True)
-    x_approval_state = fields.Selection(default='open',
-                                        string='Approval Status', related='x_approval_id.state', store=True,
-                                        readonly=False)
     @api.onchange('pmr_itms_user')
     def _onchange_pmr_itms_user(self):
         if self.pmr_itms_user:
@@ -87,6 +97,7 @@ class PmrItmsMemoPengajuanBarang(models.Model):
         ('draft', 'Draft'),
         ('open', 'Waiting for Approval'),
         ('appr', 'Approved'),
+        ('in_hand', 'In Handover'),
         ('in_user', 'In User'),
         ('return', 'Return To IT'),
         ('cancel', 'Cancelled')
@@ -146,7 +157,6 @@ class PmrItmsMemoPengajuanBarang(models.Model):
                 else:
                     rec.x_approval_state = 'approved'
 
-
     def action_reset_to_draft(self):
         for rec in self:
             rec.state = 'draft'
@@ -171,7 +181,56 @@ class PmrItmsMemoPengajuanBarang(models.Model):
                     }
 
                     appr.create_approval_log(params)
+    def action_create_handover(self):
+        self.ensure_one()
+        default_lines = []
+        for line in self.pmr_itms_memo_line_ids:
+            default_lines.append((0, 0, {
+                'pmr_jenis_perangkat': f'{line.pmr_itms_product._name},{line.pmr_itms_product.id}' if line.pmr_itms_product else False,
+                'pmr_quantity_product_it': line.pmr_itms_jumlah,
+                'product_unit_category': line.pmr_itms_uom.id,
+            }))
+       
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Handover',
+            'res_model': 'pmr.itms.handover.it',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_pmr_itms_personil_it': self.pmr_itms_personil_it.id,
+                'default_pmr_itms_user': self.pmr_itms_user.id,
+                'default_pmr_itms_departement': self.pmr_itms_departement.id,
+                'default_pmr_itms_request_date': fields.Datetime.now(), 
+                'default_pmr_itms_handover_head': default_lines, 
+            }
+        }
     
+    def action_create_handover_demand(self):
+        self.ensure_one()
+        default_lines = []
+        for line in self.pmr_itms_memo_line_ids:
+            default_lines.append((0, 0, {
+                'pmr_jenis_perangkat': f'{line.pmr_itms_product._name},{line.pmr_itms_product.id}' if line.pmr_itms_product else False,
+                'pmr_quantity_product_it': line.pmr_itms_jumlah,
+                'product_unit_category': line.pmr_itms_uom.id,
+            }))
+       
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Create Handover',
+            'res_model': 'pmr.itms.handover.it',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_pmr_itms_personil_it': self.pmr_itms_personil_it.id,
+                'default_pmr_itms_user': self.pmr_itms_user.id,
+                'default_pmr_itms_departement': self.pmr_itms_departement.id,
+                'default_pmr_itms_request_date': fields.Datetime.now(), 
+                'default_pmr_itms_handover_head': default_lines, 
+            }
+        }
+
     def create_approval_from_memo(self, setting_param, sequence_code):
         approval_setting_id = int(self.env['ir.config_parameter'].sudo().get_param(setting_param, 0))
         submitter_id = self.env.user.id
@@ -328,6 +387,12 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
         ('pmr.mainboard', 'MotherBoard'),
         ('pmr.power.supply', 'Power Supply'),
         ('pmr.lan.card', 'Integrated LAN'),
+        ('pmr.antivirus', 'Antivirus'),
+        ('pmr.cad', 'CAD'),
+        ('pmr.cam', 'CAM'),
+        ('pmr.os', 'Operating System'),
+        ('pmr.office', 'Office'),
+        ('pmr.software.lain', 'Software Lainnya'),
     ], string="Item Name")
     pmr_itms_jumlah = fields.Float(string="Quantity")
     pmr_itms_uom = fields.Many2one('uom.uom', string="Uom")
@@ -338,6 +403,7 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
     pmr_validation_pr = fields.Char(string="PR")
     pmr_validation_po = fields.Boolean(string="PO", compute="_compute_pmr_validation_po", store=True)
     pmr_validation_grn = fields.Boolean(string="GRN", compute="_compute_pmr_validation_grn", store=True)
+    pmr_validation_inventory = fields.Boolean(string="Inventory IT", compute="_compute_pmr_validation_inventory", store=True)
     state = fields.Selection(string="state", related='pmr_itms_memo_head.state', store=True)
     request_type = fields.Selection(string="state", related='pmr_itms_memo_head.request_type', store=True)
 
@@ -350,6 +416,15 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
     def _compute_pmr_validation_grn(self):
         for line in self:
             line.pmr_validation_grn = (line.pmr_validation_pr_id.x_pr_state == 'received')
+
+    @api.depends('pmr_validation_pr_id.x_pr_state')
+    def _compute_pmr_validation_inventory(self):
+        for line in self:
+            if line.pmr_validation_pr_id.x_pr_state == 'received':
+                line.pmr_validation_inventory = True
+                self._create_inventory_movement(line)
+            else:
+                line.pmr_validation_inventory = False
 
     @api.depends('pmr_itms_memo_head')
     def _compute_name(self):
@@ -388,4 +463,59 @@ class PmrItmsMemoPengajuanBarangLine(models.Model):
             'target': 'new', 
             'context': {'default_' + key: value for key, value in default_values.items()},
         }
+    
+    def _create_inventory_movement(self, line):
+        """Membuat record pergerakan inventaris di model PmrItmsInventoryMovement"""
+        if line.pmr_itms_product and line.pmr_itms_uom:
+            # Menyiapkan nilai-nilai untuk membuat record baru
+            inventory_vals = {
+                'name_document': line.name,
+                'name_product': line.pmr_itms_product.name,
+                # 'pmr_itms_departement': line.pmr_itms_memo_head.department_id.id,  # Departemen dari memo
+                'pmr_itms_user': line.pmr_itms_memo_head.pmr_itms_user.id if line.pmr_itms_memo_head else False,
+                'pmr_quantity_product_it': line.pmr_itms_jumlah,  # Jumlah yang diajukan
+                'product_unit_category': line.pmr_itms_uom.id,  # UOM dari item
+                # 'product_location_unit': line.pmr_itms_memo_head.location_id.id,  # Lokasi dari memo
+            }
+            # Membuat record di PmrItmsInventoryMovement
+            self.env['pmr.itms.inventory.movement'].create(inventory_vals)
+
+    def action_inventory_demand(self, line):
+        """Membuat record pergerakan inventaris di model PmrItmsInventoryMovement"""
+        if line.pmr_itms_product and line.pmr_itms_uom:
+            # Menyiapkan nilai-nilai untuk membuat record baru
+            inventory_vals = {
+                'name_document': line.name,
+                'name_product': line.pmr_itms_product.name,
+                # 'pmr_itms_departement': line.pmr_itms_memo_head.department_id.id,  # Departemen dari memo
+                'pmr_itms_user': line.pmr_itms_memo_head.pmr_itms_user.id if line.pmr_itms_memo_head else False,
+                'pmr_quantity_product_it': line.pmr_itms_jumlah,  # Jumlah yang diajukan
+                'product_unit_category': line.pmr_itms_uom.id,  # UOM dari item
+                # 'product_location_unit': line.pmr_itms_memo_head.location_id.id,  # Lokasi dari memo
+            }
+            # Membuat record di PmrItmsInventoryMovement
+            self.env['pmr.itms.inventory.movement'].create(inventory_vals)
+    
+
+    # def _create_inventory_movement(self, line):
+    #     """Membuat record pergerakan inventaris di model PmrItmsInventoryMovement"""
+    #     request_type = self.pmr_itms_memo_head.request_type
+
+    #     if line.pmr_itms_product and line.pmr_itms_uom:
+    #         # Menyiapkan nilai-nilai untuk membuat record baru
+    #         inventory_vals = {
+    #             'name_document': line.name,
+    #             'name_product': line.pmr_itms_product.name,
+    #             # 'pmr_itms_departement': line.pmr_itms_memo_head.department_id.id,  # Departemen dari memo
+    #             'pmr_itms_user': line.pmr_itms_memo_head.pmr_itms_user.id if line.pmr_itms_memo_head else False,
+    #             # 'pmr_quantity_product_it': line.pmr_itms_jumlah,  # Jumlah yang diajukan
+    #             'product_unit_category': line.pmr_itms_uom.id,  # UOM dari item
+    #             # 'product_location_unit': line.pmr_itms_memo_head.location_id.id,  # Lokasi dari memo
+    #         }
+    #         if request_type == 'demand':
+    #             inventory_vals['pmr_quantity_product_it'] = -abs(self.pmr_itms_jumlah)  # selalu negatif
+    #         else:
+    #             inventory_vals['pmr_quantity_product_it'] = self.pmr_itms_jumlah
+    #         # Membuat record di PmrItmsInventoryMovement
+    #         self.env['pmr.itms.inventory.movement'].create(inventory_vals)
     

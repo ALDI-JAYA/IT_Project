@@ -6,15 +6,73 @@ class PmrItmsHandoverIt(models.Model):
     _name = "pmr.itms.handover.it"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _description = "Pmr Handover"
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)', 'Sourch Document Sudah Ada')
+    ]
 
     name = fields.Char(string="Name", required=True, copy=False, readonly=True, default=lambda self: _("New"))
     pmr_itms_handover_head  = fields.One2many('pmr.itms.handover.it.line','pmr_itms_handover', tracking=10)
+    pmr_itms_request_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
+    pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True, store=True)
+    pmr_itms_to_to_it = fields.Many2one('pmr.itms.role', string="Role")
+    pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
+    pmr_no_handover = fields.Char(string="Nomor Asset")
+    is_movement_created = fields.Boolean(string="From Users", default=False)
+    x_approval_id = fields.Many2one('amp.approval', string='Approval Ref', copy=False)
+    x_approval_state = fields.Selection(default='open',
+                                        string='Approval Status', related='x_approval_id.state', store=True,
+                                        readonly=False)
+    x_approval_log_ids = fields.One2many('amp.approval.log', 'x_handover_id', string='Approval Logs', copy=False)
+    handover_status = [
+        ('draft', 'Draft'),
+        ('user_agreement', 'User Aggreement'),
+        ('submit', 'Submit'),
+        ('open', 'Waiting for Approval'),
+        ('appr', 'Approved'),
+        ('cancel', 'Cancelled'),
+    ]
+    state = fields.Selection(handover_status, string="Status", default="draft", compute="_get_handover_status",inverse="_inverse_handover_status",
+                                store=True, copy=False, tracking=True)
+    x_currency_id = fields.Many2one("res.currency", string="Currency",
+                                    default=lambda self: self.env.company.currency_id)
+    x_approval_active = fields.Boolean(string='Active handover Approval', compute='_compute_approval_active_data', store=True)
 
     @api.model
     def create(self, vals):
         if vals.get("name", _("New")) == _("New"):
             vals["name"] = self._generate_sequence()
         return super(PmrItmsHandoverIt, self).create(vals)
+
+    def action_create_inventory_movement(self):
+        for rec in self:
+            for line in rec.pmr_itms_handover_head:
+                self.env['pmr.itms.inventory.movement'].create({
+                    'name_product': line.pmr_jenis_perangkat.name if line.pmr_jenis_perangkat else '',
+                    'pmr_itms_departement': rec.pmr_itms_departement.id,
+                    'pmr_itms_user': rec.pmr_itms_user.id,
+                    'pmr_quantity_product_it': line.pmr_quantity_product_it,
+                    'product_unit_category': line.product_unit_category.id,
+                    'product_location_unit': rec.pmr_itms_location_id.id if hasattr(rec, 'pmr_itms_location_id') else False,
+                    'name_document': rec.name,
+                })
+
+            rec.is_movement_created = True
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': "Inventory Movement Created",
+                'message': "Data telah berhasil dipindahkan!",
+                'type': 'success',
+                'sticky': False,
+                'next': {
+                    'type': 'ir.actions.client',
+                    'tag': 'reload',
+                }
+            }
+        }
 
     def _generate_sequence(self):
         """Generate a unique sequence based on year, month, and existing records."""
@@ -41,12 +99,6 @@ class PmrItmsHandoverIt(models.Model):
         new_sequence = f"{prefix}/{year_str}/{month_str}/{sequence_number:05d}"
         return new_sequence
 
-    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
-    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
-    pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True, store=True)
-    pmr_itms_to_to_it = fields.Many2one('pmr.itms.role', string="Role")
-    pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
-
     @api.onchange('pmr_itms_personil_it')
     def _onchange_pmr_itms_personil_it(self):
         if self.pmr_itms_personil_it:
@@ -60,27 +112,6 @@ class PmrItmsHandoverIt(models.Model):
             self.pmr_itms_departement = self.pmr_itms_user.department_id
         else:
             self.pmr_itms_departement = False
-
-    pmr_no_handover = fields.Char(string="Nomor Asset")
-
-    x_approval_id = fields.Many2one('amp.approval', string='Approval Ref', copy=False)
-    x_approval_state = fields.Selection(default='open',
-                                        string='Approval Status', related='x_approval_id.state', store=True,
-                                        readonly=False)
-    x_approval_log_ids = fields.One2many('amp.approval.log', 'x_handover_id', string='Approval Logs', copy=False)
-    handover_status = [
-        ('draft', 'Draft'),
-        ('user_agreement', 'User Aggreement'),
-        ('submit', 'Submit'),
-        ('open', 'Waiting for Approval'),
-        ('appr', 'Approved'),
-        ('cancel', 'Cancelled'),
-    ]
-    state = fields.Selection(handover_status, string="Status", default="draft", compute="_get_handover_status",inverse="_inverse_handover_status",
-                                store=True, copy=False, tracking=True)
-    x_currency_id = fields.Many2one("res.currency", string="Currency",
-                                    default=lambda self: self.env.company.currency_id)
-    x_approval_active = fields.Boolean(string='Active handover Approval', compute='_compute_approval_active_data', store=True)
 
     MAPPING_handover_APPROVAL_SETTINGS = {
         'handover_Trial': {'approval_required': False, 'setting_param': None, 'sequence_code': None},
@@ -101,7 +132,234 @@ class PmrItmsHandoverIt(models.Model):
         self.state= 'completed'
         for rec in self :
             rec.pmr_handover_completion.state = 'completed'
-    
+
+    def action_send_to_product_models(self):
+        for record in self:
+            for line in record.pmr_itms_handover_head:
+                if not line.pmr_jenis_perangkat:
+                    continue
+
+                model_name = line.pmr_jenis_perangkat._name
+                rec_id = line.pmr_jenis_perangkat.id
+                perangkat_rec = self.env[model_name].browse(rec_id)
+                if not perangkat_rec.exists():
+                    continue
+
+                tujuan_model = None
+                model_inventory_map = {
+                    'pmr.printer': ('pmr.itms.product.it.printer', 'printer', 'pmr_name_printer'),
+                    'pmr.switch': ('pmr.itms.product.it.switch', 'switch', 'pmr_name_switch'),
+                    'pmr.wifi': ('pmr.itms.product.it.wifi', 'wifi', 'pmr_name_wifi'),
+                    'pmr.pc': ('pmr.itms.product.it', 'pc', 'pmr_name_pc_laptop'),
+                    'pmr.router': ('pmr.itms.product.it.router', 'router', 'pmr_name_router'),
+                    'pmr.processor': ('pmr.itms.product.it.accessories', 'processor', 'name_processor'),
+                    'pmr.hardisk': ('pmr.itms.product.it.accessories', 'hardisk', 'name_hardisk'),
+                    'pmr.ram': ('pmr.itms.product.it.accessories', 'ram', 'name_ram'),
+                    'pmr.vga': ('pmr.itms.product.it.accessories', 'vga', 'name_vga'),
+                    'pmr.fdd': ('pmr.itms.product.it.accessories', 'fdd', 'name_fdd'),
+                    'pmr.casing': ('pmr.itms.product.it.accessories', 'casing', 'name_casing'),
+                    'pmr.keyboard': ('pmr.itms.product.it.accessories', 'keyboard', 'name_keyboard'),
+                    'pmr.monitor': ('pmr.itms.product.it.accessories', 'monitor', 'name_monitor'),
+                    'pmr.mouse': ('pmr.itms.product.it.accessories', 'mouse', 'name_mouse'),
+                    'pmr.mainboard': ('pmr.itms.product.it.accessories', 'motherboard', 'name_mobo'),
+                    'pmr.power.supply': ('pmr.itms.product.it.accessories', 'power_supply', 'name_psu'),
+                    'pmr.lan.card': ('pmr.itms.product.it.accessories', 'Integrated_LAN', 'name_lan'),
+                    'pmr.antivirus': ('pmr.itms.product.it.antivirus', 'antivirus', 'pmr_antivirus'),
+                    'pmr.cad': ('pmr.itms.product.it.cad', 'cad', 'pmr_cad'),
+                    'pmr.cam': ('pmr.itms.product.it.cam', 'cam', 'pmr_cam'),
+                    'pmr.os': ('pmr.itms.product.it.os', 'operatingsys', 'pmr_os'),
+                    'pmr.office': ('pmr.itms.product.it.office', 'office', 'pmr_os'),
+                    'pmr.software.lain': ('pmr.itms.product.it.sl', 'sl', 'pmr_sl'),
+                }
+
+                mapping = model_inventory_map.get(model_name)
+                if not mapping:
+                    continue
+
+                tujuan_model_str, category, inventory_field_name = mapping
+                tujuan_model = self.env[tujuan_model_str]
+
+                # Cari record inventory
+                inventory_rec = self.env['pmr.itms.inventory.it'].search([
+                    ('category', '=', category),
+                ], limit=1)
+
+                if not inventory_rec:
+                    raise UserError(f"Data di inventory dengan kategori '{category}' tidak ada")
+                
+                if line.pmr_quantity_product_it > inventory_rec.total_onhand_quantity:
+                    raise UserError(
+                        f"Jumlah permintaan ({line.pmr_quantity_product_it}) tidak Cukup. Jumlah Stok di Inventory IT"
+                        f"({inventory_rec.total_onhand_quantity}) untuk kategori '{category}' "
+                        f"dengan produk '{inventory_rec.pmr_itms_product.name}'."
+                    )
+
+                vals = {
+                    'name_document':record.name,
+                    'pmr_itms_departement': record.pmr_itms_departement.id or False,
+                    'pmr_itms_user': record.pmr_itms_user.id or False,
+                    'pmr_itms_personil_it': record.pmr_itms_personil_it.id or False,
+                    'pmr_itms_re_to_it': record.pmr_itms_re_to_it.id or False,
+                    'product_unit_category': line.product_unit_category.id if line.product_unit_category else False,
+                    'pmr_create_date': record.pmr_itms_request_date,
+                    inventory_field_name: inventory_rec.id, 
+                    'pmr_quantity_product_it': line.pmr_quantity_product_it, 
+                    'name': line.pmr_merk_type, 
+                }
+                if model_name == 'pmr.wifi':
+                    vals.update({
+                        'pmr_frekuensi_wifi': inventory_rec.pmr_frekuensi_wifi,
+                        'pmr_keamanan': inventory_rec.pmr_keamanan,
+                    })
+                elif model_name == 'pmr.printer':
+                    vals.update({
+                        'pmr_jenis_printer': inventory_rec.pmr_jenis_printer,
+                        'pmr_kecepatan_cetak': inventory_rec.pmr_kecepatan_cetak,
+                        'pmr_konektivitas_printer': inventory_rec.pmr_konektivitas_printer,
+                        'pmr_ukuran_kertas': inventory_rec.pmr_ukuran_kertas,
+                        'pmr_fitur_tambahan': inventory_rec.pmr_fitur_tambahan,
+                    })
+                elif model_name == 'pmr.switch':
+                    vals.update({
+                        'pmr_jenis_switch': inventory_rec.pmr_jenis_switch,
+                        'pmr_jumlah_port': inventory_rec.pmr_jumlah_port,
+                        'pmr_kecepatan_port': inventory_rec.pmr_kecepatan_port,
+                        'pmr_switching_capacity': inventory_rec.pmr_switching_capacity,
+                    })
+
+                elif model_name == 'pmr.pc':
+                    vals.update({
+                        'pmr_mainboard': inventory_rec.pmr_mainboard,
+                        'pmr_processor': inventory_rec.pmr_processor,
+                        'pmr_hardisk_1': inventory_rec.pmr_hardisk_1,
+                        'pmr_hardisk_2': inventory_rec.pmr_hardisk_2,
+                        'pmr_hardisk_3': inventory_rec.pmr_hardisk_3,
+                        'pmr_hardisk_4': inventory_rec.pmr_hardisk_4,
+                        'pmr_ram_1': inventory_rec.pmr_ram_1,
+                        'pmr_ram_2': inventory_rec.pmr_ram_2,
+                        'pmr_ram_3': inventory_rec.pmr_ram_3,
+                        'pmr_ram_4': inventory_rec.pmr_ram_4,
+                        'pmr_vga_1': inventory_rec.pmr_vga_1,
+                        'pmr_vga_2': inventory_rec.pmr_vga_2,
+                        'pmr_operating_system': inventory_rec.pmr_operating_system,
+                        'pmr_antivirus': inventory_rec.pmr_antivirus,
+                        'pmr_cad': inventory_rec.pmr_cad,
+                        'pmr_cam': inventory_rec.pmr_cam,
+                        'pmr_office': inventory_rec.pmr_office,
+                        'pmr_power_supply': inventory_rec.pmr_power_supply,
+                        'pmr_fdd': inventory_rec.pmr_fdd,
+                        'pmr_lan_card': inventory_rec.pmr_lan_card,
+                        'pmr_hdmi_boolean': inventory_rec.pmr_hdmi_boolean,
+                        'pmr_dvd_room_boolean': inventory_rec.pmr_dvd_room_boolean,
+                        'pmr_ups_boolean': inventory_rec.pmr_ups_boolean,
+                        'pmr_usb_2_0_port': inventory_rec.pmr_usb_2_0_port,
+                        'pmr_usb_3_0_port': inventory_rec.pmr_usb_3_0_port,
+                        'pmr_vga_port': inventory_rec.pmr_vga_port,
+                        'pmr_hdmi_port': inventory_rec.pmr_hdmi_port,
+                        'pmr_display_port': inventory_rec.pmr_display_port,
+                        'pmr_rj45_port': inventory_rec.pmr_rj45_port,
+                        'pmr_3_in_1_audio_port': inventory_rec.pmr_3_in_1_audio_port,
+                        'pmr_io_interface': inventory_rec.pmr_io_interface,
+                        'pmr_lan_card_type': inventory_rec.pmr_lan_card_type,
+                        'pmr_vga_type_1': inventory_rec.pmr_vga_type_1,
+                        'pmr_vga_type_2': inventory_rec.pmr_vga_type_2,
+                    })
+                elif model_name == 'pmr.router':
+                    vals.update({
+                        'pmr_hardware_router': inventory_rec.pmr_hardware_router,
+                        'pmr_konektivitas_router': inventory_rec.pmr_konektivitas_router,
+                        'pmr_fitur_tambahan_router': inventory_rec.pmr_fitur_tambahan_router,
+                    })
+                elif model_name == 'pmr.processor':
+                    vals.update({
+                        'product_type': 'processor',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.hardisk':
+                    vals.update({
+                        'product_type': 'hardisk',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.ram':
+                    vals.update({
+                        'product_type': 'ram',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.vga':
+                    vals.update({
+                        'product_type': 'vga',
+                        'name_processor': inventory_rec.id, 
+                        'pmr_onboard': inventory_rec.pmr_onboard,
+                        'pmr_pci': inventory_rec.pmr_pci,
+                    })
+                elif model_name == 'pmr.fdd':
+                    vals.update({
+                        'product_type': 'fdd',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.casing':
+                    vals.update({
+                        'product_type': 'casing',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.keyboard':
+                    vals.update({
+                        'product_type': 'keyboard',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.mouse':
+                    vals.update({
+                        'product_type': 'mouse',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.monitor':
+                    vals.update({
+                        'product_type': 'monitor',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.mainboard':
+                    vals.update({
+                        'product_type': 'motherboard',
+                        'name_processor': inventory_rec.id, 
+                    })
+                elif model_name == 'pmr.lan.card':
+                    vals.update({
+                        'product_type': 'lan',
+                        'name_processor': inventory_rec.id, 
+                        'pmr_onboard': inventory_rec.pmr_onboard,
+                        'pmr_pci': inventory_rec.pmr_pci,
+                    })
+                elif model_name == 'pmr.antivirus':
+                    vals.update({
+                        # 'serial_number': inventory_rec.serial_number,
+                        # 'type_software': inventory_rec.type_software,
+                    })
+                elif model_name == 'pmr.cad':
+                    vals.update({
+                        # 'type_software': inventory_rec.type_software,
+                    })
+                elif model_name == 'pmr.cam':
+                    vals.update({
+                        # 'type_software': inventory_rec.type_software,
+                    })
+                elif model_name == 'pmr.os':
+                    vals.update({
+                        # 'type_software': inventory_rec.type_software,
+                    })
+
+                tujuan_model.create(vals)
+
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Sukses',
+                    'message': 'Data berhasil terkirim.',
+                    'type': 'success',  
+                    'sticky': False, 
+                }
+            }
+  
     def action_in_progress(self):
         self.state= 'in_progress'
         for rec in self :
@@ -253,6 +511,28 @@ class PmrItmsHandoverIt(models.Model):
         else:
             self.update_approval_from_handover(existing_approval_handover, setting_param)
 
+    def action_generate_product_it(self):
+        for line in self.pmr_itms_handover_head:
+            self.env['pmr.itms.product.it.printer'].create({
+                'name': self.env.user.name,  # atau bisa dari field khusus kalau ada
+                'pmr_create_date': fields.Datetime.now(),
+                'pmr_quantity_product_it': line.pmr_quantity_product_it,
+                'product_unit_category': line.product_unit_category.id,
+                'product_category': line.pmr_jenis_perangkat.product_category.id if line.pmr_jenis_perangkat.product_category else False,
+                'product_sub_category': line.pmr_jenis_perangkat.product_sub_category.id if line.pmr_jenis_perangkat.product_sub_category else False,
+                # Tambahkan jika ada relasi ke department, user, lokasi, dsb.
+            })
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Success'),
+                'message': _('Data berhasil dikirim ke Produk IT Printer.'),
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
 class PmrItmsAmpApprovalInherit(models.Model):
     _inherit = 'amp.approval'
 
@@ -308,8 +588,33 @@ class PmrItmsHandoverItLine(models.Model):
     _description = "Pmr Handover Line"
 
     pmr_itms_handover = fields.Many2one('pmr.itms.handover.it', string="ID Memo")
-    pmr_jenis_perangkat = fields.Text(string="Item")
-    pmr_merk_type = fields.Char(string="Merk/Type")
+    pmr_itms_movent = fields.Many2one('pmr.itms.inventory.movement', string="Item 2")
+    pmr_jenis_perangkat = fields.Reference(selection=[
+        ('pmr.pc', 'pc'),
+        ('pmr.wifi', 'WiFi'),
+        ('pmr.switch', 'Switch'),
+        ('pmr.router', 'Router'),
+        ('pmr.processor', 'Processor'),
+        ('pmr.hardisk', 'Hardisk'),
+        ('pmr.ram', 'RAM'),
+        ('pmr.vga', 'VGA'),
+        ('pmr.fdd', 'Expansion Slot'),
+        ('pmr.casing', 'Casing'),
+        ('pmr.keyboard', 'Keyboard'),
+        ('pmr.monitor', 'Monitor'),
+        ('pmr.mouse', 'Mouse'),
+        ('pmr.printer', 'Printer'),
+        ('pmr.mainboard', 'MotherBoard'),
+        ('pmr.power.supply', 'Power Supply'),
+        ('pmr.lan.card', 'Integrated LAN'),
+        ('pmr.antivirus', 'Antivirus'),
+        ('pmr.cad', 'CAD'),
+        ('pmr.cam', 'CAM'),
+        ('pmr.os', 'Operating System'),
+        ('pmr.office', 'Office'),
+        ('pmr.software.lain', 'Software Lainnya'),
+    ], string="Item Name")
+    pmr_merk_type = fields.Char(string="Hostname")
     pmr_quantity_product_it = fields.Float(string="Quantity",required=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
 

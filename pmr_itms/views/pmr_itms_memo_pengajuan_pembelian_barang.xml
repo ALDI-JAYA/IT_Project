@@ -8,15 +8,14 @@
                 <form>
                     <header> 
                         <button id="button_submit" name="action_submit" string="Submit"
-                        class="btn-primary" type="object" states="draft" />
-                   
+                            class="btn-primary" type="object" states="draft" />
                         <button id="button_reset_to_draft" name="action_reset_to_draft" string="Reset to Draft"
                             class="btn-primary" type="object" states="open,done" />
 
                         <button id="button_cancel" name="action_cancel" string="Cancel"  type="object" states="draft"
                                     confirm="Are you sure that you need to cancel ?"/>
 
-                        <field name="state" widget="statusbar" statusbar_visible="draft,open,appr,pr,po,grn,in_user,return" />    
+                        <field name="state" widget="statusbar" statusbar_visible="draft,open,appr,pr,po,grn,in_handover,in_user,return" />    
                     </header> 
                     <sheet>
                         <div class="oe_title">
@@ -32,12 +31,26 @@
                                     attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                             </group> 
                             <group>
+                                <field name="has_lines_grn"/> 
                                 <field name="request_type" 
                                     attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                 <field name="pmr_itms_user" 
                                     attrs="{'readonly': [('state', '!=', 'draft')]}"/>
-                                 <field name="pmr_itms_departement_user" 
+                                <field name="pmr_itms_departement_user" 
                                     attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                <div>
+                                    <button id="button_submit_handover"
+                                    name="action_create_handover"
+                                    string="Create Handover"
+                                    class="btn-primary"
+                                    type="object"
+                                    attrs="{'invisible': [('has_lines_grn', '=', False)]}"/>
+                                <button name="action_create_handover_demand"
+                                    type="object"
+                                    string="Create Handover"
+                                    class="btn-outline-primary"
+                                    attrs="{'invisible': [('request_type', '!=', 'demand')]}"/>
+                                </div>
                             </group>   
                         </group>  
                     <notebook>
@@ -52,14 +65,17 @@
                                     <field name="pmr_itms_uom" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                     <field name="pmr_note" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                     <field name="request_type" invisible="1"/>
-                                    <field name="pmr_validation_pr" readonly="1"/>
+                                    <field name="pmr_validation_pr_id" readonly="1"/>
+                                    <!-- <field name="pmr_validation_pr" readonly="1"/> -->
                                     <field name="pmr_validation_po" widget="boolean_toggle" readonly="1"/>
                                     <field name="pmr_validation_grn" widget="boolean_toggle" readonly="1"/>
+                                    <field name="pmr_validation_inventory" widget="boolean_toggle" readonly="1"/>
                                     <button name="action_create_purchase_request"
                                         type="object"
                                         string="Create Purchase Request"
                                         class="btn-primary"
-                                        attrs="{'invisible': [('request_type', '!=', 'purchase')]}"/>
+                                        attrs="{'invisible': [('state', '!=', 'approve'), ('request_type', '!=', 'purchase')]}"
+                                        groups="pmr_itms.group_pmr_itms_user"/>
                                 </tree>
                             </field>
                         </page>
@@ -116,6 +132,7 @@
                     <field name="pmr_itms_request_date" />
                     <field name="pmr_itms_user" />
                     <field name="pmr_itms_departement_user" />
+                    <field name="request_type" decoration-success="request_type == 'purchase'" decoration-warning="request_type == 'demand'"/>
                     <field name="state" 
                         decoration-info="state == 'draft'" 
                         decoration-warning="state == 'open'"

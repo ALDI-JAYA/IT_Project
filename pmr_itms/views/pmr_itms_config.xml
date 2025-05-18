@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <menuitem id="menu_itms_root" name="Configuration" parent="menu_pmr_itms" sequence="2"/>
+    <menuitem id="menu_itms_root" name="Configuration" parent="menu_pmr_itms" sequence="5"/>
+    <menuitem id="menu_itms_root_manajemen" name="Manajemen IT" parent="menu_pmr_itms" sequence="4"/>
+    <menuitem id="menu_itms_root_inventory" name="Inventory" parent="menu_pmr_itms" action="action_itms_inventory_it" sequence="3"/>
 
     <record id="view_tree_itms_user" model="ir.ui.view">
         <field name="name">itms.user.tree</field>
@@ -360,39 +362,42 @@
         </field>
     </record>
 
-    <menuitem id="menu_manajemen" name="Manajemen IT Hardware" parent="menu_itms_root" sequence="3"/>
+    <menuitem id="menu_manajemen" name="Manajemen IT Hardware" parent="menu_itms_root_manajemen" sequence="3"/>
 
     <record id="view_tree_itms_product_it" model="ir.ui.view">
         <field name="name">itms.product.it.tree</field>
         <field name="model">pmr.itms.product.it</field>
         <field name="arch" type="xml">
             <tree string="CPU/Laptop">
+                <field name="name_document"/>
+                <field name="pmr_barcode"/>
                 <field name="name"/>
+                <field name="pmr_name_pc_laptop"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
                 <field name="pmr_create_date"/>
                 <field name="product_type" optional="hide"/>
                 <field name="pmr_quantity_product_it"/>
-                <field name="pmr_processor"/>
-                <field name="pmr_mainboard"/>
-                <field name="pmr_ram_1"/>
+                <field name="pmr_processor" optional="hide"/>
+                <field name="pmr_mainboard" optional="hide"/>
+                <field name="pmr_ram_1" optional="hide"/>
                 <field name="pmr_ram_2" optional="hide"/>
                 <field name="pmr_ram_3" optional="hide"/>
                 <field name="pmr_ram_4" optional="hide"/>
-                <field name="pmr_vga_1"/>
+                <field name="pmr_vga_1" optional="hide"/>
                 <field name="pmr_vga_2" optional="hide"/>
-                <field name="pmr_hardisk_1"/>
+                <field name="pmr_hardisk_1" optional="hide"/>
                 <field name="pmr_hardisk_2" optional="hide"/>
                 <field name="pmr_hardisk_3" optional="hide"/>
                 <field name="pmr_hardisk_4" optional="hide"/>
-                <field name="pmr_casing"/>
-                <field name="pmr_keyboard"/>
-                <field name="pmr_monitor"/> 
+                <field name="pmr_casing" optional="hide"/>
+                <field name="pmr_keyboard" optional="hide"/>
+                <field name="pmr_monitor" optional="hide"/> 
                 <field name="pmr_ups_boolean" optional="hide"/>
                 <field name="pmr_dvd_room_boolean" optional="hide"/>
                 <field name="pmr_hdmi_boolean" optional="hide"/>
-                <field name="pmr_lan_card"/>
-                <field name="pmr_fdd"/>
+                <field name="pmr_lan_card" optional="hide"/>
+                <field name="pmr_fdd" optional="hide"/>
                 <field name="pmr_fdd_type" optional="hide"/>
                 <field name="pmr_power_supply" optional="hide"/>
                 <field name="pmr_mouse" optional="hide"/>
@@ -401,7 +406,7 @@
                 <field name="pmr_cad" optional="hide"/>
                 <field name="pmr_cam" optional="hide"/>
                 <field name="pmr_antivirus" optional="hide"/>
-                <field name="pmr_program_lain" widget="many2many_tags"/>
+                <field name="pmr_program_lain" widget="many2many_tags" optional="hide"/>
                 <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
@@ -416,6 +421,8 @@
                 <field name="product_location_unit"/>
                 <field name="pmr_itms_departement" optional="hide"/>
                 <field name="pmr_itms_user"/>
+                <field name="pmr_itms_personil_it"/>
+                <field name="pmr_itms_re_to_it"/>
                 <field name="pmr_create_date"/>
                 <field name="product_type"/>
                 <field name="pmr_quantity_product_it"/>
@@ -802,6 +809,11 @@
                         <field name="pmr_log_notes"/>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -828,18 +840,21 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="name_document"/>
+                <field name="pmr_barcode"/>
                 <field name="name"/>
+                <field name="pmr_name_printer"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
                 <field name="pmr_create_date"/>
                 <field name="product_location_unit"/>
-                <field name="product_type"/>
+                <field name="product_type" optional="hide"/>
                 <field name="pmr_quantity_product_it"/>
-                <field name="pmr_kecepatan_cetak"/>
-                <field name="pmr_konektivitas_printer"/>
-                <field name="pmr_ukuran_kertas"/>
-                <field name="pmr_fitur_tambahan"/>
-                <field name="pmr_ip_printer"/>
+                <field name="pmr_kecepatan_cetak" optional="hide"/>
+                <field name="pmr_konektivitas_printer" optional="hide"/>
+                <field name="pmr_ukuran_kertas" optional="hide"/>
+                <field name="pmr_fitur_tambahan" optional="hide"/>
+                <field name="pmr_ip_printer" optional="hide"/>
                 <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
@@ -874,6 +889,8 @@
                 <header> 
                     <button id="button_reject" name="action_not" string="Submit"
                         class="btn-primary" type="object" states="non" />
+                    <button id="button_non" name="action_non" string="Nonaktif"
+                        class="btn-primary" type="object" states="aktif" />
                     <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
                     <button name="action_run_cron_manual" string="Jalankan Cron" type="object" class="btn-primary"/>
                     <button name="action_disable_cron" string="Nonaktifkan Cron" type="object" class="btn-danger"/>
@@ -892,6 +909,8 @@
                             <field name="pmr_itms_departement"/>
                             <field name="pmr_itms_user"/>
                             <field name="pmr_create_date"/> 
+                            <field name="pmr_itms_personil_it"/>
+                            <field name="pmr_itms_re_to_it"/>
                             <field name="pmr_asset"/>   
                             <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
                             <field name="pmr_barcode" string="Barcode"/>
@@ -905,9 +924,7 @@
                                     <field name="pmr_quantity_product_it" readonly="1"/>
                                     <field name="product_unit_category"/>
                                 </div>
-                            <field name="pmr_umur_product"/> 
-                            <field name="pmr_umur_product_str"/> 
-                            <field name="pmr_umur_product_str_year"/> 
+                            <field name="pmr_umur_product_str"/>  
                             <field name="active" invisible="1"/> 
         
                         </group>
@@ -925,6 +942,11 @@
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -951,15 +973,18 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="name_document"/>
+                <field name="pmr_barcode"/>
                 <field name="name"/>
+                <field name="pmr_name_router"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
                 <field name="pmr_create_date"/>
-                <field name="product_type"/>
+                <field name="product_type" optional="hide"/>
                 <field name="pmr_quantity_product_it"/>
-                <field name="pmr_hardware_router"/>
-                <field name="pmr_konektivitas_router"/>
-                <field name="pmr_fitur_tambahan_router"/>
+                <field name="pmr_hardware_router" optional="hide"/>
+                <field name="pmr_konektivitas_router" optional="hide"/>
+                <field name="pmr_fitur_tambahan_router" optional="hide"/>
                 <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
@@ -1009,6 +1034,8 @@
                             <field name="pmr_itms_departement"/>
                             <field name="pmr_itms_user"/>
                             <field name="pmr_create_date"/> 
+                            <field name="pmr_itms_personil_it"/>
+                            <field name="pmr_itms_re_to_it"/>
                             <field name="pmr_asset"/>   
                             <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
                             <field name="pmr_barcode" string="Barcode"/>
@@ -1026,6 +1053,7 @@
                             <field name="pmr_umur_product"/> 
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
         
                         </group>
                     </group>
@@ -1040,6 +1068,11 @@
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -1066,15 +1099,18 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="name_document"/>
+                <field name="pmr_barcode"/>
                 <field name="name"/>
+                <field name="pmr_name_wifi"/>
                 <field name="product_location_unit"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
                 <field name="pmr_create_date"/>
-                <field name="product_type"/>
+                <field name="product_type" optional="hide"/>
                 <field name="pmr_quantity_product_it"/>
-                <field name="pmr_frekuensi_wifi"/>
-                <field name="pmr_keamanan"/>
+                <field name="pmr_frekuensi_wifi" optional="hide"/>
+                <field name="pmr_keamanan" optional="hide"/>
                 <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
@@ -1121,6 +1157,8 @@
                             <field name="pmr_itms_departement"/>
                             <field name="pmr_itms_user"/>
                             <field name="pmr_create_date"/> 
+                            <field name="pmr_itms_personil_it"/>
+                            <field name="pmr_itms_re_to_it"/>
                             <field name="pmr_asset"/>   
                             <field name="pmr_no_asset" attrs="{'invisible': [('pmr_asset', '=', False)]}"/>
                             <field name="pmr_barcode" string="Barcode"/>
@@ -1135,7 +1173,8 @@
                                     <field name="product_unit_category" />
                                 </div>
                             <field name="pmr_umur_product_str"/> 
-                            <field name="pmr_umur_product_str_year"/> 
+                            <field name="pmr_umur_product_str_year"/>
+                            <field name="active" invisible="1"/>  
         
                         </group>
                     </group>
@@ -1179,18 +1218,21 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="name_document"/>
+                <field name="pmr_barcode"/>
                 <field name="name"/>
+                <field name="pmr_nama_switch"/>
                 <field name="product_location_unit"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
                 <field name="pmr_create_date"/>
-                <field name="product_type"/>
+                <field name="product_type" optional="hide"/>
                 <field name="pmr_quantity_product_it"/>
-                <field name="pmr_jenis_switch"/>
-                <field name="pmr_jumlah_port"/>
-                <field name="pmr_kecepatan_port"/>
-                <field name="pmr_switching_capacity"/>
-                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+                <field name="pmr_jenis_switch" optional="hide"/>
+                <field name="pmr_jumlah_port" optional="hide"/>
+                <field name="pmr_kecepatan_port" optional="hide"/>
+                <field name="pmr_switching_capacity" optional="hide"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1262,6 +1304,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
         
                         </group>
                     </group>
@@ -1276,6 +1319,11 @@
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
@@ -1302,6 +1350,8 @@
         <field name="mode">primary</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="name_document"/>
+                <field name="pmr_barcode"/>
                 <field name="name"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
@@ -1309,8 +1359,8 @@
                 <field name="pmr_name_accesories"/>
                 <field name="product_type"/>
                 <field name="pmr_quantity_product_it"/>
-                <field name="pmr_onboard"/>
-                <field name="pmr_pci"/>
+                <field name="pmr_onboard" optional="hide"/>
+                <field name="pmr_pci" optional="hide"/>
                 <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
@@ -1382,6 +1432,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
                         </group>
                         <group>
                             <field name="pmr_onboard" attrs="{'invisible': [('product_type', 'not in', ['vga', 'lan'])]}"/>
@@ -1414,7 +1465,7 @@
 
     <menuitem id="menu_itms_product_it_accessories" name="Accessories" parent="menu_manajemen" action="action_itms_product_it_accessories"/>
 
-    <menuitem id="menu_manajemen_software" name="Manajemen IT Software" parent="menu_itms_root" sequence="4"/>
+    <menuitem id="menu_manajemen_software" name="Manajemen IT Software" parent="menu_itms_root_manajemen" sequence="4"/>
     <record id="view_tree_itms_product_it_antivirus" model="ir.ui.view">
         <field name="name">itms.product.it.tree.antivirus</field>
         <field name="model">pmr.itms.product.it.antivirus</field>
@@ -1428,7 +1479,7 @@
                 <field name="pmr_quantity_product_it"/>
                 <field name="pmr_antivirus"/>
                 <field name="pmr_no_sn"/>
-                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1453,19 +1504,9 @@
         <field name="model">pmr.itms.product.it.antivirus</field>
         <field name="arch" type="xml">
             <form string="Antivirus">
-                <header> 
-                    <button id="button_reject" name="action_reject" string="Reject"
-                        class="btn-primary" type="object" states="not" />
-                   
-                    <button id="button_repair" name="action_repair" string="Repair"
-                        class="btn-primary" type="object" states="not" />
-                    
-                    <button id="button_good" name="action_good" string="Good"
-                        class="btn-primary" type="object" states="not" />
-                    
+                <header>                    
                     <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
-
-                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                    <field name="state" widget="statusbar" statusbar_visible="non,aktif" />    
                 </header> 
                 <sheet>
                     <div class="oe_title">
@@ -1492,6 +1533,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
                         </group>
                     </group>
                     <!-- <notebook>
@@ -1538,7 +1580,7 @@
                 <field name="pmr_create_date"/>
                 <!-- <field name="product_type"/> -->
                 <field name="pmr_quantity_product_it"/>
-                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1564,18 +1606,8 @@
         <field name="arch" type="xml">
             <form string="Operating System">
                 <header> 
-                    <button id="button_reject" name="action_reject" string="Reject"
-                        class="btn-primary" type="object" states="not" />
-                   
-                    <button id="button_repair" name="action_repair" string="Repair"
-                        class="btn-primary" type="object" states="not" />
-                    
-                    <button id="button_good" name="action_good" string="Good"
-                        class="btn-primary" type="object" states="not" />
-                    
                     <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
-
-                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                    <field name="state" widget="statusbar" statusbar_visible="non,aktif" />    
                 </header> 
                 <sheet>
                     <div class="oe_title">
@@ -1593,6 +1625,7 @@
                             <field name="pmr_barcode" string="Barcode"/>
                         </group>
                         <group>
+                            <field name="pmr_cad"/>        
                             <label for="pmr_quantity_product_it"/>
                                 <div class="o_row">
                                     <field name="pmr_quantity_product_it" readonly="1"/>
@@ -1600,6 +1633,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
                         </group>
                     </group>
                     <!-- <notebook>
@@ -1647,7 +1681,7 @@
                 <field name="pmr_create_date"/>
                 <!-- <field name="product_type"/> -->
                 <field name="pmr_quantity_product_it"/>
-                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1673,18 +1707,8 @@
         <field name="arch" type="xml">
             <form string="Operating System">
                 <header> 
-                    <button id="button_reject" name="action_reject" string="Reject"
-                        class="btn-primary" type="object" states="not" />
-                   
-                    <button id="button_repair" name="action_repair" string="Repair"
-                        class="btn-primary" type="object" states="not" />
-                    
-                    <button id="button_good" name="action_good" string="Good"
-                        class="btn-primary" type="object" states="not" />
-                    
                     <button name="action_generate_barcode" type="object" string="Generate Barcode" class="oe_highlight"/>
-
-                    <field name="state" widget="statusbar" statusbar_visible="not,reject,repair,good" />    
+                    <field name="state" widget="statusbar" statusbar_visible="non,aktif" />    
                 </header> 
                 <sheet>
                     <div class="oe_title">
@@ -1702,6 +1726,7 @@
                             <field name="pmr_barcode" string="Barcode"/>
                         </group>
                         <group>
+                            <field name="pmr_cam"/> 
                             <label for="pmr_quantity_product_it"/>
                                 <div class="o_row">
                                     <field name="pmr_quantity_product_it" readonly="1"/>
@@ -1709,6 +1734,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
                         </group>
                     </group>
                     <!-- <notebook>
@@ -1810,6 +1836,7 @@
                             <field name="pmr_barcode" string="Barcode"/>
                         </group>
                         <group>
+                            <field name="pmr_office"/> 
                             <label for="pmr_quantity_product_it"/>
                                 <div class="o_row">
                                     <field name="pmr_quantity_product_it" readonly="1"/>
@@ -1817,6 +1844,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
                         </group>
                     </group>
                     <!-- <notebook>
@@ -1864,7 +1892,7 @@
                 <field name="pmr_create_date"/>
                 <!-- <field name="product_type"/> -->
                 <field name="pmr_quantity_product_it"/>
-                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1919,6 +1947,7 @@
                             <field name="pmr_barcode" string="Barcode"/>
                         </group>
                         <group>
+                            <field name="pmr_os"/> 
                             <label for="pmr_quantity_product_it"/>
                                 <div class="o_row">
                                     <field name="pmr_quantity_product_it" readonly="1"/>
@@ -1972,7 +2001,7 @@
                 <field name="pmr_create_date"/>
                 <!-- <field name="product_type"/> -->
                 <field name="pmr_quantity_product_it"/>
-                <field name="state" decoration-danger="state=='not'" decoration-primary="state=='reject'" decoration-warning="state=='repair'" decoration-success="state=='good'" widget="badge"/>
+                <field name="state" decoration-danger="state=='non'" decoration-success="state=='aktif'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -2027,6 +2056,7 @@
                             <field name="pmr_barcode" string="Barcode"/>
                         </group>
                         <group>
+                            <field name="pmr_sl"/> 
                             <label for="pmr_quantity_product_it"/>
                                 <div class="o_row">
                                     <field name="pmr_quantity_product_it" readonly="1"/>
@@ -2034,6 +2064,7 @@
                                 </div>
                             <field name="pmr_umur_product_str"/> 
                             <field name="pmr_umur_product_str_year"/> 
+                            <field name="active" invisible="1"/> 
                         </group>
                     </group>
                     <!-- <notebook>
@@ -2080,7 +2111,7 @@
                 <field name="category_product"/>
                 <field name="product_location_unit"/>
                 <field name="pmr_barcode"/>
-                <field name="pmr_quantity_product_it"/>
+                <field name="total_onhand_quantity"/>
             </tree>
         </field>
     </record>
@@ -2092,7 +2123,7 @@
                 <field name="product"/>
                 <field name="category"/>
                 <!-- <field name="pmr_barcode"/> -->
-                <field name="pmr_quantity_product_it"/>
+                <field name="total_onhand_quantity"/>
                 <field name="condition"/>
                 <templates>
                     <t t-name="kanban-box">
@@ -2104,10 +2135,13 @@
                                     </strong>
                                 </div>
                                 <div>
-                                    <span t-if="record.condition.raw_value == 'baik'" class="badge bg-success text-white" style="border-radius: 8px; padding: 4px 10px;">
+                                    <span t-if="record.condition.raw_value == 'good'" class="badge bg-success text-white" style="border-radius: 8px; padding: 4px 10px;">
                                         <field name="condition"/>
                                     </span>
-                                    <span t-elif="record.condition.raw_value == 'rusak'" class="badge bg-danger text-white" style="border-radius: 8px; padding: 4px 10px;">
+                                    <span t-elif="record.condition.raw_value == 'repair'" class="badge bg-primary text-white" style="border-radius: 8px; padding: 4px 10px;">
+                                        <field name="condition"/>
+                                    </span>
+                                    <span t-elif="record.condition.raw_value == 'new'" class="badge bg-light text-dark" style="border-radius: 8px; padding: 4px 10px;">
                                         <field name="condition"/>
                                     </span>
                                     <span t-else="" class="badge bg-secondary text-white" style="border-radius: 8px; padding: 4px 10px;">
@@ -2122,8 +2156,8 @@
                                     <strong>Kategori:</strong> <field name="category"/>
                                 </div>
                                 <div style="margin-bottom: 6px;">
-                                    <i class="fa fa-tag" style="margin-right: 6px; color: #7f8c8d;"></i>
-                                    <strong>Kategori Produk:</strong> <field name="category_product"/>
+                                    <i class="fa fa-laptop" style="margin-right: 6px; color: #7f8c8d;"></i>
+                                    <strong>Kategori Produk:</strong> <field name="category_product" decoration-danger="category_product=='hardware'" decoration-primary="category_product=='software'" widget="badge"/>
                                 </div>
                                 <!-- <div style="margin-bottom: 6px;">
                                     <i class="fa fa-barcode" style="margin-right: 6px; color: #7f8c8d;"></i>
@@ -2136,7 +2170,7 @@
                                 <div style="margin-bottom: 6px;">
                                     <i class="ffa-area-chart" style="margin-right: 6px; color: #7f8c8d;"></i>
                                     <strong>On Hand:</strong>
-                                    <t t-if="record.total_onhand_quantity.raw_value &lt; 5">
+                                    <t t-if="record.total_onhand_quantity.raw_value &lt; 1">
                                         <span class="badge bg-danger text-white" style="margin-left: 5px; border-radius: 6px; padding: 4px 10px;">
                                             <field name="total_onhand_quantity"/>
                                         </span>
@@ -2193,23 +2227,24 @@
                             <field name="product"/>
                             <field name="category"/>  
                             <field name="category_product"/>  
-                            <field name="product_location_unit"/>  
+                            <field name="product_location_unit"/>   
                             <!-- <button name="action_generate_barcode" type="object" string="Generate Barcode" 
                                 class="oe_highlight" attrs="{'invisible': [('pmr_barcode', '!=', False)]}"/>  -->
                         </group>
                         <group> 
                             <!-- <field name="pmr_barcode" string="Barcode" readonly="1"/>    -->
                             <field name="condition"/> 
-                            <label for="pmr_quantity_product_it"/>
+                            <label for="total_onhand_quantity"/>
                                 <div class="o_row">
-                                    <field name="pmr_quantity_product_it"/>
+                                    <field name="total_onhand_quantity"/>
                                     <field name="product_unit_category" />
                                 </div>
                             <field name="notes"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Spesification" attrs="{'invisible': [('category', '==', 'pc')]}">
+                        <page string="Spesification" attrs="{'invisible': [('category', 'not in', ['printer', 'router', 'wifi'])]}">
+
                             <group>
                                 <!-- Printer -->
                                 <field name="pmr_jenis_printer" attrs="{'invisible': [('category', '!=', 'printer')]}"/>
@@ -2235,10 +2270,10 @@
                                 <field name="pmr_switching_capacity" attrs="{'invisible': [('category', '!=', 'switch')]}"/>
 
                                 <!-- Anti Virus -->
-                                <field name="serial_number" attrs="{'invisible': [('category', '!=', 'antivirus')]}"/>
+                                <!-- <field name="serial_number" attrs="{'invisible': [('category', '!=', 'antivirus')]}"/> -->
                             </group>
                         </page>
-                        <page string="Hardware Spesification" attrs="{'invisible': [('category', '!=', 'pc')]}">
+                        <page string="CPU Spesification" attrs="{'invisible': [('category', '!=', 'pc')]}">
                             <group>
                                 <group>
                                     <label for="pmr_processor" attrs="{'invisible': [('category', '!=', 'pc')]}"/>
@@ -2318,22 +2353,6 @@
                                         <div class="o_row">
                                             <field name="pmr_hardisk_4" />
                                         </div>
-                                    <label for="pmr_casing" attrs="{'invisible': [('category', '!=', 'pc')]}"/>
-                                        <div class="o_row">
-                                            <field name="pmr_casing" />
-                                        </div>
-                                    <label for="pmr_keyboard" attrs="{'invisible': [('category', '!=', 'pc')]}"/>
-                                        <div class="o_row">
-                                            <field name="pmr_keyboard" />
-                                        </div>
-                                    <label for="pmr_monitor" attrs="{'invisible': [('category', '!=', 'pc')]}"/>
-                                        <div class="o_row">
-                                            <field name="pmr_monitor" />
-                                        </div>
-                                    <label for="pmr_mouse" attrs="{'invisible': [('category', '!=', 'pc')]}"/>
-                                        <div class="o_row">
-                                            <field name="pmr_mouse" />
-                                        </div>
                                 </group>
                             </group>
                         </page>
@@ -2347,8 +2366,15 @@
                                 <field name="pmr_program_lain" widget="many2many_tags"/>
                             </group>
                         </page>
+                        <page string="Serial Number" attrs="{'invisible': [('category', '!=', 'antivirus')]}">
+                            <field name="serial_number_antivirus" nolabel="1">
+                                <tree editable="bottom"> 
+                                    <field name="pmr_sequence"/>    
+                                    <field name="pmr_serial_number"/>
+                                </tree>
+                            </field>
+                        </page>
                     </notebook>
-
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
@@ -2372,7 +2398,7 @@
                 </p>
             </field>
     </record>
-    <menuitem id="menu_itms_inventory_it" name="Inventory IT" parent="menu_itms_root" action="action_itms_inventory_it" sequence="5"/>
+    <!-- <menuitem id="menu_itms_inventory_it" name="Inventory IT" parent="menu_itms_root" action="action_itms_inventory_it" sequence="5"/> -->
 
     <record id="action_itms_user" model="ir.actions.act_window">
         <field name="name">User</field>
@@ -2480,13 +2506,16 @@
         <field name="model">pmr.itms.inventory.movement</field>
         <field name="arch" type="xml">
             <tree string="Inventory Movement" editable="bottom">
+                <field name="name_document"/>
                 <field name="product_location_unit"/>
-                <field name="name_product"/>
+                <field name="pmr_barcode"/>
+                <field name="name_product" readonly="1"/>
                 <field name="pmr_create_date"/>
                 <field name="pmr_itms_departement"/>
                 <field name="pmr_itms_user"/>
                 <field name="pmr_quantity_product_it" sum="total"/>
                 <field name="product_unit_category"/>
+                <field name="state" decoration-success="state == 'aktif'" decoration-danger="state == 'non'" widget="badge"/>
             </tree>
         </field>
     </record>

@@ -22,7 +22,7 @@ class PmrItmsUser(models.Model):
         ('active', 'User Active Directory')
     ], string="User Directory", tracking=True, store=True)
     device_model = fields.Char(string="Device Merk", tracking=True)
-    serial_number = fields.Char(string="Serial Number", tracking=True)
+    # serial_number = fields.Char(string="Serial Number", tracking=True)
     ip_address = fields.Char(string="IP Address")
     motherboard_type = fields.Many2one('pmr.motherboard.type', string="PMR Motherboard Type", store=True)
     pmr_mainboard = fields.Many2one('pmr.mainboard',string="Motherboard", store=True)
@@ -168,8 +168,12 @@ class PmrItmsProductItSwitch(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Source Document", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
@@ -198,8 +202,8 @@ class PmrItmsProductItSwitch(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="switch", tracking=True, store=True)
     state = fields.Selection([
-        ('aktif', 'Aktif'),
-        ('non', 'Non Aktif'),
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
     ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_nama_switch')
@@ -309,8 +313,12 @@ class PmrItmsProductItAccessories(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
@@ -352,10 +360,10 @@ class PmrItmsProductItAccessories(models.Model):
         ('vga', 'VGA'),
         ('lan', 'Integrated LAN'),
         ('fdd', 'Expansion Slot'),
-    ], string="Device Type", default="sparepart", tracking=True, store=True)
+    ], string="Device Type", tracking=True, store=True)
     state = fields.Selection([
-        ('non', 'Non Aktif'),
-        ('aktif', 'Aktif'),
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
     ], string="State", default="non", tracking=True, store=True)
     
     @api.onchange('name_vga', 'name_fdd', 'name_lan')
@@ -403,6 +411,7 @@ class PmrItmsProductItAccessories(models.Model):
                 record.pmr_umur_product = max((today_date - create_date).days, 0)
             else:
                 record.pmr_umur_product = 0  
+                
     def _compute_pmr_name_accesories(self):
         for record in self:
             accessories = []
@@ -558,8 +567,12 @@ class PmrItmsProductItWifi(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
@@ -586,8 +599,8 @@ class PmrItmsProductItWifi(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="wifi", tracking=True, store=True)
     state = fields.Selection([
-        ('non', 'Non Aktif'),
-        ('aktif', 'Aktif'),
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
     ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_name_wifi')
@@ -637,13 +650,14 @@ class PmrItmsProductItWifi(models.Model):
                 'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
                 'product_unit_category': record.product_unit_category.id,
                 'product_location_unit': record.pmr_name_wifi.product_location_unit.id,
+                'pmr_barcode': record.pmr_barcode.id,
             })
             record.state = 'non'
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Sukses',
+                'title': 'Successfully',
                 'message': 'Data berhasil dikirim',
                 'sticky': False,
             }
@@ -778,8 +792,12 @@ class PmrItmsProductItRouter(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
@@ -807,8 +825,8 @@ class PmrItmsProductItRouter(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="router", tracking=True, store=True)
     state = fields.Selection([
-        ('non', 'Non Aktif'),
-        ('aktif', 'Aktif'),
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
     ], string="State", default="non", tracking=True, store=True)
     @api.onchange('pmr_name_router')
     def _onchange_pmr_name_router(self):
@@ -889,13 +907,14 @@ class PmrItmsProductItRouter(models.Model):
                 'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
                 'product_unit_category': record.product_unit_category.id,
                 'product_location_unit': record.pmr_name_router.product_location_unit.id,
+                'pmr_barcode': record.pmr_barcode.id,
             })
             record.state = 'aktif'
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Sukses',
+                'title': 'Successfully',
                 'message': 'Data berhasil dikirim',
                 'sticky': False,
             }
@@ -1028,14 +1047,15 @@ class PmrItmsProductItPrinter(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     active = fields.Boolean(string="Active", default=True)
     pmr_barcode = fields.Many2one('pmr.barcode', string="Barcode")
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
-    pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
-    pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
-    pmr_umur_product_str_year = fields.Char(string="Product Age (Tahun)", compute="_compute_pmr_umur_product_str_year", store=True)
+    pmr_umur_product_str = fields.Char(string="Product Age", store=True)
     pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
@@ -1061,8 +1081,8 @@ class PmrItmsProductItPrinter(models.Model):
         ('sotware', 'Software'),
     ], string="Device Type", default="printer", tracking=True, store=True)
     state = fields.Selection([
-        ('non', 'Non Aktif'),
-        ('aktif', 'Aktif'),
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
     ], string="State", default="non", tracking=True, store=True)
 
     @api.onchange('pmr_name_printer')
@@ -1174,17 +1194,21 @@ class PmrItmsProductItPrinter(models.Model):
                 'pmr_quantity_product_it': -abs(record.pmr_quantity_product_it),
                 'product_unit_category': record.product_unit_category.id,
                 'product_location_unit': record.pmr_name_printer.product_location_unit.id,
+                'pmr_barcode': record.pmr_barcode.id,
+                'printer_id': record.id,
             })
             record.state = 'aktif'
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Sukses',
-                'message': 'Data berhasil dikirim ke Inventory Movement',
+                'title': 'Successfully',
+                'message': 'Data Terkirim',
                 'sticky': False,
             }
         }
+    def action_non(self):
+        self.state= 'non'
     
     def generate_pc_laptop_sequence(self):
         for record in self:
@@ -1224,8 +1248,12 @@ class PmrItmsProductIt(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age (Hari)", compute="_compute_pmr_umur_product", store=True)
@@ -1364,8 +1392,8 @@ class PmrItmsProductIt(models.Model):
         ('laptop', 'Laptop'),
     ], string="Device Type", tracking=True, store=True)
     state = fields.Selection([
-        ('non', 'Non Aktif'),
-        ('aktif', 'Aktif'),
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
     ], string="State", default="non", tracking=True, store=True)
     pmr_program_lain = fields.Many2many('pmr.software.lain',string="Software Lain")
     pmr_vga_type_1 = fields.Char(string="Type", store=True)
@@ -2239,8 +2267,12 @@ class PmrItmsProductItAntivirus(models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
+    active = fields.Boolean(string="Active", default=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age(Days)", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Full)", compute="_compute_pmr_umur_product_str", store=True)
@@ -2252,15 +2284,13 @@ class PmrItmsProductItAntivirus(models.Model):
     pmr_no_asset = fields.Char(string="Nomor Asset")
     pmr_no_sn= fields.Char(string="Serial Number")
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
-    pmr_antivirus = fields.Many2one('pmr.antivirus',string="Antivirus", store=True)
+    pmr_antivirus = fields.Many2one('pmr.itms.inventory.it',string="Nama Antivirus", domain=[('category', '=', 'antivirus')], store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
+    ], string="State", default="non", tracking=True, store=True)
 
     @api.model
     def _cron_update_product_age(self):
@@ -2300,15 +2330,7 @@ class PmrItmsProductItAntivirus(models.Model):
             else:
                 rec.pmr_umur_product_str = "-"
                 rec.pmr_umur_product_str_year = "-"
-    
-    def action_reject(self):
-        self.state= 'reject'
 
-    def action_repair(self):
-        self.state = 'repair'
-
-    def action_good(self):
-        self.state= 'good'
     
     def generate_pc_laptop_sequence(self):
         for record in self:
@@ -2348,8 +2370,12 @@ class PmrItmsProductItOffice(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
@@ -2358,6 +2384,7 @@ class PmrItmsProductItOffice(models.Model):
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
     pmr_asset = fields.Boolean(string="Asset", default=False)
+    pmr_office = fields.Many2one('pmr.itms.inventory.it',string="Nama Office", domain=[('category', '=', 'office')], store=True)
     pmr_no_asset = fields.Char(string="Nomor Asset")
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
@@ -2448,8 +2475,12 @@ class PmrItmsProductItCad(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
@@ -2459,15 +2490,14 @@ class PmrItmsProductItCad(models.Model):
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
     pmr_asset = fields.Boolean(string="Asset", default=False)
     pmr_no_asset = fields.Char(string="Nomor Asset")
+    pmr_cad = fields.Many2one('pmr.itms.inventory.it',string="Nama CAD", domain=[('category', '=', 'cad')], store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
+    ], string="State", default="non", tracking=True, store=True)
 
     @api.depends('pmr_create_date')
     def _compute_pmr_umur_product(self):
@@ -2548,8 +2578,12 @@ class PmrItmsProductItCam(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
@@ -2559,15 +2593,14 @@ class PmrItmsProductItCam(models.Model):
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
     pmr_asset = fields.Boolean(string="Asset", default=False)
     pmr_no_asset = fields.Char(string="Nomor Asset")
+    pmr_cam = fields.Many2one('pmr.itms.inventory.it',string="Nama CAM", domain=[('category', '=', 'cam')], store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
     state = fields.Selection([
-        ('not', 'Not State'),
-        ('reject', 'Reject'),
-        ('repair', 'Repair'),
-        ('good', 'Good'),
-    ], string="State", default="not", tracking=True, store=True)
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
+    ], string="State", default="non", tracking=True, store=True)
 
     @api.depends('pmr_create_date')
     def _compute_pmr_umur_product(self):
@@ -2648,8 +2681,12 @@ class PmrItmsProductItOs(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
@@ -2659,6 +2696,7 @@ class PmrItmsProductItOs(models.Model):
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
     pmr_asset = fields.Boolean(string="Asset", default=False)
     pmr_no_asset = fields.Char(string="Nomor Asset")
+    pmr_os = fields.Many2one('pmr.itms.inventory.it',string="Nama Operating System", domain=[('category', '=', 'os')], store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
     product_sub_category = fields.Many2one('pmr.product.sub.category', string="Sub Category", store=True)
@@ -2748,8 +2786,12 @@ class PmrItmsProductItSoftwareLain(models.Model):
         ('name_uniq', 'unique(name)', 'Name must be Unique.')
     ]
     
-    name = fields.Char(string="Personil IT", required=True, store=True)
+    name = fields.Char(string="Name", required=True, store=True)
+    name_document = fields.Char(string="Source Document", store=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
+    active = fields.Boolean(string="Active", default=True)
+    pmr_itms_personil_it = fields.Many2one('pmr.itms.personil.it', string="IT Personnel", store=True)
+    pmr_itms_re_to_it = fields.Many2one('pmr.itms.role', string="Role")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_umur_product = fields.Integer(string="Product Age", compute="_compute_pmr_umur_product", store=True)
     pmr_umur_product_str = fields.Char(string="Product Age (Text)", compute="_compute_pmr_umur_product_str", store=True)
@@ -2758,6 +2800,7 @@ class PmrItmsProductItSoftwareLain(models.Model):
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="Quantity", required=True, default=1)
     pmr_asset = fields.Boolean(string="Asset", default=False)
+    pmr_sl = fields.Many2one('pmr.itms.inventory.it',string="Nama Software Lainnya", domain=[('category', '=', 'sl')], store=True)
     pmr_no_asset = fields.Char(string="Nomor Asset")
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_category = fields.Many2one('pmr.product.category', string="Category",store=True)
@@ -3031,10 +3074,6 @@ class PmrPC(models.Model):
     pmr_rj45_port =fields.Boolean(string="RJ45 Port")
     pmr_3_in_1_audio_port =fields.Boolean(string="3-in-1 Audio Port")
     pmr_io_interface = fields.Char(string="I/O Interface", default="I/O Interface")
-    pmr_casing = fields.Many2one('pmr.casing', string="Casing", store=True)
-    pmr_keyboard = fields.Many2one('pmr.keyboard', string="Keyboard", store=True)
-    pmr_monitor = fields.Many2one('pmr.monitor', string="Monitor", store=True)
-    pmr_mouse = fields.Many2one('pmr.mouse',string="Mouse", store=True)
     pmr_lan_card_type = fields.Char(string="Type", compute="_compute_lan_card_type", store=True)
     pmr_vga_type_1 = fields.Char(string="Type", compute="_compute_vga_type", store=True)
     pmr_vga_type_2 = fields.Char(string="Type", compute="_compute_vga_type", store=True)
@@ -3177,6 +3216,7 @@ class PmrOs(models.Model):
     ]
     
     name = fields.Char(string="Name", required=True, store=True)
+    # serial_number = fields.Many2one('serial.number.it.os',string="Serial Number", tracking=True, store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     pmr_sn_operating_system = fields.Char(string="Product Key")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
@@ -3218,6 +3258,7 @@ class PmrAntivirus(models.Model):
     
     name = fields.Char(string="Name",store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
+    serial_number = fields.Many2one('serial.number.it.antivirus',string="Serial Number", tracking=True, store=True)
     type_software = fields.Selection([
         ('freeware', 'freeware'),
         ('licensed', 'licensed'),
@@ -3244,6 +3285,7 @@ class PmrOffice(models.Model):
     ]
     
     name = fields.Char(string="Name", required=True, store=True)
+    # serial_number = fields.Many2one('serial.number.it.office',string="Serial Number", tracking=True, store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     pmr_sn_office = fields.Char(string="Product Key")
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
@@ -3273,6 +3315,7 @@ class PmrCad(models.Model):
     ]
     
     name = fields.Char(string="Name", required=True, store=True)
+    # serial_number = fields.Many2one('serial.number.it.cad',string="Serial Number", tracking=True, store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     type_software = fields.Selection([
@@ -3301,6 +3344,7 @@ class PmrCam(models.Model):
     ]
     
     name = fields.Char(string="Name", required=True, store=True)
+    # serial_number = fields.Many2one('serial.number.it.cam',string="Serial Number", tracking=True, store=True)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     type_software = fields.Selection([
@@ -3528,6 +3572,50 @@ class AssetNumberItLine(models.Model):
     product_unit_category = fields.Many2one('uom.uom', string="Uom", required=True, store=True)
     pmr_itms_panset_line = fields.Many2one('asset.number.it', string="ID Memo", store=True)
 
+class SerialNumberAntivirus(models.Model):
+    _name = "pmr.itms.serial.number.antivirus"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _description = "Serial Number IT Line"
+
+    pmr_sequence = fields.Integer(string="No")
+    inventory_it_id = fields.Many2one('pmr.itms.inventory.it', string="Inventory IT")
+    pmr_serial_number = fields.Char(string="Serial Number Antivirus")
+    
+    @api.model
+    def create(self, vals):
+        # Ambil nilai terakhir dari pmr_sequence
+        last_sequence = self.search([], order='pmr_sequence desc', limit=1).pmr_sequence
+        vals['pmr_sequence'] = last_sequence + 1 if last_sequence else 1
+        return super(SerialNumberAntivirus, self).create(vals)
+     
+# class SerialNumberCad(models.Model):
+#     _name = "serial.number.it.cad"
+#     _inherit = ["mail.thread", "mail.activity.mixin"]
+#     _description = "Serial Number IT Line"
+
+#     pmr_serial_number = fields.Char(string="Serial Number CAD")
+
+# class SerialNumberCam(models.Model):
+#     _name = "serial.number.it.cam"
+#     _inherit = ["mail.thread", "mail.activity.mixin"]
+#     _description = "Serial Number IT Line"
+
+#     pmr_serial_number = fields.Char(string="Serial Number CAM")
+
+# class SerialNumberOffice(models.Model):
+#     _name = "serial.number.it.office"
+#     _inherit = ["mail.thread", "mail.activity.mixin"]
+#     _description = "Serial Number IT Line"
+
+#     pmr_serial_number = fields.Char(string="Serial Number Office")
+
+# class SerialNumberOs(models.Model):
+#     _name = "serial.number.it.os"
+#     _inherit = ["mail.thread", "mail.activity.mixin"]
+#     _description = "Serial Number IT Line"
+
+#     pmr_serial_number = fields.Char(string="Serial Number OS")
+
 class PmrItmsInventoryIt(models.Model):
     _name = "pmr.itms.inventory.it"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -3535,7 +3623,7 @@ class PmrItmsInventoryIt(models.Model):
     _rec_name = "product"
 
     _sql_constraints = [
-        ('name_uniq', 'unique(product)', 'Name must be Unique.')
+        ('product_condition_unique', 'unique(product,condition)', 'Product ini sudah ada.')
     ]   
     product = fields.Char(string="Name Product")
     pmr_itms_product = fields.Reference(selection=[
@@ -3560,6 +3648,8 @@ class PmrItmsInventoryIt(models.Model):
         ('pmr.cad', 'CAD'),
         ('pmr.cam', 'CAM'),
         ('pmr.os', 'Operating System'),
+        ('pmr.office', 'Office'),
+        ('pmr.software.lain', 'Software Lainnya'),
     ], string="Item Name")
     # asset_code = fields.Many2one('asset.number.it',string='Asset Code', required=True, tracking=True)
     pmr_barcode = fields.Many2one('pmr.barcode', String="Barcode")
@@ -3586,8 +3676,9 @@ class PmrItmsInventoryIt(models.Model):
         ('antivirus', 'Antivirus'),
         ('cad', 'CAD'),
         ('cam', 'CAM'),
+        ('office', 'Office'),
         ('operatingsys', 'Operating System'),
-        ('other', 'Other'),
+        ('sl', 'Software Lainnya'),
     ], string='Category', required=True, tracking=True)
     category_product= fields.Selection([
         ('hardware', 'Hardware'),
@@ -3599,8 +3690,8 @@ class PmrItmsInventoryIt(models.Model):
     condition = fields.Selection([
         ('new', 'New'),
         ('good', 'Good'),
-        ('repair', 'In Repair'),
-        ('damaged', 'Damaged'),
+        ('repair', 'Repair'),
+        ('reject', 'reject'),
     ], default='good', string='Condition', tracking=True)
     usage_status = fields.Selection([
         ('in_use', 'In Use'),
@@ -3676,7 +3767,11 @@ class PmrItmsInventoryIt(models.Model):
     pmr_io_interface = fields.Char(string="I/O Interface", default="I/O Interface")
 
     total_onhand_quantity = fields.Float(string="Total On Hand Quantity", compute="_compute_total_onhand_quantity", store=False)
-    serial_number = fields.Char(string="Serial Number", tracking=True)
+    serial_number_antivirus = fields.One2many('pmr.itms.serial.number.antivirus','inventory_it_id',string="Serial Number", tracking=True, store=True)
+    # serial_number_cad = fields.Many2one('serial.number.it.cad',string="Serial Number", tracking=True, store=True)
+    # serial_number_cam = fields.Many2one('serial.number.it.cam',string="Serial Number", tracking=True, store=True)
+    # serial_number_office = fields.Many2one('serial.number.it.office',string="Serial Number", tracking=True, store=True)
+    # serial_number_os = fields.Many2one('serial.number.it.os',string="Serial Number", tracking=True, store=True)
     notes = fields.Text(string='Notes')
     
     @api.depends('product', 'pmr_quantity_product_it')
@@ -3690,8 +3785,6 @@ class PmrItmsInventoryIt(models.Model):
             else:
                 rec.total_onhand_quantity = 0.0
 
-
-
     def action_set_to_retired (self):
         # (Opsional) logika membuat data baru bisa diletakkan di sini
         return {
@@ -3702,13 +3795,34 @@ class PmrItmsInventoryIt(models.Model):
             'target': 'current',
             'domain': [('name_product', '=', self.product)],
         }
-
     @api.model
     def create(self, vals):
         record = super(PmrItmsInventoryIt, self).create(vals)
+
+        # Auto-isi nama produk jika pmr_itms_product diisi
         if record.pmr_itms_product:
             record.product = record.pmr_itms_product.display_name
+
+        # Auto-buat record serial number antivirus
+        if vals.get('pmr_sn_antivirus'):
+            self.env['pmr.itms.serial.number.antivirus'].create({
+                'pmr_serial_number': vals['pmr_sn_antivirus'],
+                'inventory_it_id': record.id,
+            })
+
         return record
+    
+    def write(self, vals):
+        res = super(PmrItmsInventoryIt, self).write(vals)
+        for rec in self:
+            if vals.get('pmr_sn_antivirus'):
+                self.env['pmr.itms.serial.number.antivirus'].create({
+                    'pmr_serial_number': vals['pmr_sn_antivirus'],
+                    'inventory_it_id': rec.id,
+                })
+        return res
+
+
 
     @api.onchange('pmr_itms_product')
     def _onchange_pmr_itms_product(self):
@@ -3782,11 +3896,7 @@ class PmrItmsInventoryIt(models.Model):
                 self.product_unit_category = record.product_unit_category
                 self.pmr_processor = record.pmr_processor.name 
                 self.pmr_mainboard = record.pmr_mainboard.name   
-                self.pmr_power_supply = record.pmr_power_supply.name   
-                self.pmr_mouse = record.pmr_mouse.name   
-                self.pmr_casing = record.pmr_casing.name   
-                self.pmr_keyboard = record.pmr_keyboard.name   
-                self.pmr_monitor = record.pmr_monitor.name   
+                self.pmr_power_supply = record.pmr_power_supply.name    
                 self.pmr_lan_card = record.pmr_lan_card.name   
                 self.pmr_lan_card_type = record.pmr_lan_card_type  
                 self.pmr_fdd = record.pmr_fdd.name   
@@ -3890,7 +4000,7 @@ class PmrItmsInventoryIt(models.Model):
             self.category_product = 'hardware'
         else:
             self.category_product = 'software'
-            
+
     # def generate_pc_laptop_sequence(self):
     #     suffix_mapping = {
     #         'pc': 'PC',
@@ -3962,9 +4072,16 @@ class PmrItmsInventoryMovement(models.Model):
     _description = "IT Inventory Movement"
    
     name_product = fields.Char(string="Product", store=True)
+    name_document = fields.Char(string="Sourch Document", store=True)
     pmr_create_date = fields.Datetime(string="Create Date", default=lambda self: fields.Datetime.now())
     pmr_itms_departement = fields.Many2one('hr.department', string="Departement", required=True, store=True)
     pmr_itms_user = fields.Many2one('pmr.itms.user', string="User", required=True)
     pmr_quantity_product_it = fields.Float(string="On Hand Quantity", required=True, default=1)
     product_unit_category = fields.Many2one('uom.uom', string="Unit Category", required=True, store=True)
     product_location_unit = fields.Many2one('pmr.location.unit', string="Location", store=True)
+    pmr_barcode = fields.Many2one('pmr.barcode', string="Barcode", store=True)
+    printer_id = fields.Many2one('pmr.itms.product.it.printer', string="Printer")
+    state = fields.Selection([
+        ('non', 'Non Used'),
+        ('aktif', 'Used'),
+        ], related='printer_id.state', store=True, string="State", tracking=True)

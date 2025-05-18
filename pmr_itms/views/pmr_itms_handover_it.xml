@@ -10,8 +10,11 @@
                         <button id="button_submit" name="action_submit" string="Submit"
                         class="btn-primary" type="object" states="submit" />
 
-                        <button id="button_agreement_user" name="action_user" string="Send User"
+                        <button id="button_agreement_user" name="action_send_to_product_models" string="Confirm"
                         class="btn-primary" type="object" states="draft" />
+
+                        <button id="button_agreement_user_to" name="action_send_to_product_models" string="Send To User"
+                        class="btn-primary" type="object"  attrs="{'invisible': [('state', '!=', 'appr')]}" />
 
                         <button id="button_user_submit" name="action_user_submit" string="To Submit"
                         class="btn-primary" type="object" states="user_agreement" />
@@ -34,10 +37,17 @@
                             <group>
                                 <field name="pmr_itms_personil_it"/>
                                 <field name="pmr_itms_re_to_it"/>
+                                <field name="pmr_itms_request_date"/>
                             </group>
                             <group> 
-                                 <field name="pmr_itms_user"/>
+                                <field name="pmr_itms_user"/>
                                 <field name="pmr_itms_departement"/>
+                                <field name="is_movement_created" widget="boolean_toggle" attrs="{'invisible': [('state', '!=', 'appr')]}"/>
+                                <button name="action_create_inventory_movement"
+                                    string="Create Inventory Movement"
+                                    type="object"
+                                    class="btn-primary"
+                                    attrs="{'invisible': ['|', ('state', '!=', 'appr'), ('is_movement_created', '=', True)]}" />
                             </group>
                         </group>
                     <notebook>
@@ -45,6 +55,7 @@
                             <field name="pmr_itms_handover_head" nolabel="1">
                                 <tree editable="bottom"> 
                                     <field name="pmr_jenis_perangkat"/>
+                                    <field name="pmr_itms_movent"/>
                                     <field name="pmr_merk_type"/>
                                     <field name="pmr_quantity_product_it"/>
                                     <field name="product_unit_category"/>
@@ -79,7 +90,7 @@
                     <field name="pmr_itms_personil_it"/>
                     <field name="pmr_itms_re_to_it"/>
                     <field name="pmr_itms_departement"/>
-                    <field name="state"/>
+                    <field name="state" decoration-success="state == 'appr'" decoration-warning="state == 'open'" decoration-primary="state == 'draft'" widget="badge"/>
                 </tree>
             </field>
         </record>

@@ -537,16 +537,12 @@
                 <field name="pmr_hardisk_2"/>
                 <field name="pmr_hardisk_3"/>
                 <field name="pmr_hardisk_4"/>
-                <field name="pmr_casing"/>
-                <field name="pmr_keyboard"/>
-                <field name="pmr_monitor"/> 
                 <field name="pmr_ups_boolean"/>
                 <field name="pmr_dvd_room_boolean"/>
                 <field name="pmr_hdmi_boolean"/>
                 <field name="pmr_lan_card"/>
                 <field name="pmr_fdd"/>
                 <field name="pmr_power_supply"/>
-                <field name="pmr_mouse"/>
                 <field name="pmr_operating_system"/>
                 <field name="pmr_office"/>
                 <field name="pmr_cad"/>
@@ -595,10 +591,6 @@
                                     <field name="pmr_fdd"/>
                                     <field name="pmr_lan_card"/>
                                     <field name="pmr_lan_card_type" readonly="1"/>
-                                    <field name="pmr_casing"/>
-                                    <field name="pmr_keyboard"/>
-                                    <field name="pmr_monitor"/>
-                                    <field name="pmr_mouse"/>
                                 </group>
                                 <group>
                                     <field name="pmr_ups_boolean"/>
@@ -912,16 +904,15 @@
                         <field name="product_unit_category" />
                         <field name="type_software" />
                     </group>
-                    <notebook>
+                    <!-- <notebook>
                         <page string="Activation Code">
-                            <field name="pmr_itms_antivirus" nolabel="1">
+                            <field name="serial_number_antivirus" nolabel="1">
                                 <tree editable="bottom"> 
-                                    <field name="name"/>
-                                    <field name="pmr_itms_user"/>
+                                    <field name="pmr_serial_number"/>
                                 </tree>
                             </field>
                         </page>
-                    </notebook>
+                    </notebook> -->
                 </sheet>
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
@@ -949,7 +940,7 @@
                 <field name="name"/>
                 <field name="product_unit_category" />
                 <field name="pmr_create_date"/>
-                <field name="type_software" />
+                <field name="type_software" decoration-danger="type_software=='freeware'" decoration-primary="type_software=='licensed'" decoration-warning="type_software=='lifetime'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1003,7 +994,7 @@
                 <field name="name"/>
                 <field name="product_unit_category" />
                 <field name="pmr_create_date"/>
-                <field name="type_software" />
+                <field name="type_software" decoration-danger="type_software=='freeware'" decoration-primary="type_software=='licensed'" decoration-warning="type_software=='lifetime'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1057,7 +1048,7 @@
                 <field name="name"/>
                 <field name="product_unit_category" />
                 <field name="pmr_create_date"/>
-                <field name="type_software" />
+                <field name="type_software" decoration-danger="type_software=='freeware'" decoration-primary="type_software=='licensed'" decoration-warning="type_software=='lifetime'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1111,7 +1102,7 @@
                 <field name="name"/>
                 <field name="product_unit_category" />
                 <field name="pmr_create_date"/>
-                <field name="type_software" />
+                <field name="type_software" decoration-danger="type_software=='freeware'" decoration-primary="type_software=='licensed'" decoration-warning="type_software=='lifetime'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -1221,7 +1212,7 @@
             <tree>
                 <field name="name"/>
                 <field name="pmr_create_date"/>
-                <field name="type_software" />
+                <field name="type_software" decoration-danger="type_software=='freeware'" decoration-primary="type_software=='licensed'" decoration-warning="type_software=='lifetime'" widget="badge"/>
             </tree>
         </field>
     </record>

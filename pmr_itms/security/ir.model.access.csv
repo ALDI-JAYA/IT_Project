@@ -19,6 +19,7 @@ access_pmr_itms_inventory_it,access.pmr.itms.inventory.it,model_pmr_itms_invento
 access_pmr_itms_inventory_movement,access.pmr.itms.inventory.movement,model_pmr_itms_inventory_movement,base.group_user,1,1,1,1
 access_pmr_itms_panitera_asset,access.pmr.itms.panitera.asset,model_pmr_itms_panitera_asset,base.group_user,1,1,1,1
 access_pmr_itms_panitera_asset_line,access.pmr.itms.panitera.asset.line,model_pmr_itms_panitera_asset_line,base.group_user,1,1,1,1
+access_pmr_itms_serial_number_antivirus,access.pmr.itms.serial.number.antivirus,model_pmr_itms_serial_number_antivirus,base.group_user,1,1,1,1
 access_pmr_itms_completion_memo_pembelian_troubleshooting,access.pmr.itms.completion.memo.pembelian.troubleshooting,model_pmr_itms_completion_memo_pembelian_troubleshooting,base.group_user,1,1,1,1
 access_pmr_itms_request_memo_pembelian_troubleshooting,access.pmr.itms.request.memo.pembelian.troubleshooting,model_pmr_itms_request_memo_pembelian_troubleshooting,base.group_user,1,1,1,1
 access_pmr_itms_memo_pengajuan_barang,access.pmr.itms.memo.pembelian.barang,model_pmr_itms_memo_pengajuan_barang,base.group_user,1,1,1,1
